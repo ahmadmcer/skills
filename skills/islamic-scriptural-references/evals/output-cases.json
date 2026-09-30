@@ -1,0 +1,55 @@
+[
+  {
+    "id": "ayat-al-kursi-complete-reference",
+    "prompt": "Provide the scriptural citation and text for Ayat al-Kursi, including original Arabic Uthmani text and recognized English translation.",
+    "expected_output": "Presents Surah Al-Baqarah (2:255) with pristine Arabic Uthmani text, Saheeh International English translation, explicit translator credit, canonical citation `[Quran 2:255]`, and brief theological context regarding its status as the greatest verse in the Qur'an.",
+    "assertions": [
+      "Provides complete Arabic text in Uthmani script with proper diacritics.",
+      "Supplies a recognized, credited English translation (e.g. Saheeh International).",
+      "Includes standard canonical citation format `[Quran 2:255]` or `Surah Al-Baqarah (2:255)`.",
+      "Employs respectful honorifics (SWT) when referring to Allah."
+    ]
+  },
+  {
+    "id": "hadith-intentions-takhrij",
+    "prompt": "Cite the foundational Hadith regarding intentions ('Actions are judged by motives'). Provide complete takhrij and grading.",
+    "expected_output": "Provides the Arabic text of the Hadith, narrator attribution ('Umar ibn al-Khattab RA), complete Takhrīj referencing both Sahih al-Bukhari 1 and Sahih Muslim 1907, explicit Sahih authenticity grading, and an explanation of its role as one of the pillars of Islamic jurisprudence.",
+    "assertions": [
+      "Attributes transmission to Companion 'Umar ibn al-Khattab (RA).",
+      "Cites primary source collections with numbers: Sahih al-Bukhari 1 and Sahih Muslim 1907.",
+      "States the authenticity grade as Sahih (agreed upon / Muttafaqun 'Alayh).",
+      "Includes original Arabic text alongside the English translation."
+    ]
+  },
+  {
+    "id": "authenticity-verification-seek-knowledge-china",
+    "prompt": "Is the saying 'Seek knowledge even unto China' an authentic Hadith? Please verify its source and grading.",
+    "expected_output": "Conducts a rigorous authenticity audit, explicitly declares that 'Seek knowledge even unto China' (Utlubul 'ilma wa law bis-Sin) is not an authentic Hadith, notes that it is graded as Fabricated (Mawdu') or severely weak by classical hadith masters (Ibn al-Jawzi, al-Dhahabi, al-Albani), and contrasts it with authentic narrations on seeking knowledge such as Sunan Ibn Majah 224.",
+    "assertions": [
+      "Explicitly refutes the authenticity of the saying, classifying it as Mawdu' (Fabricated) or severely Da'if.",
+      "Names recognized classical or contemporary muhaddithin who graded the narration (e.g. Ibn al-Jawzi, al-Albani).",
+      "Contrasts the fabricated text with an authentic Hadith on seeking knowledge (e.g. Sunan Ibn Majah 224: 'Seeking knowledge is an obligation upon every Muslim')."
+    ]
+  },
+  {
+    "id": "tafsir-surah-al-asr",
+    "prompt": "What is the classical Tafsir of Surah Al-'Asr (Chapter 103)? Please reference classical scholars.",
+    "expected_output": "Presents the 3 verses of Surah Al-'Asr with Arabic text and translation, references classical exegesis from Ibn Kathir, cites Imam al-Shafi'i's famous reflection ('If Allah had only revealed this Surah, it would have sufficed mankind'), and outlines the 4 conditions for salvation: faith, righteous deeds, advising to truth, and advising to patience.",
+    "assertions": [
+      "Provides all 3 verses in Arabic Uthmani and English translation with citation `[Quran 103:1-3]`.",
+      "References classical exegesis from Tafsir Ibn Kathir.",
+      "Cites Imam al-Shafi'i's statement on Surah Al-'Asr.",
+      "Outlines the 4 essential criteria for salvation enumerated in the text."
+    ]
+  },
+  {
+    "id": "distinguishing-hadith-qudsi",
+    "prompt": "Cite the Hadith Qudsi where Allah forbids injustice, and explain how a Hadith Qudsi differs from the Qur'an.",
+    "expected_output": "Quotes the Hadith Qudsi narrated by Abu Dharr al-Ghifari (RA) from Sahih Muslim 2577 ('O My servants! I have forbidden injustice for Myself...'), gives Arabic text and translation, and explains the 3 core distinctions between the Qur'an and Hadith Qudsi (Quran is recited in Salah, inimitable/miraculous in verbatim Arabic wording, and mass-transmitted).",
+    "assertions": [
+      "Cites primary source: Sahih Muslim 2577, narrated by Abu Dharr al-Ghifari (RA).",
+      "Supplies Arabic text and translation of the narration.",
+      "Clearly articulates theological differences between Quranic revelation and Hadith Qudsi (verbatim miraculous nature, recitation in prayer, transmission)."
+    ]
+  }
+]

@@ -1,0 +1,86 @@
+[
+  {
+    "query": "Quote Ayat al-Kursi with original Arabic text, English translation, and reference.",
+    "should_trigger": true
+  },
+  {
+    "query": "What is the authentic Hadith on intentions narrated by Umar ibn al-Khattab?",
+    "should_trigger": true
+  },
+  {
+    "query": "Provide the full citation and grading for the Hadith 'Actions are by intentions'.",
+    "should_trigger": true
+  },
+  {
+    "query": "What is the classical Tafsir of Ibn Kathir on Surah Al-Asr?",
+    "should_trigger": true
+  },
+  {
+    "query": "Verify the authenticity of the saying: 'Seek knowledge even unto China'.",
+    "should_trigger": true
+  },
+  {
+    "query": "How should I cite Sahih Muslim in academic footnotes according to ALA-LC romanization?",
+    "should_trigger": true
+  },
+  {
+    "query": "Look up Surah Al-Ikhlas (112:1-4) in Uthmani script with translation.",
+    "should_trigger": true
+  },
+  {
+    "query": "Find the Hadith in Sunan Abi Dawud about prayer and provide its takhrij and grading.",
+    "should_trigger": true
+  },
+  {
+    "query": "Explain the difference between Hadith Qudsi and the Holy Quran with scriptural examples.",
+    "should_trigger": true
+  },
+  {
+    "query": "Can you provide the Asbab al-Nuzul (occasions of revelation) for Surah Al-Duha?",
+    "should_trigger": true
+  },
+  {
+    "query": "Is there an authentic Hadith in Bukhari regarding the pillars of Islam?",
+    "should_trigger": true
+  },
+  {
+    "query": "How do I say 'good morning, how are you?' in conversational Egyptian Arabic?",
+    "should_trigger": false
+  },
+  {
+    "query": "What are the best tourist destinations to visit in Morocco?",
+    "should_trigger": false
+  },
+  {
+    "query": "Help me draft a business contract in Arabic for a software export company.",
+    "should_trigger": false
+  },
+  {
+    "query": "Translate this modern Arabic news headline about oil markets.",
+    "should_trigger": false
+  },
+  {
+    "query": "What was the economic impact of the Suez Canal opening in 1869?",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a Python script to parse Arabic text and remove HTML tags.",
+    "should_trigger": false
+  },
+  {
+    "query": "Recommend a good Middle Eastern restaurant in London.",
+    "should_trigger": false
+  },
+  {
+    "query": "How does the grammar of Arabic broken plurals work for non-human nouns?",
+    "should_trigger": false
+  },
+  {
+    "query": "Provide a summary of the 14th-century travels of Ibn Battuta in Southeast Asia.",
+    "should_trigger": false
+  },
+  {
+    "query": "What is the capital city of Jordan?",
+    "should_trigger": false
+  }
+]
