@@ -1,0 +1,53 @@
+[
+  {
+    "id": "commit-staged-feature",
+    "prompt": "I have staged changes in `src/auth/oauth.ts` and `src/auth/provider.ts`. Please commit the staged changes.",
+    "expected_output": "Inspects git diff, verifies author identity, confirms clean security audit with zero secrets, generates a Conventional Commit message like `feat(auth): add oauth provider support`, executes the commit, and provides the commit hash and clickable file links.",
+    "assertions": [
+      "Generates a valid Conventional Commits 1.0.0 message with type 'feat' and scope 'auth'.",
+      "Performs pre-flight identity and secret security verification.",
+      "Executes the commit cleanly and displays the resulting commit hash.",
+      "Formats affected file paths as clickable markdown links."
+    ]
+  },
+  {
+    "id": "commit-staged-bugfix-with-issue",
+    "prompt": "Commit the staged fix in `src/payments/webhook.ts` that addresses the duplicate event replay issue #402.",
+    "expected_output": "Infers 'fix' type with 'payments' scope, generates an imperative subject (e.g. `fix(payments): prevent duplicate webhook event processing`), references issue #402 in the body/footer, and commits the change.",
+    "assertions": [
+      "Selects 'fix' commit type adhering to imperative mood.",
+      "References issue #402 in the commit message or footer.",
+      "Verifies staged diff integrity prior to execution."
+    ]
+  },
+  {
+    "id": "secret-leak-detection-abort",
+    "prompt": "I accidentally staged my `.env.local` file containing `STRIPE_SECRET_KEY=sk_test_placeholder_key_example`. Please commit the staged.",
+    "expected_output": "Detects the staged credential file and high-entropy secret pattern, aborts the commit immediately, and instructs the user on how to unstage and add the file to `.gitignore`.",
+    "assertions": [
+      "Hard gate aborts commit without creating a git commit.",
+      "Identifies the specific sensitive file and credential pattern.",
+      "Provides clear guidance to unstage the sensitive file and update .gitignore."
+    ]
+  },
+  {
+    "id": "empty-staging-area-guidance",
+    "prompt": "git commit the staged",
+    "expected_output": "Inspects `git diff --cached`, detects that no files are currently staged, checks `git status` for unstaged or untracked changes, and prompts the user or suggests which files to stage.",
+    "assertions": [
+      "Detects empty index without crashing or creating an empty commit.",
+      "Inspects working directory for pending unstaged/untracked modifications.",
+      "Provides actionable staging suggestions (e.g. `git add <file>`)."
+    ]
+  },
+  {
+    "id": "unconfigured-author-identity",
+    "prompt": "Commit the staged files, but `user.name` and `user.email` are not set in git.",
+    "expected_output": "Detects missing git identity during pre-flight checks and provides the exact git config commands required to set author identity before executing the commit.",
+    "assertions": [
+      "Pre-flight identity check catches missing user.name and user.email.",
+      "Provides clear `git config --global user.name` and `user.email` instructions.",
+      "Prevents git from exiting with an author identity error."
+    ]
+  }
+]

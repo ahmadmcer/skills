@@ -1,0 +1,86 @@
+[
+  {
+    "query": "git commit the staged",
+    "should_trigger": true
+  },
+  {
+    "query": "git commit",
+    "should_trigger": true
+  },
+  {
+    "query": "Commit the staged files with a clear conventional commit message.",
+    "should_trigger": true
+  },
+  {
+    "query": "Stage and commit the bug fix in the authentication controller.",
+    "should_trigger": true
+  },
+  {
+    "query": "Create a git commit for my recent changes.",
+    "should_trigger": true
+  },
+  {
+    "query": "Please commit these changes.",
+    "should_trigger": true
+  },
+  {
+    "query": "Commit my staged changes and verify the commit hash.",
+    "should_trigger": true
+  },
+  {
+    "query": "Make a commit with conventional commit format for the new API endpoints.",
+    "should_trigger": true
+  },
+  {
+    "query": "Commit the staged files and check for secret leaks first.",
+    "should_trigger": true
+  },
+  {
+    "query": "Help me commit these staged changes.",
+    "should_trigger": true
+  },
+  {
+    "query": "Can you commit what is currently staged?",
+    "should_trigger": true
+  },
+  {
+    "query": "How do I clone a git repository from GitHub?",
+    "should_trigger": false
+  },
+  {
+    "query": "What is the git command to rebase onto main?",
+    "should_trigger": false
+  },
+  {
+    "query": "Show me how to create a git branch and switch to it.",
+    "should_trigger": false
+  },
+  {
+    "query": "What is git stash and how do I apply it?",
+    "should_trigger": false
+  },
+  {
+    "query": "How do I push my commits to the origin remote?",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix this CSS flexbox alignment issue in the header.",
+    "should_trigger": false
+  },
+  {
+    "query": "Draft an Architecture Decision Record for our database.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a Python function to sort a list of dictionaries.",
+    "should_trigger": false
+  },
+  {
+    "query": "Configure a GitHub Actions CI workflow for testing.",
+    "should_trigger": false
+  },
+  {
+    "query": "Explain the difference between git merge and git rebase.",
+    "should_trigger": false
+  }
+]

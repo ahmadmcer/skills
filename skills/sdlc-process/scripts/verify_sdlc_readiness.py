@@ -38,6 +38,8 @@ def run_git(args: list[str], cwd: Path) -> tuple[int, str]:
             cwd=cwd,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=10,
         )
         return res.returncode, res.stdout.strip()
