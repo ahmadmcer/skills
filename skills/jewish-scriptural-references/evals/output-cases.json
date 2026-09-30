@@ -1,0 +1,66 @@
+[
+  {
+    "id": "output-01-shema-yisrael",
+    "title": "Shema Yisrael Citation and Exegesis",
+    "prompt": "Provide the Hebrew text and standard Jewish translation of the Shema (Deuteronomy 6:4-9). Compare the NJPS and JPS 1917 translations, format the citation to SBL standards, and explain Rashi's commentary on 'Adonai Echad'.",
+    "expected_elements": {
+      "sbl_citation": "(Deut 6:4–9 NJPS)",
+      "hebrew_text": "שְׁמַ֖ע יִשְׂרָאֵ֑ל יְהוָ֥ה אֱלֹהֵ֖ינוּ יְהוָ֥ה ׀ אֶחָֽד׃",
+      "translation_comparison": {
+        "jps_1917": "Hear, O Israel: The LORD our God, the LORD is one.",
+        "njps_1985": "Hear, O Israel! The LORD is our God, the LORD alone. (or: The LORD our God, the LORD is one.)"
+      },
+      "rashi_commentary": "Rashi explains that the LORD who is now 'our God' (accepted by Israel alone) will in the messianic future be 'the LORD is one' for all humanity, citing Zechariah 14:9 ('On that day the LORD shall be one and His name one').",
+      "en_dash": "Must use en-dash in range: 6:4–9"
+    }
+  },
+  {
+    "id": "output-02-hillel-golden-rule",
+    "title": "Hillel's Golden Rule on Shabbat 31a",
+    "prompt": "Cite and analyze Hillel's famous statement to the prospective convert who asked to learn the entire Torah while standing on one foot. Provide the exact Talmudic citation in SBL format, verify that the Daf is valid, provide the Aramaic text and English translation, and contrast Hillel's approach with Shammai's.",
+    "expected_elements": {
+      "sbl_citation": "b. Šabb. 31a",
+      "daf_verification": "Daf 31a is valid (satisfies Daf >= 2a invariant)",
+      "aramaic_text": "דַּעֲלָךְ סְנֵי לְחַבְרָךְ לָא תַּעֲבֵיד — זוֹ הִיא כׇּל הַתּוֹרָה כּוּלָּהּ, וְאִידַּךְ פֵּירוּשָׁהּ הוּא, זִיל גְּמוֹר",
+      "english_translation": "That which is hateful to you do not do to your fellow; that is the entire Torah, and the rest is its commentary. Go and study.",
+      "narrative_context": "Shammai repelled the inquirer with a builder's measuring cubit (expressing strict uncompromising standards), whereas Hillel gently converted and instructed him with patience and love for humanity."
+    }
+  },
+  {
+    "id": "output-03-sanhedrin-saving-a-life-variants",
+    "title": "Textual Variants in Sanhedrin 4:5 on Saving a Soul",
+    "prompt": "Analyze the passage on saving a single human life in Mishnah Sanhedrin 4:5 and Talmud Bavli Sanhedrin 37a. Discuss the significant textual variant regarding 'from Israel' (mi-Yisrael) between printed editions and early manuscripts.",
+    "expected_elements": {
+      "sbl_citations": [
+        "m. Sanh. 4:5",
+        "b. Sanh. 37a"
+      ],
+      "vilna_reading": "כל המאבד נפש אחת מישראל... וכל המקיים נפש אחת מישראל ('Whoever destroys a single soul from Israel... whoever saves a single soul from Israel')",
+      "critical_manuscript_reading": "Codex Kaufmann A 50, Parma de Rossi 138, Cambridge Add. 470.1, and Talmud Yerushalmi omit 'מישראל' (mi-Yisrael), rendering the dictum universal: 'Whoever saves a single soul...'",
+      "theological_argument": "The Mishnaic rationale is based on Adam being created as a single solitary individual to show that all human beings descend from the same parentage, establishing equal human worth and universal fraternity."
+    }
+  },
+  {
+    "id": "output-04-psalm-23-versification",
+    "title": "Psalm 23 Masoretic vs Christian Versification",
+    "prompt": "Explain the differences in verse numbering between the Hebrew Masoretic Text of Psalm 23 (Tehillim 23) and English Christian translations. Provide SBL citations for both traditions.",
+    "expected_elements": {
+      "masoretic_text": "In the Hebrew Bible (MT), the superscription 'מִזְמוֹר לְדָוִד' (Mizmor l'David) is integrated directly as part of Verse 1: 'מִזְמוֹר לְדָוִד יְהוָה רֹעִי לֹא אֶחְסָר'",
+      "christian_editions": "In many Christian English translations (KJV, ESV, NIV), the superscription 'A Psalm of David' is unnumbered, and Verse 1 begins with 'The LORD is my shepherd; I shall not want.'",
+      "general_psalms_discrepancy": "In many other psalms (e.g. Psalm 51), the superscription is verse 1 or verses 1–2, creating a 1-to-2 verse divergence throughout the entire chapter.",
+      "citations": "Jewish: (Tehillim 23:1 MT); Christian: (Ps 23:1 ESV)"
+    }
+  },
+  {
+    "id": "output-05-pardes-genesis-1-1",
+    "title": "Fourfold PaRDeS Exegesis of Genesis 1:1",
+    "prompt": "Perform a four-tiered PaRDeS breakdown of Genesis 1:1 (Bereshit bara Elohim). Cite the primary Rishonim for Peshat and identify the Remez, Derash, and Sod dimensions.",
+    "expected_elements": {
+      "verse_citation": "(Gen 1:1 NJPS)",
+      "peshat": "Rashi and Rashbam demonstrate that 'Bereshit' is in the construct state ('in the beginning of God's creating...'). It does not mean 'at the absolute beginning of time' because water and darkness are already mentioned in verse 2 without a prior creation narrative.",
+      "remez": "The letter Bet (ב) opening the Torah has a numerical value of 2 and is closed on three sides, hinting that one may contemplate what happened from creation forward, but not probe what precedes it or lies above/beneath.",
+      "derash": "Midrash Rabbah expounds 'Bereshit' as 'for the sake of Reshit': the world was created for the sake of the Torah (called Reshit in Proverbs 8:22) and Israel (called Reshit in Jeremiah 2:3).",
+      "sod": "Kabbalistic exegesis (Zohar) interprets Bereshit as the primordial emanation from the Ein Sof into the first Sefirah (Keter / Chokhmah), from which the cosmos was brought into being."
+    }
+  }
+]

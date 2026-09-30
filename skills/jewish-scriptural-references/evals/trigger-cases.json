@@ -1,0 +1,134 @@
+[
+  {
+    "id": "trigger-01-tanakh-shema",
+    "prompt": "What is the Hebrew text and Jewish English translation of the Shema in Deuteronomy 6:4-9 according to the NJPS?",
+    "should_trigger": true,
+    "category": "Tanakh & Shema"
+  },
+  {
+    "id": "trigger-02-talmud-hillel-golden-rule",
+    "prompt": "Cite Hillel's statement to the prospective convert in Shabbat 31a using SBL format, including the Aramaic and English translation.",
+    "should_trigger": true,
+    "category": "Talmud Bavli"
+  },
+  {
+    "id": "trigger-03-mishnah-sanhedrin-variants",
+    "prompt": "Explain the textual variants in Mishnah Sanhedrin 4:5 regarding saving a single soul between the Vilna Shas and the Kaufmann manuscript.",
+    "should_trigger": true,
+    "category": "Mishnah & Textual Variants"
+  },
+  {
+    "id": "trigger-04-psalm-versification-mt-vs-christian",
+    "prompt": "Why does Psalm 23 or Psalm 51 have different verse numbering in the Hebrew Masoretic Text compared to the King James Bible?",
+    "should_trigger": true,
+    "category": "Masorah & Versification"
+  },
+  {
+    "id": "trigger-05-pardes-genesis-1-1",
+    "prompt": "Break down Genesis 1:1 using the four levels of PaRDeS exegesis, referencing Rashi and Rashbam.",
+    "should_trigger": true,
+    "category": "Hermeneutics & Rishonim"
+  },
+  {
+    "id": "trigger-06-pirkei-avot-transmission",
+    "prompt": "Quote Pirkei Avot 1:1 on the transmission of Torah from Sinai through the Men of the Great Assembly.",
+    "should_trigger": true,
+    "category": "Mishnah"
+  },
+  {
+    "id": "trigger-07-daf-1a-hallucination-check",
+    "prompt": "Can you cite Babylonian Talmud Berakhot 1a for the morning blessings?",
+    "should_trigger": true,
+    "category": "Anti-Hallucination & Daf 2a"
+  },
+  {
+    "id": "trigger-08-talmud-yerushalmi-citation",
+    "prompt": "How do I cite the Jerusalem Talmud Berakhot chapter 1 according to the SBL Handbook of Style?",
+    "should_trigger": true,
+    "category": "Talmud Yerushalmi & SBL"
+  },
+  {
+    "id": "trigger-09-mishneh-torah-shabbat",
+    "prompt": "What is the proper citation format for Rambam's Mishneh Torah Hilkhot Shabbat chapter 1?",
+    "should_trigger": true,
+    "category": "Halakhic Codes"
+  },
+  {
+    "id": "trigger-10-shulchan-aruch-waking",
+    "prompt": "Where in the Shulchan Aruch is the ruling about rising like a lion in the morning, and how is it cited?",
+    "should_trigger": true,
+    "category": "Halakhic Codes"
+  },
+  {
+    "id": "trigger-11-rashi-vs-ramban-creation",
+    "prompt": "Compare Rashi's and Ramban's interpretations of the word Bereshit in Genesis 1:1.",
+    "should_trigger": true,
+    "category": "Classical Commentators"
+  },
+  {
+    "id": "trigger-12-micah-6-8-prophetic-ethics",
+    "prompt": "What does Micah 6:8 teach regarding doing justice and loving kindness in Jewish thought?",
+    "should_trigger": true,
+    "category": "Tanakh (Nevi'im)"
+  },
+  {
+    "id": "trigger-13-twelve-minor-prophets-trei-asar",
+    "prompt": "How are the Twelve Minor Prophets (Trei Asar) organized in the Tanakh compared to Christian Bibles?",
+    "should_trigger": true,
+    "category": "Tanakh Canon"
+  },
+  {
+    "id": "trigger-14-midrash-rabbah-citation",
+    "prompt": "Give me an SBL citation and summary for Genesis Rabbah 1:1 on the creation of the world.",
+    "should_trigger": true,
+    "category": "Midrash"
+  },
+  {
+    "id": "trigger-15-translation-comparison-jps-koren-alter",
+    "prompt": "Compare the translation philosophies of the 1917 JPS, 1985 NJPS, Koren Jerusalem Bible, and Robert Alter.",
+    "should_trigger": true,
+    "category": "Jewish Translations"
+  },
+  {
+    "id": "trigger-16-divine-names-writing-conventions",
+    "prompt": "Why do traditional Jewish publications write 'G-d' or use 'Hashem' instead of spelling out divine names?",
+    "should_trigger": true,
+    "category": "Scribal Etiquette & Halakha"
+  },
+  {
+    "id": "trigger-17-seven-laws-of-noah",
+    "prompt": "Where in the Talmud Bavli (Sanhedrin 56a) are the Seven Noahide Laws enumerated?",
+    "should_trigger": true,
+    "category": "Talmud Bavli"
+  },
+  {
+    "id": "trigger-18-oven-of-akhnai",
+    "prompt": "Cite and explain the debate over the Oven of Akhnai in Bava Metzia 59b ('It is not in heaven').",
+    "should_trigger": true,
+    "category": "Talmud Bavli & Legal Authority"
+  },
+  {
+    "id": "trigger-19-negative-modern-hebrew-slang",
+    "prompt": "What does the modern Israeli slang word 'sababa' mean and where did it originate?",
+    "should_trigger": false,
+    "category": "Negative - Modern Slang"
+  },
+  {
+    "id": "trigger-20-negative-tel-aviv-restaurants",
+    "prompt": "Find top-rated vegan restaurants in Tel Aviv near Rothschild Boulevard.",
+    "should_trigger": false,
+    "category": "Negative - General Travel"
+  },
+  {
+    "id": "trigger-21-negative-israeli-electoral-system",
+    "prompt": "Explain the Knesset coalition threshold percentage in Israeli parliamentary elections.",
+    "should_trigger": false,
+    "category": "Negative - Contemporary Politics"
+  },
+  {
+    "id": "trigger-22-negative-python-data-structures",
+    "prompt": "How do I implement a binary search tree in Python with insert and delete methods?",
+    "should_trigger": false,
+    "category": "Negative - General Programming"
+  }
+]
