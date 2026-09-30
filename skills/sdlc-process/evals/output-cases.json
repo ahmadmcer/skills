@@ -1,0 +1,57 @@
+[
+  {
+    "id": "prd-generation-with-gherkin",
+    "prompt": "Draft a comprehensive Product Requirements Document (PRD) for an AI-powered code review service named 'ReviewPulse'. It integrates with GitHub webhooks, scans pull requests, and provides actionable code comments.",
+    "expected_output": "Produces a structured PRD containing an Executive Summary, User Personas, MoSCoW-prioritized Functional Requirements, Non-Goals, NFRs (latency, security), and executable Gherkin acceptance criteria.",
+    "assertions": [
+      "Defines clear scope boundaries with explicit In-Scope Goals and Out-of-Scope Non-Goals.",
+      "Categorizes requirements into Must Have, Should Have, and Could Have tiers using MoSCoW prioritization.",
+      "Provides Given/When/Then (Gherkin) acceptance scenarios covering both successful review flows and error/edge cases.",
+      "Specifies quantifiable non-functional constraints including webhook response latency and secret sanitization."
+    ]
+  },
+  {
+    "id": "architecture-decision-record-authoring",
+    "prompt": "Write an Architecture Decision Record (ADR) evaluating whether to use Apache Kafka or PostgreSQL LISTEN/NOTIFY for asynchronous event processing in our microservices platform.",
+    "expected_output": "Generates a complete ADR following standard format with Title, Status, Context, Decision, Alternatives Considered (Kafka vs Postgres), Consequences (Positive, Negative, Neutral), and Compliance/Invariants.",
+    "assertions": [
+      "Adheres to the standard Michael Nygard ADR format (Title, Date, Status, Deciders, Context, Decision, Consequences).",
+      "Objectively compares alternatives with concrete pros, cons, and technical trade-offs.",
+      "Explicitly articulates negative operational consequences alongside positive benefits.",
+      "Defines compliance criteria or linting invariants to enforce the architectural decision in production code."
+    ]
+  },
+  {
+    "id": "stride-threat-model-analysis",
+    "prompt": "Conduct a STRIDE threat modeling analysis for a cloud-hosted payment gateway API that receives customer credit card tokens and dispatches charge requests to payment processors.",
+    "expected_output": "Generates a STRIDE threat model detailing System Boundaries, Data Flow Diagram (DFD) description, a structured threat matrix covering Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, and Elevation of Privilege, paired with mitigation controls.",
+    "assertions": [
+      "Identifies system trust boundaries and external payment processor touchpoints.",
+      "Constructs a complete STRIDE matrix addressing each of the six threat categories with specific attack scenarios.",
+      "Proposes defense-in-depth mitigations (e.g. mutual TLS, tokenization, audit logging, rate limiting, and RBAC).",
+      "Classifies severity levels and defines actionable residual risk items."
+    ]
+  },
+  {
+    "id": "testing-trophy-test-plan",
+    "prompt": "Develop a test strategy and verification plan for a multi-tenant SaaS subscription billing service using the Testing Trophy methodology.",
+    "expected_output": "Produces a testing matrix structured around Static Analysis, Unit, Integration, and E2E smoke tests, with explicit emphasis on integration testing against test containers, contract tests for billing webhooks, and flakiness mitigations.",
+    "assertions": [
+      "Applies the Testing Trophy framework emphasizing high-confidence integration testing over shallow mocks.",
+      "Defines concrete test scenarios across data persistence, domain billing calculations, and webhook dispatching.",
+      "Outlines test double policies (fakes vs stubs vs mocks) and isolation techniques.",
+      "Includes non-functional verification including clock mocking and deterministic state reset."
+    ]
+  },
+  {
+    "id": "blameless-post-mortem-analysis",
+    "prompt": "We experienced a 45-minute production outage when a new database migration locked the 'orders' table during peak Black Friday traffic. Draft a blameless post-mortem report with a 5 Whys root cause analysis.",
+    "expected_output": "Produces a blameless post-mortem document including Executive Summary, Impact Assessment, UTC Timeline, 5 Whys Root Cause Analysis discovering lack of expand/contract migration gates, and prioritized Prevent/Detect/Mitigate action items.",
+    "assertions": [
+      "Maintains a strictly blameless tone focusing on systemic and process vulnerabilities rather than individual fault.",
+      "Constructs a chronological timeline with duration and user impact calculations.",
+      "Executes a rigorous 5 Whys analysis tracing the failure to process gaps in migration testing and rollout safety.",
+      "Formulates prioritized, actionable preventative measures with designated categories (Prevent, Detect, Mitigate)."
+    ]
+  }
+]

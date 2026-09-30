@@ -1,0 +1,86 @@
+[
+  {
+    "query": "We need to draft a formal Product Requirements Document (PRD) with Gherkin acceptance criteria for our new billing service.",
+    "should_trigger": true
+  },
+  {
+    "query": "Help us write an Architecture Decision Record (ADR) on whether to adopt gRPC or REST for internal microservices.",
+    "should_trigger": true
+  },
+  {
+    "query": "Conduct a STRIDE threat modeling analysis for our new user authentication and token refresh service.",
+    "should_trigger": true
+  },
+  {
+    "query": "Design a testing matrix and test plan following the Testing Trophy for our e-commerce checkout workflow.",
+    "should_trigger": true
+  },
+  {
+    "query": "Set up an end-to-end SDLC framework for our engineering team, spanning discovery to production observability.",
+    "should_trigger": true
+  },
+  {
+    "query": "How should we handle database migrations with zero downtime? Explain the expand and contract pattern.",
+    "should_trigger": true
+  },
+  {
+    "query": "Evaluate our software delivery velocity and stability using DORA 4 metrics and AI rework rate.",
+    "should_trigger": true
+  },
+  {
+    "query": "Draft a technical RFC for migrating our monolith to an event-driven architecture.",
+    "should_trigger": true
+  },
+  {
+    "query": "We just had a major production outage. Help us run a blameless post-mortem with a 5 Whys root cause analysis.",
+    "should_trigger": true
+  },
+  {
+    "query": "Structure our release engineering process with trunk-based development, semantic versioning, and canary feature flags.",
+    "should_trigger": true
+  },
+  {
+    "query": "Perform an SDLC readiness audit on our repository to verify git branch hygiene, commit conventions, and secret security.",
+    "should_trigger": true
+  },
+  {
+    "query": "Fix this CSS flexbox alignment issue where the submit button is 2px off.",
+    "should_trigger": false
+  },
+  {
+    "query": "Design an accessible brand color palette with 10-step tonal scales and SVG logo lockups for our marketing website.",
+    "should_trigger": false
+  },
+  {
+    "query": "What is the git command to discard local uncommitted changes in one file?",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a simple SQL query to find the top 5 customers by revenue.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create a logo mark and social media banner for our new podcast.",
+    "should_trigger": false
+  },
+  {
+    "query": "Can you explain how JavaScript closures work with an example?",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a regular expression to match email addresses.",
+    "should_trigger": false
+  },
+  {
+    "query": "Find all prime numbers up to 100 in Python.",
+    "should_trigger": false
+  },
+  {
+    "query": "How do I format a date in Java to ISO 8601?",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix this syntax error: unexpected token on line 45.",
+    "should_trigger": false
+  }
+]
