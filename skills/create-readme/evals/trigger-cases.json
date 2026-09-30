@@ -1,0 +1,134 @@
+[
+  {
+    "id": "trigger-01-generate-readme-from-scratch",
+    "prompt": "Create a comprehensive, production-ready README.md for this repository from scratch.",
+    "should_trigger": true,
+    "category": "Scaffold New README"
+  },
+  {
+    "id": "trigger-02-audit-existing-readme",
+    "prompt": "Audit our existing README.md against documentation quality standards and tell me what is missing or broken.",
+    "should_trigger": true,
+    "category": "Audit & Quality Score"
+  },
+  {
+    "id": "trigger-03-cli-tool-readme",
+    "prompt": "Generate a modern README for my new Rust command-line tool, including flag tables, installation, and terminal demo placeholders.",
+    "should_trigger": true,
+    "category": "CLI Archetype"
+  },
+  {
+    "id": "trigger-04-fullstack-webapp-readme",
+    "prompt": "Write a complete README for a Next.js and PostgreSQL fullstack app with a Mermaid architecture diagram and an environment variables table.",
+    "should_trigger": true,
+    "category": "Web Application Archetype"
+  },
+  {
+    "id": "trigger-05-python-library-readme",
+    "prompt": "Create a PyPI package README for a Python data-validation library, featuring 5-minute quickstart code, type annotations, and Shields.io badges.",
+    "should_trigger": true,
+    "category": "Library Archetype"
+  },
+  {
+    "id": "trigger-06-backend-api-readme",
+    "prompt": "Document our FastAPI backend service in a README with Docker Compose setup instructions and an API endpoints summary table.",
+    "should_trigger": true,
+    "category": "Backend API Archetype"
+  },
+  {
+    "id": "trigger-07-monorepo-readme",
+    "prompt": "Write a top-level README for a Turborepo monorepo with apps and shared packages.",
+    "should_trigger": true,
+    "category": "Monorepo Archetype"
+  },
+  {
+    "id": "trigger-08-agent-skill-readme",
+    "prompt": "Create a README for this Antigravity Agent Skill detailing its trigger guidelines, directory structure, and bundled scripts.",
+    "should_trigger": true,
+    "category": "Agent Skill Archetype"
+  },
+  {
+    "id": "trigger-09-add-mermaid-architecture",
+    "prompt": "Add a Mermaid architecture diagram to our project README showing how the frontend, API gateway, database, and Redis cache interact.",
+    "should_trigger": true,
+    "category": "Diagrams & Visuals"
+  },
+  {
+    "id": "trigger-10-env-vars-table",
+    "prompt": "Inspect our .env.example file and generate a standardized markdown table of environment variables for the README.",
+    "should_trigger": true,
+    "category": "Configuration & Environment"
+  },
+  {
+    "id": "trigger-11-shields-badges-curation",
+    "prompt": "Add high-signal Shields.io status badges (CI status, npm version, MIT license, test coverage) to our repository README.",
+    "should_trigger": true,
+    "category": "Badges & Shields"
+  },
+  {
+    "id": "trigger-12-30-second-quickstart-rewrite",
+    "prompt": "Rewrite the Getting Started section of our README to adhere to the 30-second rule with copy-pasteable commands.",
+    "should_trigger": true,
+    "category": "Onboarding & Quickstart"
+  },
+  {
+    "id": "trigger-13-clean-placeholders-in-readme",
+    "prompt": "Scan our README for placeholder tokens like [TODO], your-username, or example.com and replace them with actual project information.",
+    "should_trigger": true,
+    "category": "Anti-Patterns & Polish"
+  },
+  {
+    "id": "trigger-14-inspect-and-scaffold",
+    "prompt": "Inspect this directory, detect the tech stack and package manager, and generate the best-fitting README file.",
+    "should_trigger": true,
+    "category": "Inspection & Scaffolding"
+  },
+  {
+    "id": "trigger-15-score-readme-rubric",
+    "prompt": "Run an automated quality audit on our README.md and score it out of 100 points.",
+    "should_trigger": true,
+    "category": "Audit & Quality Score"
+  },
+  {
+    "id": "trigger-16-open-source-contributing-guide",
+    "prompt": "Add a contributing guidelines section and license information to our open-source README.",
+    "should_trigger": true,
+    "category": "Community & Contributing"
+  },
+  {
+    "id": "trigger-17-prerequisites-section",
+    "prompt": "Clarify the prerequisites and runtime versions required to build our project in the README.",
+    "should_trigger": true,
+    "category": "Prerequisites"
+  },
+  {
+    "id": "trigger-18-negative-implement-binary-search",
+    "prompt": "Write a Python function to perform a binary search on a sorted list.",
+    "should_trigger": false,
+    "category": "Negative - Algorithm Implementation"
+  },
+  {
+    "id": "trigger-19-negative-git-commit-command",
+    "prompt": "git commit -m 'fix user authentication bug'",
+    "should_trigger": false,
+    "category": "Negative - Git Commit"
+  },
+  {
+    "id": "trigger-20-negative-css-styling",
+    "prompt": "Fix the flexbox alignment on the navigation bar in styles/main.css.",
+    "should_trigger": false,
+    "category": "Negative - Frontend Styling"
+  },
+  {
+    "id": "trigger-21-negative-database-migration",
+    "prompt": "Write a SQL migration script to add an email_verified column to the users table.",
+    "should_trigger": false,
+    "category": "Negative - Database Migration"
+  },
+  {
+    "id": "trigger-22-negative-dockerfile-build-error",
+    "prompt": "Debug why my Docker build is failing at step 4 with 'permission denied'.",
+    "should_trigger": false,
+    "category": "Negative - Docker Debugging"
+  }
+]
