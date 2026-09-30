@@ -1,13 +1,13 @@
 # Sensory Immersion, Somatic Physiology & Defamiliarization
 
-> *"Art exists that one may recover the sensation of life; it exists to make one feel things, to make the stone stony. The purpose of art is to impart the sensation of things as they are perceived and not as they are known. The technique of art is to make objects 'unfamiliar'—to make forms difficult, to increase the difficulty and length of perception."*  
-> — Viktor Shklovsky, *Art as Technique* (1917)
+> _"Art exists that one may recover the sensation of life; it exists to make one feel things, to make the stone stony. The purpose of art is to impart the sensation of things as they are perceived and not as they are known. The technique of art is to make objects 'unfamiliar'—to make forms difficult, to increase the difficulty and length of perception."_  
+> — Viktor Shklovsky, _Art as Technique_ (1917)
 
-Sensory immersion is not about cataloging visual adjectives. Visual description is the easiest, flattest, and most superficial dimension of worldbuilding. True narrative immersion occurs when the reader's nervous system is activated through a full spectrum of sensory data, internal somatic physiology, and **defamiliarization** (*ostranenie*).
+Sensory immersion is not about cataloging visual adjectives. Visual description is the easiest, flattest, and most superficial dimension of worldbuilding. True narrative immersion occurs when the reader's nervous system is activated through a full spectrum of sensory data, internal somatic physiology, and **defamiliarization** (_ostranenie_).
 
 ---
 
-## 1. Viktor Shklovsky's *Ostranenie* (Defamiliarization)
+## 1. Viktor Shklovsky's _Ostranenie_ (Defamiliarization)
 
 When human beings encounter familiar things daily—a car engine, a loaf of bread, a lover's hand—perception becomes automatized. We see the label ("car"), not the sensory reality. Automatization eats away at life, turning descriptions into dull clichés.
 
@@ -15,12 +15,12 @@ The craft of defamiliarization consists of stripping away the habitual label and
 
 ### Comparison: Stock Labeling vs. Defamiliarization
 
-| Object / Event | Stock Cliché (Automatized) | Defamiliarized Immersion (*Ostranenie*) |
-| :--- | :--- | :--- |
-| **A Sword Wound** | *The blade stabbed deep into his shoulder, and blood poured out.* | *Cold iron bit through linen and gristle, parting muscle like rotten canvas. A hot, wet weight slumped down his ribcage.* |
-| **A Cold Morning** | *It was freezing outside, with snow on the trees.* | *The morning air tasted of frozen iron. Exhaled breath curdled into blue fog, and pine needles snapped underfoot like dried bones.* |
-| **Crying in Grief** | *Tears streamed down her cheeks as she sobbed.* | *Her sinuses burned with salt. Every intake of air was a jagged hitch in her ribs, her throat swollen shut around a dry knot of silence.* |
-| **A Fired Gun** | *He shot the pistol with a loud bang.* | *A sulfurous crack slapped the concrete walls. The recoil punched backward into the web of his thumb, leaving a sharp stink of burnt cordite in his nostrils.* |
+| Object / Event      | Stock Cliché (Automatized)                                        | Defamiliarized Immersion (_Ostranenie_)                                                                                                                        |
+| :------------------ | :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **A Sword Wound**   | _The blade stabbed deep into his shoulder, and blood poured out._ | _Cold iron bit through linen and gristle, parting muscle like rotten canvas. A hot, wet weight slumped down his ribcage._                                      |
+| **A Cold Morning**  | _It was freezing outside, with snow on the trees._                | _The morning air tasted of frozen iron. Exhaled breath curdled into blue fog, and pine needles snapped underfoot like dried bones._                            |
+| **Crying in Grief** | _Tears streamed down her cheeks as she sobbed._                   | _Her sinuses burned with salt. Every intake of air was a jagged hitch in her ribs, her throat swollen shut around a dry knot of silence._                      |
+| **A Fired Gun**     | _He shot the pistol with a loud bang._                            | _A sulfurous crack slapped the concrete walls. The recoil punched backward into the web of his thumb, leaving a sharp stink of burnt cordite in his nostrils._ |
 
 ---
 
@@ -42,43 +42,54 @@ Amateur fiction relies 90% on vision and 10% on sound. Professional fiction dist
 ```
 
 ### 1. Olfactory (The Direct Wire to the Amygdala)
+
 Smell bypasses the conscious thalamus and connects directly to the emotional and memory centers of the brain. A single sharp scent grounds a scene faster than three paragraphs of landscape description.
-- *Examples*: Rancid lard, damp limestone, crushed marigolds, hot electrical insulation, the metallic tang of an approaching thunderstorm.
+
+- _Examples_: Rancid lard, damp limestone, crushed marigolds, hot electrical insulation, the metallic tang of an approaching thunderstorm.
 
 ### 2. Haptic & Tactile (Friction, Pressure, Temperature)
+
 How does the world press against the protagonist's skin and clothing?
-- *Examples*: The greasy tackiness of a varnished bar top; the stiff, starched collar chafing against a sunburned neck; freezing rain stinging the temples like shot.
+
+- _Examples_: The greasy tackiness of a varnished bar top; the stiff, starched collar chafing against a sunburned neck; freezing rain stinging the temples like shot.
 
 ### 3. Acoustic (Ambient Resonance & Micro-Sounds)
+
 Not just loud noises, but the texture of acoustic space.
-- *Examples*: The wet slap of boots on slate; the dry, papery rustle of dry leaves caught under a gate; the rhythmic, insectile ticking of cooling engine pipes in a dark hangar.
+
+- _Examples_: The wet slap of boots on slate; the dry, papery rustle of dry leaves caught under a gate; the rhythmic, insectile ticking of cooling engine pipes in a dark hangar.
 
 ### 4. Gustatory (Taste & Oral Textures)
+
 Taste is intimately linked with fear, exhaustion, and atmosphere.
-- *Examples*: The coppery tang of biting one's tongue in panic; the stale ash of yesterday's tobacco coating the palate; the chalky dryness of dehydration during an interrogation.
+
+- _Examples_: The coppery tang of biting one's tongue in panic; the stale ash of yesterday's tobacco coating the palate; the chalky dryness of dehydration during an interrogation.
 
 ### 5. Visual (Light, Contrast, and Silhouette)
+
 Avoid static "travel guide" inventories. Focus on **light sources, shadows in motion, and color contrasts**.
-- *Examples*: The sodium-yellow glare of a single streetlight cutting through rain; the oily sheen on puddles reflecting neon; a silhouette breaking the light beneath a doorframe.
+
+- _Examples_: The sodium-yellow glare of a single streetlight cutting through rain; the oily sheen on puddles reflecting neon; a silhouette breaking the light beneath a doorframe.
 
 ### 6. Somatic & Proprioceptive (Internal Visceral Physiology)
+
 Proprioception is the sense of one's body in space; somatic sensations are the involuntary physiological responses of internal organs to stress, dread, or desire.
 
 ---
 
 ## 3. Somatic Physiology: Killing the Emotion Adverb
 
-Never write: *"He was afraid"*, *"She felt nervous"*, or *"They were ecstatic"*. Those are intellectual verdicts, not visceral storytelling. Show the neurological and hormonal cascades in the flesh.
+Never write: _"He was afraid"_, _"She felt nervous"_, or _"They were ecstatic"_. Those are intellectual verdicts, not visceral storytelling. Show the neurological and hormonal cascades in the flesh.
 
 ### Somatic Replacement Directory
 
-| Emotion | Banned Cognitive Label | Visceral Somatic Replacement |
-| :--- | :--- | :--- |
-| **Terror / Panic** | *He was terrified.* | *The floor fell out of his stomach. A cold flush prickled across his forearms; breath trapped behind his sternum like a locked valve.* |
-| **Rage / Fury** | *She became very angry.* | *Pressure surged behind her eyes. Her molars ground together until the jaw hinge ached; veins throbbed against the skin of her wrists.* |
-| **Guilt / Shame** | *He felt terrible guilt.* | *A hot, sick prickle crept up the back of his neck. His gaze dropped to his boots, palms suddenly clammy and slick against his trousers.* |
-| **Grief / Despair** | *She was overcome with grief.* | *A dead hollow opened in her chest, heavy as lead ballast. Her limbs felt detached, moving through water, hearing voices as if through two inches of pine.* |
-| **Suspicion / Paranoia** | *He felt suspicious.* | *The hair on his nape stood on end. His shoulders pinched inward, ears straining against the silence for a floorboard creak that never came.* |
+| Emotion                  | Banned Cognitive Label         | Visceral Somatic Replacement                                                                                                                                |
+| :----------------------- | :----------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Terror / Panic**       | _He was terrified._            | _The floor fell out of his stomach. A cold flush prickled across his forearms; breath trapped behind his sternum like a locked valve._                      |
+| **Rage / Fury**          | _She became very angry._       | _Pressure surged behind her eyes. Her molars ground together until the jaw hinge ached; veins throbbed against the skin of her wrists._                     |
+| **Guilt / Shame**        | _He felt terrible guilt._      | _A hot, sick prickle crept up the back of his neck. His gaze dropped to his boots, palms suddenly clammy and slick against his trousers._                   |
+| **Grief / Despair**      | _She was overcome with grief._ | _A dead hollow opened in her chest, heavy as lead ballast. Her limbs felt detached, moving through water, hearing voices as if through two inches of pine._ |
+| **Suspicion / Paranoia** | _He felt suspicious._          | _The hair on his nape stood on end. His shoulders pinched inward, ears straining against the silence for a floorboard creak that never came._               |
 
 ---
 
@@ -91,7 +102,9 @@ To prevent scenes from turning into floating heads in an empty white room, enfor
 ### Example Application:
 
 #### Before (One-dimensional, visual-only):
-> *Jack waited by the docks. A boat approached in the dark. A man stepped out and handed him an envelope.*
+
+> _Jack waited by the docks. A boat approached in the dark. A man stepped out and handed him an envelope._
 
 #### After (Multi-sensory grounding: olfactory + tactile + acoustic):
-> *The harbor air smelled of dead eel and rotting creosote. Salt mist clung to Jack's woolen collar, soaking through to his skin. Through the black chop, an outboard motor sputtered to a dying hum. A silhouette vaulted onto the slippery pier boards, thrusting an oilskin packet into Jack's chest with enough force to knock the breath from his ribs.*
+
+> _The harbor air smelled of dead eel and rotting creosote. Salt mist clung to Jack's woolen collar, soaking through to his skin. Through the black chop, an outboard motor sputtered to a dying hum. A silhouette vaulted onto the slippery pier boards, thrusting an oilskin packet into Jack's chest with enough force to knock the breath from his ribs._

@@ -21,7 +21,7 @@ import os
 import re
 import subprocess
 import sys
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 # Ensure safe UTF-8 output on Windows consoles
 if hasattr(sys.stdout, "reconfigure"):
@@ -35,12 +35,11 @@ SEMVER_REGEX = re.compile(
 )
 
 CONVENTIONAL_REGEX = re.compile(
-    r"^(?P<type>[a-z]+)(?:\((?P<scope>[^)]+)\))?(?P<breaking>!)?:\s*(?P<desc>.+)$",
-    re.IGNORECASE
+    r"^(?P<type>[a-z]+)(?:\((?P<scope>[^)]+)\))?(?P<breaking>!)?:\s*(?P<desc>.+)$", re.IGNORECASE
 )
 
 
-def run_git(args: List[str], repo_path: str = ".") -> str:
+def run_git(args: list[str], repo_path: str = ".") -> str:
     """Run git command and return stripped stdout."""
     try:
         res = subprocess.run(
@@ -50,7 +49,7 @@ def run_git(args: List[str], repo_path: str = ".") -> str:
             text=True,
             encoding="utf-8",
             errors="replace",
-            check=True
+            check=True,
         )
         return res.stdout.strip()
     except subprocess.CalledProcessError:
@@ -59,7 +58,7 @@ def run_git(args: List[str], repo_path: str = ".") -> str:
         return ""
 
 
-def get_latest_git_tag(repo_path: str = ".") -> Optional[str]:
+def get_latest_git_tag(repo_path: str = ".") -> str | None:
     """Find the latest semver-compliant git tag in repository."""
     raw_tags = run_git(["tag", "--sort=-v:refname"], repo_path)
     if not raw_tags:
@@ -72,7 +71,7 @@ def get_latest_git_tag(repo_path: str = ".") -> Optional[str]:
     return None
 
 
-def parse_semver(v_str: str) -> Optional[Dict[str, Any]]:
+def parse_semver(v_str: str) -> dict[str, Any] | None:
     """Parse SemVer 2.0.0 string into components."""
     m = SEMVER_REGEX.match(v_str.strip())
     if not m:
@@ -84,11 +83,11 @@ def parse_semver(v_str: str) -> Optional[Dict[str, Any]]:
         "minor": int(d["minor"]),
         "patch": int(d["patch"]),
         "prerelease": d.get("prerelease"),
-        "build": d.get("build")
+        "build": d.get("build"),
     }
 
 
-def get_commits_since_tag(tag: Optional[str], repo_path: str = ".") -> List[Dict[str, Any]]:
+def get_commits_since_tag(tag: str | None, repo_path: str = ".") -> list[dict[str, Any]]:
     """Extract commits since the specified tag, or all commits if tag is None."""
     log_range = f"{tag}..HEAD" if tag else "HEAD"
     # Format: subject%x1ebody%x1fhash%x1d
@@ -126,29 +125,29 @@ def get_commits_since_tag(tag: Optional[str], repo_path: str = ".") -> List[Dict
 
         is_breaking = has_bang or ("BREAKING CHANGE:" in body) or ("BREAKING-CHANGE:" in body)
 
-        commits.append({
-            "sha": sha,
-            "subject": subject,
-            "body": body,
-            "type": c_type,
-            "scope": scope,
-            "desc": desc,
-            "is_breaking": is_breaking
-        })
+        commits.append(
+            {
+                "sha": sha,
+                "subject": subject,
+                "body": body,
+                "type": c_type,
+                "scope": scope,
+                "desc": desc,
+                "is_breaking": is_breaking,
+            }
+        )
 
     return commits
 
 
 def calculate_next_version(
-    current_ver: Dict[str, Any],
-    commits: List[Dict[str, Any]],
-    pre_release_type: Optional[str] = None
-) -> Dict[str, Any]:
+    current_ver: dict[str, Any], commits: list[dict[str, Any]], pre_release_type: str | None = None
+) -> dict[str, Any]:
     """Calculate next SemVer based on commit history."""
     major = current_ver["major"]
     minor = current_ver["minor"]
     patch = current_ver["patch"]
-    is_zero_major = (major == 0)
+    is_zero_major = major == 0
 
     breaking_count = sum(1 for c in commits if c["is_breaking"])
     feat_count = sum(1 for c in commits if c["type"] == "feat")
@@ -177,13 +176,17 @@ def calculate_next_version(
     elif fix_count > 0:
         bump_type = "patch"
         patch += 1
-        rationale = f"Detected {fix_count} bugfix/performance commit(s) ('fix:', 'perf:') -> bumped PATCH."
+        rationale = (
+            f"Detected {fix_count} bugfix/performance commit(s) ('fix:', 'perf:') -> bumped PATCH."
+        )
     else:
         # Default patch bump if commits exist but none matched conventional types
         if len(commits) > 0:
             bump_type = "patch"
             patch += 1
-            rationale = f"{len(commits)} non-conventional commit(s) found -> defaulted to PATCH bump."
+            rationale = (
+                f"{len(commits)} non-conventional commit(s) found -> defaulted to PATCH bump."
+            )
 
     next_version_str = f"{major}.{minor}.{patch}"
 
@@ -203,7 +206,7 @@ def calculate_next_version(
         "features_count": feat_count,
         "fixes_count": fix_count,
         "total_commits_analyzed": len(commits),
-        "rationale": rationale
+        "rationale": rationale,
     }
 
 
@@ -214,23 +217,19 @@ def main():
     parser.add_argument(
         "--current-version",
         default=None,
-        help="Override current version (default: auto-detect from latest git tag, or 0.1.0)"
+        help="Override current version (default: auto-detect from latest git tag, or 0.1.0)",
     )
     parser.add_argument(
         "--pre-release",
         choices=["alpha", "beta", "rc"],
         default=None,
-        help="Append a pre-release identifier (e.g. -rc.1)"
+        help="Append a pre-release identifier (e.g. -rc.1)",
     )
     parser.add_argument(
-        "--repo-path",
-        default=".",
-        help="Path to git repository (default: current directory)"
+        "--repo-path", default=".", help="Path to git repository (default: current directory)"
     )
     parser.add_argument(
-        "--json",
-        action="store_true",
-        help="Output structured JSON instead of human-readable text"
+        "--json", action="store_true", help="Output structured JSON instead of human-readable text"
     )
 
     args = parser.parse_args()
@@ -247,7 +246,10 @@ def main():
 
     parsed_cur = parse_semver(current_ver_str)
     if not parsed_cur:
-        print(f"Error: Invalid Semantic Version string '{current_ver_str}'. Must follow MAJOR.MINOR.PATCH.", file=sys.stderr)
+        print(
+            f"Error: Invalid Semantic Version string '{current_ver_str}'. Must follow MAJOR.MINOR.PATCH.",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     commits = get_commits_since_tag(detected_tag, args.repo_path)

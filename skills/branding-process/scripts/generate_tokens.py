@@ -14,11 +14,10 @@ import argparse
 import json
 import math
 import os
-import sys
-from typing import Dict, Any, Tuple, List
+from typing import Any
 
 
-def hex_to_rgb(hex_str: str) -> Tuple[int, int, int]:
+def hex_to_rgb(hex_str: str) -> tuple[int, int, int]:
     """Convert hex color string to (R, G, B) tuple."""
     hex_str = hex_str.strip().lstrip("#")
     if len(hex_str) == 3:
@@ -55,7 +54,7 @@ def contrast_ratio(hex1: str, hex2: str) -> float:
     return (lighter + 0.05) / (darker + 0.05)
 
 
-def generate_color_scale(base_hex: str) -> Dict[str, str]:
+def generate_color_scale(base_hex: str) -> dict[str, str]:
     """
     Generate a 10-step tonal scale (50, 100, 200, ..., 900, 950) around a base color.
     Uses perceptual lightness blending toward white (#FFFFFF) and dark slate (#090D16).
@@ -98,7 +97,7 @@ def generate_color_scale(base_hex: str) -> Dict[str, str]:
     return scale
 
 
-def build_w3c_tokens(brand_data: Dict[str, Any]) -> Dict[str, Any]:
+def build_w3c_tokens(brand_data: dict[str, Any]) -> dict[str, Any]:
     """Generate W3C Design Tokens Community Group specification structure."""
     tokens = {
         "$name": brand_data.get("name", "Brand Tokens"),
@@ -129,9 +128,7 @@ def build_w3c_tokens(brand_data: Dict[str, Any]) -> Dict[str, Any]:
             },
             "body": {
                 "$type": "fontFamily",
-                "$value": brand_data.get(
-                    "font_body", "system-ui, -apple-system, sans-serif"
-                ),
+                "$value": brand_data.get("font_body", "system-ui, -apple-system, sans-serif"),
             },
             "mono": {
                 "$type": "fontFamily",
@@ -162,8 +159,7 @@ def build_w3c_tokens(brand_data: Dict[str, Any]) -> Dict[str, Any]:
     # Primary brand palette
     primary_scale = generate_color_scale(brand_data.get("primary", "#2563eb"))
     tokens["color"]["brand"]["primary"] = {
-        step: {"$type": "color", "$value": hex_val}
-        for step, hex_val in primary_scale.items()
+        step: {"$type": "color", "$value": hex_val} for step, hex_val in primary_scale.items()
     }
     tokens["color"]["brand"]["primary"]["DEFAULT"] = {
         "$type": "color",
@@ -174,8 +170,7 @@ def build_w3c_tokens(brand_data: Dict[str, Any]) -> Dict[str, Any]:
     if "secondary" in brand_data:
         sec_scale = generate_color_scale(brand_data["secondary"])
         tokens["color"]["brand"]["secondary"] = {
-            step: {"$type": "color", "$value": hex_val}
-            for step, hex_val in sec_scale.items()
+            step: {"$type": "color", "$value": hex_val} for step, hex_val in sec_scale.items()
         }
         tokens["color"]["brand"]["secondary"]["DEFAULT"] = {
             "$type": "color",
@@ -186,8 +181,7 @@ def build_w3c_tokens(brand_data: Dict[str, Any]) -> Dict[str, Any]:
     if "accent" in brand_data:
         acc_scale = generate_color_scale(brand_data["accent"])
         tokens["color"]["brand"]["accent"] = {
-            step: {"$type": "color", "$value": hex_val}
-            for step, hex_val in acc_scale.items()
+            step: {"$type": "color", "$value": hex_val} for step, hex_val in acc_scale.items()
         }
         tokens["color"]["brand"]["accent"]["DEFAULT"] = {
             "$type": "color",
@@ -197,14 +191,13 @@ def build_w3c_tokens(brand_data: Dict[str, Any]) -> Dict[str, Any]:
     # Neutral scale
     neutral_scale = generate_color_scale(brand_data.get("neutral", "#64748b"))
     tokens["color"]["neutral"] = {
-        step: {"$type": "color", "$value": hex_val}
-        for step, hex_val in neutral_scale.items()
+        step: {"$type": "color", "$value": hex_val} for step, hex_val in neutral_scale.items()
     }
 
     return tokens
 
 
-def build_css_variables(brand_data: Dict[str, Any], tokens: Dict[str, Any]) -> str:
+def build_css_variables(brand_data: dict[str, Any], tokens: dict[str, Any]) -> str:
     """Generate CSS Custom Properties with light and dark mode variable sets."""
     primary_scale = generate_color_scale(brand_data.get("primary", "#2563eb"))
     neutral_scale = generate_color_scale(brand_data.get("neutral", "#64748b"))
@@ -226,7 +219,7 @@ def build_css_variables(brand_data: Dict[str, Any], tokens: Dict[str, Any]) -> s
 
     for step, val in primary_scale.items():
         lines.append(f"  --brand-primary-{step}: {val};")
-    lines.append(f"  --brand-primary: var(--brand-primary-500);")
+    lines.append("  --brand-primary: var(--brand-primary-500);")
     lines.append("")
 
     if "secondary" in brand_data:
@@ -234,7 +227,7 @@ def build_css_variables(brand_data: Dict[str, Any], tokens: Dict[str, Any]) -> s
         lines.append("  /* Secondary Brand Scale */")
         for step, val in sec_scale.items():
             lines.append(f"  --brand-secondary-{step}: {val};")
-        lines.append(f"  --brand-secondary: var(--brand-secondary-500);")
+        lines.append("  --brand-secondary: var(--brand-secondary-500);")
         lines.append("")
 
     if "accent" in brand_data:
@@ -242,7 +235,7 @@ def build_css_variables(brand_data: Dict[str, Any], tokens: Dict[str, Any]) -> s
         lines.append("  /* Accent Scale */")
         for step, val in acc_scale.items():
             lines.append(f"  --brand-accent-{step}: {val};")
-        lines.append(f"  --brand-accent: var(--brand-accent-500);")
+        lines.append("  --brand-accent: var(--brand-accent-500);")
         lines.append("")
 
     lines.append("  /* Neutral Scale */")
@@ -294,19 +287,13 @@ def build_css_variables(brand_data: Dict[str, Any], tokens: Dict[str, Any]) -> s
     return "\n".join(lines)
 
 
-def build_tailwind_preset(brand_data: Dict[str, Any]) -> str:
+def build_tailwind_preset(brand_data: dict[str, Any]) -> str:
     """Generate Tailwind CSS configuration preset."""
     primary_scale = generate_color_scale(brand_data.get("primary", "#2563eb"))
     neutral_scale = generate_color_scale(brand_data.get("neutral", "#64748b"))
 
-    sec_scale = (
-        generate_color_scale(brand_data["secondary"])
-        if "secondary" in brand_data
-        else None
-    )
-    acc_scale = (
-        generate_color_scale(brand_data["accent"]) if "accent" in brand_data else None
-    )
+    sec_scale = generate_color_scale(brand_data["secondary"]) if "secondary" in brand_data else None
+    acc_scale = generate_color_scale(brand_data["accent"]) if "accent" in brand_data else None
 
     code = [
         "/**",
@@ -373,7 +360,7 @@ def build_tailwind_preset(brand_data: Dict[str, Any]) -> str:
     return "\n".join(code)
 
 
-def validate_brand_contrast(brand_data: Dict[str, Any]) -> List[str]:
+def validate_brand_contrast(brand_data: dict[str, Any]) -> list[str]:
     """Validate key color combinations against WCAG 2.1 AA (4.5:1 / 3:1) standards."""
     warnings = []
     primary = brand_data.get("primary", "#2563eb")
@@ -398,33 +385,21 @@ def validate_brand_contrast(brand_data: Dict[str, Any]) -> List[str]:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Generate design tokens from brand parameters."
-    )
+    parser = argparse.ArgumentParser(description="Generate design tokens from brand parameters.")
     parser.add_argument("--config", help="Path to brand.json configuration file")
     parser.add_argument("--name", default="Brand", help="Brand name")
-    parser.add_argument(
-        "--primary", default="#2563eb", help="Primary brand color (hex)"
-    )
+    parser.add_argument("--primary", default="#2563eb", help="Primary brand color (hex)")
     parser.add_argument("--secondary", default="#10b981", help="Secondary color (hex)")
     parser.add_argument("--accent", default="#8b5cf6", help="Accent color (hex)")
-    parser.add_argument(
-        "--neutral", default="#64748b", help="Neutral slate color (hex)"
-    )
-    parser.add_argument(
-        "--font-display", default="Inter, sans-serif", help="Display font family"
-    )
-    parser.add_argument(
-        "--font-body", default="system-ui, sans-serif", help="Body font family"
-    )
-    parser.add_argument(
-        "--out-dir", default="./brand-assets/tokens", help="Output directory"
-    )
+    parser.add_argument("--neutral", default="#64748b", help="Neutral slate color (hex)")
+    parser.add_argument("--font-display", default="Inter, sans-serif", help="Display font family")
+    parser.add_argument("--font-body", default="system-ui, sans-serif", help="Body font family")
+    parser.add_argument("--out-dir", default="./brand-assets/tokens", help="Output directory")
 
     args = parser.parse_args()
 
     if args.config and os.path.exists(args.config):
-        with open(args.config, "r", encoding="utf-8") as f:
+        with open(args.config, encoding="utf-8") as f:
             brand_data = json.load(f)
     else:
         brand_data = {
@@ -470,9 +445,7 @@ def main():
         for w in warnings:
             print(f"  ! {w}")
     else:
-        print(
-            "\nAccessibility Check: All primary contrast pairings meet WCAG AA standards."
-        )
+        print("\nAccessibility Check: All primary contrast pairings meet WCAG AA standards.")
 
 
 if __name__ == "__main__":

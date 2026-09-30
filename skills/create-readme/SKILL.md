@@ -31,7 +31,9 @@ Whenever creating, updating, or auditing a repository's README, follow this stan
 ```
 
 ### Step 1: Codebase Discovery & Inspection
+
 Inspect the repository automatically to discover runtimes, package managers, scripts, environment variables, and Docker configurations:
+
 ```bash
 # Inspect current directory and output metadata summary
 python skills/create-readme/scripts/inspect_project.py .
@@ -39,7 +41,9 @@ python skills/create-readme/scripts/inspect_project.py .
 # Output detailed inspection metadata as JSON
 python skills/create-readme/scripts/inspect_project.py . --json
 ```
+
 The inspector discovers:
+
 - Languages and runtimes (Python, TypeScript, Node.js, Rust, Go, Java, Docker).
 - Package managers and build manifests (`package.json`, `pyproject.toml`, `Cargo.toml`, `go.mod`, `Makefile`).
 - Defined test, build, lint, and dev scripts.
@@ -47,7 +51,9 @@ The inspector discovers:
 - Git repository metadata and license type.
 
 ### Step 2: Archetype Alignment
+
 Select the documentation structure best suited for the target audience:
+
 - **CLI Tool**: Synopsis, installation via package managers, commands & flags table, terminal demo GIF/ASCII, exit codes.
 - **Library / SDK / Package**: npm/PyPI badges, minimal 5-line quickstart, TypeScript types, peer dependencies, API usage.
 - **Web Application (SPA/SSR/Fullstack)**: Features, live demo link, UI screenshots, prerequisites, `.env` matrix, local dev steps, database migrations, build & deploy.
@@ -58,7 +64,9 @@ Select the documentation structure best suited for the target audience:
 See: [readme-archetypes-and-templates.md](references/readme-archetypes-and-templates.md)
 
 ### Step 3: Value Hook & Visual Architecture
+
 Craft the top of the README to capture attention within 5 seconds:
+
 1. **Title & Elevator Pitch**: Start with a bold title and a concise 1–2 sentence value proposition explaining the core problem solved and for whom.
 2. **Curated Badges (Rule of 3–6)**: Include high-signal Shields.io badges (Build/CI Status, Package Version, License, Test Coverage). Never spam more than 6–8 badges.
 3. **Visual Hook / Architecture Diagram**: Embed a GitHub-rendered **Mermaid diagram** (flowchart, sequence, or data pipeline) or an annotated ASCII file tree showing architectural boundaries.
@@ -67,7 +75,9 @@ See: [shields-and-badges-guide.md](references/shields-and-badges-guide.md)
 See: [architecture-diagrams-and-visuals.md](references/architecture-diagrams-and-visuals.md)
 
 ### Step 4: Rapid Onboarding (The 30-Second Rule)
+
 Enable a newcomer to run the project locally in under 30 seconds:
+
 1. **Prerequisites**: Explicitly state required runtimes with minimum versions (e.g., `Node.js >= 18.0.0`, `Python >= 3.10`, `Docker Engine >= 24.0`).
 2. **Step-by-Step Installation**: Provide copy-pasteable terminal commands with exact arguments.
 3. **Configuration & Environment Variables**: Document all required and optional variables in a clean markdown table (`Variable`, `Description`, `Type`, `Default`, `Required`).
@@ -77,7 +87,9 @@ Enable a newcomer to run the project locally in under 30 seconds:
 See: [environment-and-configuration-tables.md](references/environment-and-configuration-tables.md)
 
 ### Step 5: Quality Audit & Scoring
+
 Run the automated auditor to score the README against the 12-point rubric:
+
 ```bash
 # Audit an existing or generated README.md
 python skills/create-readme/scripts/audit_readme.py README.md
@@ -85,7 +97,9 @@ python skills/create-readme/scripts/audit_readme.py README.md
 # Audit with JSON output for automated gating
 python skills/create-readme/scripts/audit_readme.py README.md --json
 ```
+
 The auditor checks for:
+
 - Completeness: Title, hook, badges, quickstart, prerequisites, usage, testing, license.
 - Anti-patterns: `TODO` placeholders, `your-username` tokens, empty sections, broken markdown links, badge spam.
 - Enforces a minimum score of **80/100** before finalizing.
@@ -109,8 +123,8 @@ Every generated or edited README must uphold these non-negotiable principles:
 
 ## 3. Automation Scripts Reference
 
-| Script | Purpose | Example Usage |
-| :--- | :--- | :--- |
-| `scripts/inspect_project.py` | Discovers project languages, manifests, scripts, env vars, and recommended archetype. | `python scripts/inspect_project.py . --json` |
-| `scripts/generate_readme.py` | Generates a complete, tailored `README.md` based on archetype and inspection metadata. | `python scripts/generate_readme.py . --archetype cli --output README.md` |
-| `scripts/audit_readme.py` | Evaluates a README against the 12-point rubric, scores it (0–100), and flags anti-patterns. | `python skills/create-readme/scripts/audit_readme.py README.md` |
+| Script                       | Purpose                                                                                     | Example Usage                                                            |
+| :--------------------------- | :------------------------------------------------------------------------------------------ | :----------------------------------------------------------------------- |
+| `scripts/inspect_project.py` | Discovers project languages, manifests, scripts, env vars, and recommended archetype.       | `python scripts/inspect_project.py . --json`                             |
+| `scripts/generate_readme.py` | Generates a complete, tailored `README.md` based on archetype and inspection metadata.      | `python scripts/generate_readme.py . --archetype cli --output README.md` |
+| `scripts/audit_readme.py`    | Evaluates a README against the 12-point rubric, scores it (0–100), and flags anti-patterns. | `python skills/create-readme/scripts/audit_readme.py README.md`          |

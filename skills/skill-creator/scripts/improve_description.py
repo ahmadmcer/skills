@@ -31,9 +31,7 @@ def _call_llm(
     # 1. Configured CLI command runner
     if runner_cmd:
         env = {
-            k: v
-            for k, v in os.environ.items()
-            if k not in ("CLAUDECODE", "OPENCODE_SUBPROCESS")
+            k: v for k, v in os.environ.items() if k not in ("CLAUDECODE", "OPENCODE_SUBPROCESS")
         }
         env["OPENCODE_SUBPROCESS"] = "1"
 
@@ -62,15 +60,11 @@ def _call_llm(
             )
 
         if result.returncode != 0:
-            raise RuntimeError(
-                f"Runner command failed ({result.returncode}):\n{result.stderr}"
-            )
+            raise RuntimeError(f"Runner command failed ({result.returncode}):\n{result.stderr}")
         return result.stdout
 
     # 2. Configured or discovered API endpoint
-    effective_api_key = (
-        api_key or os.environ.get("OPENAI_API_KEY") or os.environ.get("LLM_API_KEY")
-    )
+    effective_api_key = api_key or os.environ.get("OPENAI_API_KEY") or os.environ.get("LLM_API_KEY")
     effective_api_base = (
         api_base
         or os.environ.get("OPENAI_BASE_URL")
@@ -157,21 +151,15 @@ def improve_description(
     runner_cmd: str | None = None,
 ) -> str:
     """Call the model to improve the description based on eval results."""
-    failed_triggers = [
-        r for r in eval_results["results"] if r["should_trigger"] and not r["pass"]
-    ]
+    failed_triggers = [r for r in eval_results["results"] if r["should_trigger"] and not r["pass"]]
     false_triggers = [
         r for r in eval_results["results"] if not r["should_trigger"] and not r["pass"]
     ]
 
     # Build scores summary
-    train_score = (
-        f"{eval_results['summary']['passed']}/{eval_results['summary']['total']}"
-    )
+    train_score = f"{eval_results['summary']['passed']}/{eval_results['summary']['total']}"
     if test_results:
-        test_score = (
-            f"{test_results['summary']['passed']}/{test_results['summary']['total']}"
-        )
+        test_score = f"{test_results['summary']['passed']}/{test_results['summary']['total']}"
         scores_summary = f"Train: {train_score}, Test: {test_score}"
     else:
         scores_summary = f"Train: {train_score}"
@@ -191,21 +179,19 @@ Current scores ({scores_summary}):
     if failed_triggers:
         prompt += "FAILED TO TRIGGER (should have triggered but didn't):\n"
         for r in failed_triggers:
-            prompt += (
-                f'  - "{r["query"]}" (triggered {r["triggers"]}/{r["runs"]} times)\n'
-            )
+            prompt += f'  - "{r["query"]}" (triggered {r["triggers"]}/{r["runs"]} times)\n'
         prompt += "\n"
 
     if false_triggers:
         prompt += "FALSE TRIGGERS (triggered but shouldn't have):\n"
         for r in false_triggers:
-            prompt += (
-                f'  - "{r["query"]}" (triggered {r["triggers"]}/{r["runs"]} times)\n'
-            )
+            prompt += f'  - "{r["query"]}" (triggered {r["triggers"]}/{r["runs"]} times)\n'
         prompt += "\n"
 
     if history:
-        prompt += "PREVIOUS ATTEMPTS (do NOT repeat these — try something structurally different):\n\n"
+        prompt += (
+            "PREVIOUS ATTEMPTS (do NOT repeat these — try something structurally different):\n\n"
+        )
         for h in history:
             train_s = f"{h.get('train_passed', h.get('passed', 0))}/{h.get('train_total', h.get('total', 0))}"
             test_s = (
@@ -249,14 +235,10 @@ I'd encourage you to be creative and mix up the style in different iterations si
 
 Please respond with only the new description text in <new_description> tags, nothing else."""
 
-    text = _call_llm(
-        prompt, model, api_key=api_key, api_base=api_base, runner_cmd=runner_cmd
-    )
+    text = _call_llm(prompt, model, api_key=api_key, api_base=api_base, runner_cmd=runner_cmd)
 
     match = re.search(r"<new_description>(.*?)</new_description>", text, re.DOTALL)
-    description = (
-        match.group(1).strip().strip('"') if match else text.strip().strip('"')
-    )
+    description = match.group(1).strip().strip('"') if match else text.strip().strip('"')
 
     transcript: dict = {
         "iteration": iteration,
@@ -285,14 +267,8 @@ Please respond with only the new description text in <new_description> tags, not
             api_base=api_base,
             runner_cmd=runner_cmd,
         )
-        match = re.search(
-            r"<new_description>(.*?)</new_description>", shorten_text, re.DOTALL
-        )
-        shortened = (
-            match.group(1).strip().strip('"')
-            if match
-            else shorten_text.strip().strip('"')
-        )
+        match = re.search(r"<new_description>(.*?)</new_description>", shorten_text, re.DOTALL)
+        shortened = match.group(1).strip().strip('"') if match else shorten_text.strip().strip('"')
 
         transcript["rewrite_prompt"] = shorten_prompt
         transcript["rewrite_response"] = shorten_text
@@ -320,22 +296,14 @@ def main():
         help="Path to eval results JSON (from run_eval.py)",
     )
     parser.add_argument("--skill-path", required=True, help="Path to skill directory")
-    parser.add_argument(
-        "--history", default=None, help="Path to history JSON (previous attempts)"
-    )
-    parser.add_argument(
-        "--model", default=None, help="Model identifier for improvement"
-    )
+    parser.add_argument("--history", default=None, help="Path to history JSON (previous attempts)")
+    parser.add_argument("--model", default=None, help="Model identifier for improvement")
     parser.add_argument("--api-key", default=None, help="API key for model evaluation")
-    parser.add_argument(
-        "--api-base", default=None, help="Base URL for model API endpoint"
-    )
+    parser.add_argument("--api-base", default=None, help="Base URL for model API endpoint")
     parser.add_argument(
         "--runner-cmd", default=None, help="CLI command template to invoke for prompts"
     )
-    parser.add_argument(
-        "--verbose", action="store_true", help="Print thinking to stderr"
-    )
+    parser.add_argument("--verbose", action="store_true", help="Print thinking to stderr")
     args = parser.parse_args()
 
     skill_path = Path(args.skill_path)

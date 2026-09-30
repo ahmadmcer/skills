@@ -19,13 +19,13 @@ Every scene drafted or polished under this skill must adhere strictly to these s
 1. **The Fictional Dream Invariant (John Gardner)**:
    The supreme objective of prose is to induce and maintain an uninterrupted, vivid "fictional dream." Never break the spell with ungrounded authorial intrusions, sudden head-hopping, or unearned abstractions.
 2. **Filter Word Elimination Rule**:
-   Eliminate sensory filters that place a mediator between the character and the reader (*"She heard the thunder rumble"* $\to$ *"Thunder rumbled across the valley"*).
+   Eliminate sensory filters that place a mediator between the character and the reader (_"She heard the thunder rumble"_ $\to$ _"Thunder rumbled across the valley"_).
 3. **Dialogue As Tactical Action (Robert McKee)**:
    Characters never speak merely to convey information or exchange pleasantries. Every line is an active psychological tactic (provoking, evading, testing, seducing, undermining, pleading).
 4. **The Action Beat vs. Tag Law (Sol Stein)**:
-   Favor physical action beats over dialogue tags. When tags are necessary, use the invisible *"said"* or *"asked"*. Never use adverbs to prop up weak dialogue (*"she said angrily"* $\to$ action beat revealing physical fury).
+   Favor physical action beats over dialogue tags. When tags are necessary, use the invisible _"said"_ or _"asked"_. Never use adverbs to prop up weak dialogue (_"she said angrily"_ $\to$ action beat revealing physical fury).
 5. **Visceral Somatic Grounding**:
-   Replace emotional labels (*"he was terrified"*) with somatic and proprioceptive physiology (*"his stomach hollowed, cold prickling down his triceps, teeth clicking shut"*).
+   Replace emotional labels (_"he was terrified"_) with somatic and proprioceptive physiology (_"his stomach hollowed, cold prickling down his triceps, teeth clicking shut"_).
 6. **Sentence Musicality (Gary Provost)**:
    Vary sentence length intentionally. Combine short, punchy clauses for high tension with expansive, lyrical sentences for contemplation and world texture. Never write monotone prose.
 
@@ -53,13 +53,13 @@ Follow this sequence when drafting, expanding, or revising any scene or chapter:
 
 Before writing the first sentence, determine the **Psychic Distance** (see [psychic-distance-and-deep-pov.md](references/psychic-distance-and-deep-pov.md)):
 
-| Level | Designation | Perspective | Narrative Function | Example |
-| :--- | :--- | :--- | :--- | :--- |
-| **1** | Distant Panoramic | Wide objective lens | Scene setting, historical framing | *"It was the winter of 1853. A carriage rolled into town."* |
-| **2** | Authorial Report | Mildly detached | Social context, broad backstory | *"Henry J. Warburton had never cared for snow or carriage rides."* |
-| **3** | Internal Summary | Moderate closeness | Cognitive appraisal, reflective shift | *"Henry hated snow; it stiffened his joints and clouded his lenses."* |
-| **4** | Close Third / FID | Deeply subjective | Free Indirect Discourse (thoughts merge with narrative) | *"He cursed under his breath. Cold damn slush, soaking his stockings."* |
-| **5** | Visceral Stream | Immediate interiority | Peak trauma, panic, intense intimacy | *"Slush everywhere. Numb toes. Damned carriage."* |
+| Level | Designation       | Perspective           | Narrative Function                                      | Example                                                                 |
+| :---- | :---------------- | :-------------------- | :------------------------------------------------------ | :---------------------------------------------------------------------- |
+| **1** | Distant Panoramic | Wide objective lens   | Scene setting, historical framing                       | _"It was the winter of 1853. A carriage rolled into town."_             |
+| **2** | Authorial Report  | Mildly detached       | Social context, broad backstory                         | _"Henry J. Warburton had never cared for snow or carriage rides."_      |
+| **3** | Internal Summary  | Moderate closeness    | Cognitive appraisal, reflective shift                   | _"Henry hated snow; it stiffened his joints and clouded his lenses."_   |
+| **4** | Close Third / FID | Deeply subjective     | Free Indirect Discourse (thoughts merge with narrative) | _"He cursed under his breath. Cold damn slush, soaking his stockings."_ |
+| **5** | Visceral Stream   | Immediate interiority | Peak trauma, panic, intense intimacy                    | _"Slush everywhere. Numb toes. Damned carriage."_                       |
 
 - **Default Standard**: Modern commercial and literary fiction operates primarily at **Level 4 (Deep POV)**, zooming out to Level 2/3 for rapid transitions, and diving into Level 5 during climactic crises.
 - **Rule Against Head-Hopping**: One POV character per scene. Never shift into another character's internal thoughts or physical sensations without a formal scene/chapter break.
@@ -68,16 +68,16 @@ Before writing the first sentence, determine the **Psychic Distance** (see [psyc
 
 ### Step 2: Sensory & Somatic Grounding
 
-Ground the scene immediately using visceral defamiliarization (*ostranenie*) rather than stock tropes (see [sensory-immersion-and-defamiliarization.md](references/sensory-immersion-and-defamiliarization.md)):
+Ground the scene immediately using visceral defamiliarization (_ostranenie_) rather than stock tropes (see [sensory-immersion-and-defamiliarization.md](references/sensory-immersion-and-defamiliarization.md)):
 
 1. **Engage the Full Sensory Register**:
-   - *Olfactory*: Scent is the most primal emotional anchor (copper, wet wool, ozone, stale chicory).
-   - *Haptic / Tactile*: Temperature, air viscosity, grit against shoe leather, humid cling of fabric.
-   - *Acoustic*: Ambient hums, irregular clatters, muffled vibrations through floorboards.
-   - *Gustatory*: Lingering bitter ash, metallic adrenaline taste, chalky dry mouth.
-   - *Proprioceptive / Somatic*: Center of gravity, chest constriction, throat tightening, neck hair standing.
+   - _Olfactory_: Scent is the most primal emotional anchor (copper, wet wool, ozone, stale chicory).
+   - _Haptic / Tactile_: Temperature, air viscosity, grit against shoe leather, humid cling of fabric.
+   - _Acoustic_: Ambient hums, irregular clatters, muffled vibrations through floorboards.
+   - _Gustatory_: Lingering bitter ash, metallic adrenaline taste, chalky dry mouth.
+   - _Proprioceptive / Somatic_: Center of gravity, chest constriction, throat tightening, neck hair standing.
 2. **Defamiliarization**:
-   Make familiar objects feel novel and striking. Avoid clichés (*"eyes like sapphires"*, *"white as a ghost"*).
+   Make familiar objects feel novel and striking. Avoid clichés (_"eyes like sapphires"_, _"white as a ghost"_).
 
 ---
 
@@ -89,14 +89,14 @@ Structure every spoken interaction as psychological warfare or negotiation (see 
    - What does Speaker A want Speaker B to do or feel?
    - What is Speaker B concealing or protecting?
 2. **Cut Conversational Throat-Clearing**:
-   - Eliminate greetings, polite pleasantries, and logistical confirmations (*"Hello," "How are you," "Good"*).
+   - Eliminate greetings, polite pleasantries, and logistical confirmations (_"Hello," "How are you," "Good"_).
    - Enter the dialogue late (in media res) and exit before resolution.
 3. **Action Beats Over Dialogue Tags**:
    - Use physical behavior that reinforces or contradicts the spoken words (e.g. smiling while locking the door).
    - Enforce punctuation rules:
-     - Tag: *"I don't know who you are," she said.*
-     - Beat: *"I don't know who you are." She cocked the hammer.*
-     - Em-dash interruption: *"If you take one more step"—he reached for the scalpel—"this ends."*
+     - Tag: _"I don't know who you are," she said._
+     - Beat: _"I don't know who you are." She cocked the hammer._
+     - Em-dash interruption: _"If you take one more step"—he reached for the scalpel—"this ends."_
 
 ---
 
@@ -123,7 +123,7 @@ Polish the prose at the sentence level to create musical cadence and remove amat
 2. **Purge Sensory Filter Words**:
    - Search and destroy: `saw`, `heard`, `felt`, `noticed`, `wondered`, `realized`, `watched`, `seemed`, `decided`, `looked`, `sounded`.
 3. **Eliminate Nominalizations & Weak Verbs**:
-   - Convert abstract nouns back into muscular actions (*"He made an examination of the lock"* $\to$ *"He picked the lock"*).
+   - Convert abstract nouns back into muscular actions (_"He made an examination of the lock"_ $\to$ _"He picked the lock"_).
 4. **Automated Prose Audit**:
    - Run the bundled prose linter to measure filter word density, dialogue tag cleanliness, sentence rhythm score, and passive voice:
      ```bash
@@ -136,10 +136,10 @@ Polish the prose at the sentence level to create musical cadence and remove amat
 
 This skill equips agents with two zero-dependency Python tools:
 
-| Script | Purpose | Common Invocation |
-| :--- | :--- | :--- |
-| `scripts/lint_prose.py` | Audits filter word density, dialogue tags, sentence rhythm, passive voice, and calculates a 0-100 Prose Immersion Score | `python scripts/lint_prose.py --file chapter1.md` |
-| `scripts/expand_scene.py` | Transforms a scene summary/beat card into a fully structured Deep POV scene draft blueprint | `python scripts/expand_scene.py --title "The Ambush" --pov "Lyra" --distance 4` |
+| Script                    | Purpose                                                                                                                 | Common Invocation                                                               |
+| :------------------------ | :---------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
+| `scripts/lint_prose.py`   | Audits filter word density, dialogue tags, sentence rhythm, passive voice, and calculates a 0-100 Prose Immersion Score | `python scripts/lint_prose.py --file chapter1.md`                               |
+| `scripts/expand_scene.py` | Transforms a scene summary/beat card into a fully structured Deep POV scene draft blueprint                             | `python scripts/expand_scene.py --title "The Ambush" --pov "Lyra" --distance 4` |
 
 ---
 

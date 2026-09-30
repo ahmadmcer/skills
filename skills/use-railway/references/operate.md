@@ -93,16 +93,16 @@ Network flow logs are service-level, not deployment-level. Do not pass a deploym
 
 Useful filters:
 
-| Flag | Use for |
-|---|---|
-| `--protocol tcp|udp|icmp|icmpv6|unknown` | Layer 4 protocol |
-| `--direction ingress|egress` | Traffic direction |
-| `--peer <service|internet|dns|edge-proxy>` | Named peer or well-known peer |
-| `--peer-kind service|internet|edge_proxy|local_dns|unknown` | Peer class |
-| `--status ok|dropped` / `--dropped true` | Dropped traffic |
-| `--port <port>` | Source or destination port |
-| `--src`, `--dst`, `--host` | IP filters |
-| `--drop-cause <cause>` | Drop reason |
+| Flag                       | Use for                    |
+| -------------------------- | -------------------------- |
+| `--protocol tcp            | udp                        | icmp              | icmpv6       | unknown`                      | Layer 4 protocol |
+| `--direction ingress       | egress`                    | Traffic direction |
+| `--peer <service           | internet                   | dns               | edge-proxy>` | Named peer or well-known peer |
+| `--peer-kind service       | internet                   | edge_proxy        | local_dns    | unknown`                      | Peer class       |
+| `--status ok               | dropped`/`--dropped true`  | Dropped traffic   |
+| `--port <port>`            | Source or destination port |
+| `--src`, `--dst`, `--host` | IP filters                 |
+| `--drop-cause <cause>`     | Drop reason                |
 
 ### DNS query logs
 
@@ -187,6 +187,7 @@ railway logs --latest --build --lines 400 --json
 ```
 
 Common causes and fixes:
+
 - **Missing dependencies**: check lockfiles, verify package manager detection
 - **Wrong build command**: override with `railway environment edit --service-config <service> build.buildCommand "<command>"`
 - **Builder mismatch**: switch builders with `railway environment edit --service-config <service> build.builder RAILPACK`
@@ -202,6 +203,7 @@ railway logs --service <service> --since 1h --lines 400 --json
 ```
 
 Common causes and fixes:
+
 - **Bad start command**: override with `railway environment edit --service-config <service> deploy.startCommand "<command>"`
 - **Missing runtime variable**: check `railway variable list --service <service> --json` and set missing values
 - **Port mismatch**: the service must listen on `$PORT` (Railway injects this). Verify with logs.

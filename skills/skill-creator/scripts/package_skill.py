@@ -14,6 +14,7 @@ import fnmatch
 import sys
 import zipfile
 from pathlib import Path
+
 from scripts.quick_validate import validate_skill
 
 getattr(sys.stdout, "reconfigure", lambda **_: None)(encoding="utf-8", errors="replace")
@@ -113,9 +114,7 @@ def package_skill(skill_path, output_dir=None):
 
 def main():
     if len(sys.argv) < 2:
-        print(
-            "Usage: python utils/package_skill.py <path/to/skill-folder> [output-directory]"
-        )
+        print("Usage: python utils/package_skill.py <path/to/skill-folder> [output-directory]")
         print("\nExample:")
         print("  python utils/package_skill.py skills/public/my-skill")
         print("  python utils/package_skill.py skills/public/my-skill ./dist")

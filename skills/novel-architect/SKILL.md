@@ -31,14 +31,18 @@ Whenever developing, outlining, or diagnosing a novel, follow this standardized 
 ```
 
 ### Step 1: Premise & Thematic Thesis
-Formulate the central dramatic premise using Lajos Egri’s formula: **Character + Conflict + Climax** (e.g., *"Ruthless ambition leads to self-destruction"*, or *"Unconditional love overcomes societal prejudice"*).
+
+Formulate the central dramatic premise using Lajos Egri’s formula: **Character + Conflict + Climax** (e.g., _"Ruthless ambition leads to self-destruction"_, or _"Unconditional love overcomes societal prejudice"_).
+
 - Identify the **Thematic Question**: What fundamental debate is being explored?
 - Establish the **Dialectic**: The Thesis (the Lie the protagonist believes), the Antithesis (the antagonist's counter-worldview), and the Synthesis (the thematic Truth earned at the climax).
 
 See: [thematic-subtext-and-motifs.md](references/thematic-subtext-and-motifs.md)
 
 ### Step 2: Structural Blueprinting & Beat Sheets
+
 Select the narrative framework that best fits the genre and scope, then calculate exact word count milestones using the bundled generator:
+
 ```bash
 # Generate a 15-beat Save the Cat roadmap for an 80,000-word novel
 python skills/novel-architect/scripts/generate_beat_sheet.py --title "The Glass Horizon" --framework save-the-cat --word-count 80000
@@ -48,6 +52,7 @@ python skills/novel-architect/scripts/generate_beat_sheet.py --title "The Glass 
 ```
 
 Supported frameworks:
+
 - **Save the Cat! Writes a Novel (15 Beats)**: Opening Image (0-1%), Theme Stated (5%), Set-Up (1-10%), Catalyst (10%), Debate (10-20%), Break into Two (20%), B Story (22%), Fun and Games (20-50%), Midpoint (50%), Bad Guys Close In (50-75%), All Is Lost (75%), Dark Night of the Soul (75-80%), Break into Three (80%), Finale (80-99%), Final Image (100%).
 - **Three-Act / 8-Sequence Model**: Act 1 (25%), Act 2A (25%), Act 2B (25%), Act 3 (25%).
 - **Dan Harmon's Story Circle**: You, Need, Go, Search, Find, Take, Return, Change.
@@ -57,17 +62,21 @@ Supported frameworks:
 See: [narrative-frameworks-and-beat-sheets.md](references/narrative-frameworks-and-beat-sheets.md)
 
 ### Step 3: Character Psychodynamics
+
 Ground characters in deep internal and external conflict:
+
 1. **The Ghost (Backstory Wound)**: The defining past trauma or lack that formed the character's defenses.
 2. **The Lie the Character Believes**: The self-protective misconception they use to survive.
-3. **The Want vs. Need Conflict**: The external conscious goal (*Want*) vs. the internal thematic requirement for growth (*Need*).
+3. **The Want vs. Need Conflict**: The external conscious goal (_Want_) vs. the internal thematic requirement for growth (_Need_).
 4. **The Moment of Truth**: The climactic test where the character must discard the Lie to embrace the Truth and achieve their Need.
 5. **Arc Taxonomy**: Select Positive Change Arc, Flat Arc (Catalyst Hero), or Negative Arc (Disillusionment, Fall, Corruption).
 
 See: [character-arcs-and-psychology.md](references/character-arcs-and-psychology.md)
 
 ### Step 4: World & Rules Architecture
+
 Construct believable settings and magic/tech systems governed by Sanderson’s Laws:
+
 - **First Law**: An author's ability to solve problems with magic/tech in a satisfying way is directly proportional to how well the reader understands the rules.
 - **Second Law**: Limitations, flaws, and costs are far more interesting than powers.
 - **Third Law**: Extrapolate cultural, economic, military, and legal consequences of existing rules before adding new ones.
@@ -75,17 +84,20 @@ Construct believable settings and magic/tech systems governed by Sanderson’s L
 See: [worldbuilding-and-magic-systems.md](references/worldbuilding-and-magic-systems.md)
 
 ### Step 5: Scene & Sequel Micro-Pacing
+
 Choreograph every scene using Dwight Swain and Jack Bickham's cause-and-effect engine:
+
 - **Scene (Action Unit)**:
   - **Goal**: Immediate, specific, observable objective.
   - **Conflict**: Active obstacle or counter-force.
-  - **Disaster**: 4 outcomes: *"No"*, *"No, and furthermore..."*, *"Yes, but..."*, or *"Yes, and therefore..."* (never flat "Yes").
+  - **Disaster**: 4 outcomes: _"No"_, _"No, and furthermore..."_, _"Yes, but..."_, or _"Yes, and therefore..."_ (never flat "Yes").
 - **Sequel (Reaction Unit)**:
   - **Reaction**: Visceral, physiological, and emotional aftermath.
   - **Dilemma**: Cognitive evaluation of limited, painful options (no easy choice).
   - **Decision**: Commitment to a new course of action &rarr; crystallizes into the **Goal** of the next Scene.
 
 Audit manuscript or outline pacing using:
+
 ```bash
 python skills/novel-architect/scripts/analyze_pacing.py ./my_novel_workspace
 ```
@@ -96,7 +108,7 @@ See: [scene-and-sequel-pacing.md](references/scene-and-sequel-pacing.md)
 
 ## 2. Core Narrative Invariants
 
-1. **Strict Causality (Therefore / But)**: Narrative events must be chained by *"therefore"* or *"but"*, never episodic *"and then"*. Every Scene Disaster must necessitate the next Sequel's Decision.
+1. **Strict Causality (Therefore / But)**: Narrative events must be chained by _"therefore"_ or _"but"_, never episodic _"and then"_. Every Scene Disaster must necessitate the next Sequel's Decision.
 2. **The Midpoint Pivot**: The exact center (~50%) must feature a fundamental transformation from reactive to proactive behavior (shifting from false victory or false defeat into the real stakes).
 3. **Internal-External Symmetry**: The external plot must directly pressure and expose the protagonist's internal Lie. The climax cannot be resolved purely by physical force without an internal choice between Lie and Truth.
 4. **Sandersonian Limitations**: Magic or advanced technology cannot solve climactic conflicts through newly introduced powers; resolution must rely on established limitations, costs, or clever reapplication of known rules.
@@ -106,8 +118,8 @@ See: [scene-and-sequel-pacing.md](references/scene-and-sequel-pacing.md)
 
 ## 3. Automation Scripts Reference
 
-| Script | Purpose | Example Invocations |
-| :--- | :--- | :--- |
-| `scripts/scaffold_novel.py` | Scaffolds structured novel project directory (`00_BIBLE`, `01_CHARACTERS`, `02_OUTLINE`, `03_MANUSCRIPT`). | `python scripts/scaffold_novel.py "Title" --genre "Sci-Fi" --word-count 80000` |
-| `scripts/generate_beat_sheet.py` | Computes word count targets and beat milestones across 5 plotting frameworks. | `python scripts/generate_beat_sheet.py --framework save-the-cat --word-count 80000` |
-| `scripts/analyze_pacing.py` | Audits outline/manuscript for act balance, tension curves, and scene-to-sequel ratio. | `python scripts/analyze_pacing.py ./my_novel_dir --json` |
+| Script                           | Purpose                                                                                                    | Example Invocations                                                                 |
+| :------------------------------- | :--------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
+| `scripts/scaffold_novel.py`      | Scaffolds structured novel project directory (`00_BIBLE`, `01_CHARACTERS`, `02_OUTLINE`, `03_MANUSCRIPT`). | `python scripts/scaffold_novel.py "Title" --genre "Sci-Fi" --word-count 80000`      |
+| `scripts/generate_beat_sheet.py` | Computes word count targets and beat milestones across 5 plotting frameworks.                              | `python scripts/generate_beat_sheet.py --framework save-the-cat --word-count 80000` |
+| `scripts/analyze_pacing.py`      | Audits outline/manuscript for act balance, tension curves, and scene-to-sequel ratio.                      | `python scripts/analyze_pacing.py ./my_novel_dir --json`                            |

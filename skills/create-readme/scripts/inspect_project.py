@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import subprocess
 import sys
@@ -83,12 +82,14 @@ def parse_env_file(filepath: Path) -> list[dict[str, str]]:
             name = name.strip()
             val = val.strip().strip("'\"")
             req = "Yes" if not val or "your" in val.lower() or "secret" in name.lower() else "No"
-            variables.append({
-                "name": name,
-                "default": val if val else "-",
-                "description": current_comment if current_comment else f"Application {name}",
-                "required": req,
-            })
+            variables.append(
+                {
+                    "name": name,
+                    "default": val if val else "-",
+                    "description": current_comment if current_comment else f"Application {name}",
+                    "required": req,
+                }
+            )
             current_comment = ""
 
     return variables
@@ -120,7 +121,11 @@ def inspect_directory(target_path: Path) -> dict:
         metadata["has_ci"] = True
 
     # Detect Docker
-    if (target_path / "Dockerfile").is_file() or (target_path / "docker-compose.yml").is_file() or (target_path / "compose.yaml").is_file():
+    if (
+        (target_path / "Dockerfile").is_file()
+        or (target_path / "docker-compose.yml").is_file()
+        or (target_path / "compose.yaml").is_file()
+    ):
         metadata["has_docker"] = True
 
     # Detect License
@@ -159,7 +164,9 @@ def inspect_directory(target_path: Path) -> dict:
     # Check Node.js / JavaScript / TypeScript
     pkg_json = target_path / "package.json"
     if pkg_json.is_file():
-        metadata["languages"].append("TypeScript" if (target_path / "tsconfig.json").is_file() else "JavaScript")
+        metadata["languages"].append(
+            "TypeScript" if (target_path / "tsconfig.json").is_file() else "JavaScript"
+        )
         # Lockfile package manager
         if (target_path / "pnpm-lock.yaml").is_file():
             metadata["package_manager"] = "pnpm"
@@ -171,7 +178,7 @@ def inspect_directory(target_path: Path) -> dict:
             metadata["package_manager"] = "npm"
 
         try:
-            with open(pkg_json, "r", encoding="utf-8") as f:
+            with open(pkg_json, encoding="utf-8") as f:
                 pj = json.load(f)
                 if pj.get("name"):
                     metadata["project_name"] = pj["name"]
@@ -193,7 +200,12 @@ def inspect_directory(target_path: Path) -> dict:
                 elif "react" in deps or "vue" in deps or "svelte" in deps or "vite" in deps:
                     metadata["frameworks"].append("React/Vite" if "react" in deps else "Vite")
                     metadata["archetype"] = "webapp"
-                elif "express" in deps or "fastify" in deps or "nestjs" in deps or "@nestjs/core" in deps:
+                elif (
+                    "express" in deps
+                    or "fastify" in deps
+                    or "nestjs" in deps
+                    or "@nestjs/core" in deps
+                ):
                     metadata["frameworks"].append("Express/Fastify/NestJS")
                     metadata["archetype"] = "api"
 
@@ -226,7 +238,12 @@ def inspect_directory(target_path: Path) -> dict:
             if "fastapi" in p_content or "django" in p_content or "flask" in p_content:
                 metadata["archetype"] = "api"
                 metadata["frameworks"].append("FastAPI/Django/Flask")
-            if "click" in p_content or "typer" in p_content or "argparse" in p_content or "[project.scripts]" in p_content:
+            if (
+                "click" in p_content
+                or "typer" in p_content
+                or "argparse" in p_content
+                or "[project.scripts]" in p_content
+            ):
                 metadata["archetype"] = "cli"
             if "pytest" in p_content:
                 metadata["has_tests"] = True
@@ -265,7 +282,9 @@ def inspect_directory(target_path: Path) -> dict:
 
     # Default description fallback
     if not metadata["description"]:
-        metadata["description"] = f"A modern {metadata['archetype']} built with {', '.join(metadata['languages']) if metadata['languages'] else 'code'}."
+        metadata["description"] = (
+            f"A modern {metadata['archetype']} built with {', '.join(metadata['languages']) if metadata['languages'] else 'code'}."
+        )
 
     return metadata
 
@@ -280,9 +299,7 @@ def main() -> None:
         default=".",
         help="Path to project directory to inspect (default: current directory).",
     )
-    parser.add_argument(
-        "--json", action="store_true", help="Output metadata as JSON."
-    )
+    parser.add_argument("--json", action="store_true", help="Output metadata as JSON.")
 
     args = parser.parse_args()
     target_dir = Path(args.directory).resolve()
@@ -300,9 +317,13 @@ def main() -> None:
     print(f" PROJECT INSPECTION SUMMARY: {data['project_name']}")
     print("=" * 64)
     print(f" Archetype:       {data['archetype'].upper()}")
-    print(f" Languages:       {', '.join(data['languages']) if data['languages'] else 'None detected'}")
+    print(
+        f" Languages:       {', '.join(data['languages']) if data['languages'] else 'None detected'}"
+    )
     print(f" Package Manager: {data['package_manager']}")
-    print(f" Frameworks:      {', '.join(data['frameworks']) if data['frameworks'] else 'None detected'}")
+    print(
+        f" Frameworks:      {', '.join(data['frameworks']) if data['frameworks'] else 'None detected'}"
+    )
     print(f" License:         {data['license']}")
     print(f" CI Configured:   {'Yes' if data['has_ci'] else 'No'}")
     print(f" Docker Enabled:  {'Yes' if data['has_docker'] else 'No'}")

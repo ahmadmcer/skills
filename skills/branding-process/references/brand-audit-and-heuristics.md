@@ -34,12 +34,12 @@ Every audit inspects four interconnected layers:
 
 Findings must be triaged objectively rather than dismissed as subjective aesthetic taste:
 
-| Severity Level | Definition | Concrete Criteria | Real-World Digital Example |
-| :--- | :--- | :--- | :--- |
-| **P0: Critical Brand Fracture** | Severe identity breakdown, illegible contrast, or brand identity failure. | Fails legal accessibility thresholds (< 3:1 contrast on essential UI/text); corrupted or stretched logo marks; conflicting brand names across live routes. | Gray text `#94a3b8` on white background (contrast ratio 2.1:1); logo squished or rasterized with jagged pixels on mobile. |
-| **P1: Major Inconsistency** | Significant voice drift, chaotic styling, or loss of brand credibility. | Multiple uncoordinated font families loaded; 10+ arbitrary, un-tokenized hex colors in CSS; marketing copy loaded with banned buzzwords and empty claims. | Hero says "Next-Gen AI Platform" with zero explanation of what it actually does; three different button styles with varying border radii on one page. |
-| **P2: Minor Polish** | Noticeable friction or subtle deviations that degrade premium feel. | Logo clear-space encroached by adjacent nav links; mismatched icon stroke weights (mixing 1.5px with 3px); slight tracking inconsistencies in display headers. | A 24x24 icon library mixed with 16px and 32px icons that look visually unbalanced; line-height too tight on multiline h2 headers. |
-| **P3: Cosmetic / Nuance** | Minor aesthetic enhancements with low user impact. | Sub-optimal gradient stop; subtle hover transition duration mismatch; microcopy phrasing that could be slightly more punchy. | Changing a hover transition from `200ms ease` to `150ms cubic-bezier` for slightly snappier feedback. |
+| Severity Level                  | Definition                                                                | Concrete Criteria                                                                                                                                              | Real-World Digital Example                                                                                                                            |
+| :------------------------------ | :------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0: Critical Brand Fracture** | Severe identity breakdown, illegible contrast, or brand identity failure. | Fails legal accessibility thresholds (< 3:1 contrast on essential UI/text); corrupted or stretched logo marks; conflicting brand names across live routes.     | Gray text `#94a3b8` on white background (contrast ratio 2.1:1); logo squished or rasterized with jagged pixels on mobile.                             |
+| **P1: Major Inconsistency**     | Significant voice drift, chaotic styling, or loss of brand credibility.   | Multiple uncoordinated font families loaded; 10+ arbitrary, un-tokenized hex colors in CSS; marketing copy loaded with banned buzzwords and empty claims.      | Hero says "Next-Gen AI Platform" with zero explanation of what it actually does; three different button styles with varying border radii on one page. |
+| **P2: Minor Polish**            | Noticeable friction or subtle deviations that degrade premium feel.       | Logo clear-space encroached by adjacent nav links; mismatched icon stroke weights (mixing 1.5px with 3px); slight tracking inconsistencies in display headers. | A 24x24 icon library mixed with 16px and 32px icons that look visually unbalanced; line-height too tight on multiline h2 headers.                     |
+| **P3: Cosmetic / Nuance**       | Minor aesthetic enhancements with low user impact.                        | Sub-optimal gradient stop; subtle hover transition duration mismatch; microcopy phrasing that could be slightly more punchy.                                   | Changing a hover transition from `200ms ease` to `150ms cubic-bezier` for slightly snappier feedback.                                                 |
 
 ---
 
@@ -48,23 +48,24 @@ Findings must be triaged objectively rather than dismissed as subjective aesthet
 Many tech startups look virtually identical because they inadvertently copy the same 5 tropes. Screen for these common brand clichés:
 
 1. **The Purple/Indigo Gradient Trap**:
-   - *Symptom*: Dark purple background with a bright violet/indigo gradient button and blur glow.
-   - *Fix*: Choose a distinct signature hue (e.g., cobalt, petrol blue, olive, warm copper, terracotta, rich emerald).
+   - _Symptom_: Dark purple background with a bright violet/indigo gradient button and blur glow.
+   - _Fix_: Choose a distinct signature hue (e.g., cobalt, petrol blue, olive, warm copper, terracotta, rich emerald).
 2. **Floating Geometric Shapes**:
-   - *Symptom*: Random 3D chrome spheres, floating glass cubes, or neon donut rings that have zero relationship to the product.
-   - *Fix*: Replace with authentic, styled product UI screenshots, real architecture diagrams, or purposeful data visualizations.
+   - _Symptom_: Random 3D chrome spheres, floating glass cubes, or neon donut rings that have zero relationship to the product.
+   - _Fix_: Replace with authentic, styled product UI screenshots, real architecture diagrams, or purposeful data visualizations.
 3. **Empty Tech Sloganeering**:
-   - *Symptom*: *"Empowering modern teams to build the future of workflows."*
-   - *Fix*: State the concrete mechanism and outcome: *"Run background jobs in TypeScript with zero infrastructure setup."*
+   - _Symptom_: _"Empowering modern teams to build the future of workflows."_
+   - _Fix_: State the concrete mechanism and outcome: _"Run background jobs in TypeScript with zero infrastructure setup."_
 4. **Interchangeable Rounded Bento Grids**:
-   - *Symptom*: 6 identical rounded boxes with micro-animations that communicate zero hierarchy.
-   - *Fix*: Asymmetric layout emphasizing the single most critical capability, supported by secondary proof points.
+   - _Symptom_: 6 identical rounded boxes with micro-animations that communicate zero hierarchy.
+   - _Fix_: Asymmetric layout emphasizing the single most critical capability, supported by secondary proof points.
 
 ---
 
 ## 4. Heuristic Inspection Checklist
 
 ### A. Visual & Asset Checks
+
 - [ ] **Logo Integrity**: Is the primary SVG crisp at 100%, 150%, and 200% zoom? Is clear space preserved on mobile viewports?
 - [ ] **Favicon**: Does the browser tab show a clear, recognizable 32x32 mark in both light and dark browser Chrome?
 - [ ] **Palette Consistency**: Are colors defined via CSS variables/Tailwind classes rather than hardcoded hex codes?
@@ -72,7 +73,8 @@ Many tech startups look virtually identical because they inadvertently copy the 
 - [ ] **Typography**: Are there at most two primary font families in use? Does the type scale follow modular steps?
 
 ### B. Verbal & Narrative Checks
-- [ ] **The 5-Second Test**: Can a first-time visitor understand *what* the product is and *who* it is for within 5 seconds?
+
+- [ ] **The 5-Second Test**: Can a first-time visitor understand _what_ the product is and _who_ it is for within 5 seconds?
 - [ ] **Onliness Check**: Does the hero copy distinguish this product from its top 3 competitors, or could a competitor swap their logo onto this page without noticing?
 - [ ] **Voice Consistency**: Does the voice remain steady between marketing pages, in-app dashboard views, and error dialogs?
 - [ ] **Actionable Microcopy**: Do buttons use specific action verbs (`Create Workspace`) instead of generic labels (`Submit`)?
@@ -87,9 +89,11 @@ Use this markdown structure when delivering a brand audit report:
 # Brand & Visual Identity Audit Report: [Product Name]
 
 ## Executive Summary
+
 [2-3 sentences summarizing brand maturity, core strengths, and critical vulnerabilities]
 
 ## Overall Health Scorecard
+
 - **Positioning Clarity**: [High / Medium / Low]
 - **Visual Consistency**: [High / Medium / Low]
 - **Verbal Resonance**: [High / Medium / Low]
@@ -98,23 +102,27 @@ Use this markdown structure when delivering a brand audit report:
 ## Severity-Ranked Findings
 
 ### P0 (Critical Brand Fracture)
+
 - **[Finding Title]**: [Description]
-  - *Location*: `src/components/Header.tsx` or live URL
-  - *Evidence*: Contrast ratio is 2.2:1; fails WCAG AA normal text requirement.
-  - *Remediation*: Update `--text-muted` token from `#94a3b8` to `#64748b`.
+  - _Location_: `src/components/Header.tsx` or live URL
+  - _Evidence_: Contrast ratio is 2.2:1; fails WCAG AA normal text requirement.
+  - _Remediation_: Update `--text-muted` token from `#94a3b8` to `#64748b`.
 
 ### P1 (Major Inconsistency / Voice Drift)
+
 - **[Finding Title]**: [Description]
-  - *Location*: Marketing hero section
-  - *Evidence*: Copy uses generic cliché *"The revolutionary all-in-one AI platform"*.
-  - *Remediation*: Replace with verified Onliness positioning: *"The distributed vector database for offline-first web apps"*.
+  - _Location_: Marketing hero section
+  - _Evidence_: Copy uses generic cliché _"The revolutionary all-in-one AI platform"_.
+  - _Remediation_: Replace with verified Onliness positioning: _"The distributed vector database for offline-first web apps"_.
 
 ### P2 (Minor Polish)
+
 - **[Finding Title]**: [Description]
-  - *Evidence*: Logo encroaches on navigation boundary on screens < 768px.
-  - *Remediation*: Apply `margin-right: 1.5rem` to enforce minimum $X$ clear space.
+  - _Evidence_: Logo encroaches on navigation boundary on screens < 768px.
+  - _Remediation_: Apply `margin-right: 1.5rem` to enforce minimum $X$ clear space.
 
 ## Immediate Action Plan
+
 1. [Step 1: Remediate all P0 accessibility & logo issues]
 2. [Step 2: Consolidate hardcoded hex colors into brand tokens]
 3. [Step 3: Refine hero and CTA copy to reflect unique positioning]

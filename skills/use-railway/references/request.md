@@ -17,22 +17,21 @@ Tip: append `.md` to any `docs.railway.com` page URL to get a markdown version s
 
 Common doc paths:
 
-| Topic | Path |
-|---|---|
-| Agent setup | `agents`, `ai/agent-skills`, `ai/mcp-server` |
-| CLI reference | `cli`, `cli/<command>` |
-| Projects | `projects` |
-| Deployments | `deployments` |
-| Volumes | `volumes` |
-| Variables | `variables` |
-| Infrastructure as Code | `infrastructure-as-code`, `infrastructure-as-code/reference` |
-| Public networking | `networking/public-networking` |
-| Private networking | `networking/private-networking` |
-| Domains, CDN, WAF | `networking/domains`, `networking/cdn`, `networking/waf` |
-| Outbound networking | `networking/outbound-networking`, `networking/static-outbound-ips` |
+| Topic                  | Path                                                               |
+| ---------------------- | ------------------------------------------------------------------ |
+| Agent setup            | `agents`, `ai/agent-skills`, `ai/mcp-server`                       |
+| CLI reference          | `cli`, `cli/<command>`                                             |
+| Projects               | `projects`                                                         |
+| Deployments            | `deployments`                                                      |
+| Volumes                | `volumes`                                                          |
+| Variables              | `variables`                                                        |
+| Infrastructure as Code | `infrastructure-as-code`, `infrastructure-as-code/reference`       |
+| Public networking      | `networking/public-networking`                                     |
+| Private networking     | `networking/private-networking`                                    |
+| Domains, CDN, WAF      | `networking/domains`, `networking/cdn`, `networking/waf`           |
+| Outbound networking    | `networking/outbound-networking`, `networking/static-outbound-ips` |
 
 Fetch official docs first for product behavior questions. Use Central Station only when you need community evidence, prior incidents, or implementation anecdotes.
-
 
 ## Central Station (community)
 
@@ -82,7 +81,6 @@ Thread URLs follow the format: `https://station.railway.com/{topic_slug}/{thread
 
 Community threads are anecdotal. Always pair with official docs when the answer informs an operational decision.
 
-
 ## GraphQL with the CLI
 
 Use `railway api` (CLI 5.28+) for API operations that dedicated commands and MCP tools cannot express. It uses the CLI's configured authentication and supports normal token refresh. Inspect the live schema before guessing fields or input shapes:
@@ -117,7 +115,6 @@ railway api \
 
 Common `ProjectUpdateInput` fields: `name`, `isPublic`, `prDeploys`, `botPrEnvironments`.
 
-
 ## Service mutations
 
 Use `railway add` to create services and GraphQL to rename them or change icons:
@@ -134,7 +131,6 @@ railway api \
 
 Get the service ID from `railway service list --json`.
 
-
 ## Service creation via GraphQL
 
 Prefer `railway add` for most cases. Use GraphQL for programmatic or advanced use:
@@ -149,17 +145,16 @@ railway api \
 
 `ServiceCreateInput` fields:
 
-| Field | Type | Description |
-|---|---|---|
-| `projectId` | String! | Target project (required) |
-| `name` | String | Service name (auto-generated if omitted) |
-| `source.image` | String | Docker image (for example, `nginx:latest`) |
-| `source.repo` | String | GitHub repo (for example, `user/repo`) |
-| `branch` | String | Git branch for repo source |
-| `environmentId` | String | Create only in a specific environment |
+| Field           | Type    | Description                                |
+| --------------- | ------- | ------------------------------------------ |
+| `projectId`     | String! | Target project (required)                  |
+| `name`          | String  | Service name (auto-generated if omitted)   |
+| `source.image`  | String  | Docker image (for example, `nginx:latest`) |
+| `source.repo`   | String  | GitHub repo (for example, `user/repo`)     |
+| `branch`        | String  | Git branch for repo source                 |
+| `environmentId` | String  | Create only in a specific environment      |
 
 After creating a service via GraphQL, configure it with a JSON config patch including `isCreated: true` (see [configure.md](configure.md)).
-
 
 ## Metrics queries
 
@@ -207,12 +202,12 @@ railway api \
   --variables '{"query":"redis","verified":true}'
 ```
 
-| Parameter | Type | Description |
-|---|---|---|
-| `query` | String | Search term |
-| `verified` | Boolean | Only verified templates |
+| Parameter     | Type    | Description                |
+| ------------- | ------- | -------------------------- |
+| `query`       | String  | Search term                |
+| `verified`    | Boolean | Only verified templates    |
 | `recommended` | Boolean | Only recommended templates |
-| `first` | Int | Number of results |
+| `first`       | Int     | Number of results          |
 
 Common template codes: `ghost`, `strapi`, `minio`, `n8n`, `uptime-kuma`, `umami`, `postgres`, `redis`, `mysql`, `mongodb`.
 
@@ -262,7 +257,6 @@ railway api \
 ```
 
 `serializedConfig` is the raw JSON object from the template query, not a string. Get `workspaceId` via `railway api 'query { project(id: "<project-id>") { workspaceId } }'`.
-
 
 ## Validated against
 

@@ -9,7 +9,6 @@ from __future__ import annotations
 import argparse
 import datetime
 import json
-import re
 import subprocess
 import sys
 from pathlib import Path
@@ -58,7 +57,10 @@ def parse_git_commits(cwd: Path, since_date: str) -> list[dict]:
 
 
 def parse_git_tags(cwd: Path) -> list[dict]:
-    code, output = run_git(["tag", "-l", "--sort=-creatordate", "--format=%(refname:short)|%(creatordate:iso-strict)"], cwd)
+    code, output = run_git(
+        ["tag", "-l", "--sort=-creatordate", "--format=%(refname:short)|%(creatordate:iso-strict)"],
+        cwd,
+    )
     if code != 0 or not output:
         return []
 
@@ -97,7 +99,9 @@ def compute_rework_rate(cwd: Path, since_date: str) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Analyze Git repository for DORA delivery metrics")
     parser.add_argument("--dir", default=".", help="Path to git repository")
-    parser.add_argument("--days", type=int, default=30, help="Number of past days to analyze (default: 30)")
+    parser.add_argument(
+        "--days", type=int, default=30, help="Number of past days to analyze (default: 30)"
+    )
     parser.add_argument("--json", action="store_true", help="Output results in JSON format")
     args = parser.parse_args()
 
@@ -160,7 +164,9 @@ def main() -> int:
     print(f"AI / Rapid Rework Rate:    {rework.get('rework_rate_pct', 0)}%")
     print("-" * 60)
     if rework.get("rework_rate_pct", 0) > 25.0:
-        print("ALERT: Rework rate exceeds 25%. Strengthen Spec-Driven Development & integration tests.")
+        print(
+            "ALERT: Rework rate exceeds 25%. Strengthen Spec-Driven Development & integration tests."
+        )
     else:
         print("HEALTH: Code churn and delivery metrics within stable operational thresholds.")
     print("=" * 60)

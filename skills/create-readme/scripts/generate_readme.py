@@ -4,8 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import json
-import os
 import sys
 from pathlib import Path
 
@@ -59,15 +57,25 @@ def build_badges(metadata: dict) -> list[str]:
     # Language/Platform Badge
     languages = metadata.get("languages", [])
     if metadata.get("archetype") == "agent-skill":
-        badges.append("[![Antigravity Skill](https://img.shields.io/badge/Antigravity-Agent_Skill-8A2BE2?style=flat-square)](https://github.com)")
+        badges.append(
+            "[![Antigravity Skill](https://img.shields.io/badge/Antigravity-Agent_Skill-8A2BE2?style=flat-square)](https://github.com)"
+        )
     if "TypeScript" in languages:
-        badges.append("[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)")
+        badges.append(
+            "[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)"
+        )
     elif "Python" in languages or "Python / Agent Skill" in languages:
-        badges.append("[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)")
+        badges.append(
+            "[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)"
+        )
     elif "Rust" in languages:
-        badges.append("[![Rust](https://img.shields.io/badge/Rust-1.75+-dea584?style=flat-square&logo=rust&logoColor=white)](https://www.rust-lang.org/)")
+        badges.append(
+            "[![Rust](https://img.shields.io/badge/Rust-1.75+-dea584?style=flat-square&logo=rust&logoColor=white)](https://www.rust-lang.org/)"
+        )
     elif "Go" in languages:
-        badges.append("[![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go&logoColor=white)](https://golang.org/)")
+        badges.append(
+            "[![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go&logoColor=white)](https://golang.org/)"
+        )
 
     return badges
 
@@ -88,7 +96,9 @@ def build_env_table(env_vars: list[dict[str, str]]) -> str:
         "| :--- | :--- | :--- | :--- |",
     ]
     for ev in env_vars:
-        lines.append(f"| `{ev['name']}` | {ev['description']} | `{ev['default']}` | {ev['required']} |")
+        lines.append(
+            f"| `{ev['name']}` | {ev['description']} | `{ev['default']}` | {ev['required']} |"
+        )
     lines.append("")
     return "\n".join(lines)
 
@@ -100,7 +110,9 @@ def generate_cli_readme(meta: dict) -> str:
     badges = "\n".join(build_badges(meta))
     pm = meta["package_manager"]
 
-    install_cmd = f"npm install -g {name}" if pm in ["npm", "pnpm", "yarn"] else f"pip install {name}"
+    install_cmd = (
+        f"npm install -g {name}" if pm in ["npm", "pnpm", "yarn"] else f"pip install {name}"
+    )
     run_cmd = f"{name} --help"
 
     return f"""# {name}
@@ -151,7 +163,7 @@ def generate_cli_readme(meta: dict) -> str:
 
 ## Testing & Verification
 ```bash
-{meta['scripts'].get('test', 'npm test' if pm in ['npm', 'pnpm'] else 'pytest')}
+{meta["scripts"].get("test", "npm test" if pm in ["npm", "pnpm"] else "pytest")}
 ```
 
 ---
@@ -162,7 +174,7 @@ Pull requests and feature issues are welcome! Please check out [CONTRIBUTING.md]
 ---
 
 ## License
-{meta['license']} © [{meta['git'].get('owner', 'Author')}](LICENSE)
+{meta["license"]} © [{meta["git"].get("owner", "Author")}](LICENSE)
 """
 
 
@@ -173,21 +185,27 @@ def generate_library_readme(meta: dict) -> str:
     badges = "\n".join(build_badges(meta))
     pm = meta["package_manager"]
 
-    install_cmd = f"npm install {name}" if pm in ["npm", "pnpm", "yarn", "bun"] else f"pip install {name}"
+    install_cmd = (
+        f"npm install {name}" if pm in ["npm", "pnpm", "yarn", "bun"] else f"pip install {name}"
+    )
 
-    sample_code = """```typescript
+    sample_code = (
+        """```typescript
 import { createClient } from '{name}';
 
 const client = createClient();
 const result = await client.execute({ query: 'hello' });
 console.log(result);
-```""" if "TypeScript" in meta["languages"] or "JavaScript" in meta["languages"] else """```python
+```"""
+        if "TypeScript" in meta["languages"] or "JavaScript" in meta["languages"]
+        else """```python
 from {name} import Client
 
 client = Client()
 result = client.execute(query="hello")
 print(result)
 ```"""
+    )
 
     return f"""# {name}
 
@@ -225,17 +243,17 @@ Detailed method and class documentation can be found in [docs/api.md](docs/api.m
 ## Development & Testing
 ```bash
 # Clone repository
-git clone https://github.com/{meta['git'].get('owner', 'user')}/{name}.git
+git clone https://github.com/{meta["git"].get("owner", "user")}/{name}.git
 cd {name}
 
 # Run test suite
-{meta['scripts'].get('test', 'npm test' if pm in ['npm', 'pnpm'] else 'pytest')}
+{meta["scripts"].get("test", "npm test" if pm in ["npm", "pnpm"] else "pytest")}
 ```
 
 ---
 
 ## License
-{meta['license']} © [{meta['git'].get('owner', 'Author')}](LICENSE)
+{meta["license"]} © [{meta["git"].get("owner", "Author")}](LICENSE)
 """
 
 
@@ -279,7 +297,7 @@ Ensure the following tools are installed locally:
 
 ### 1. Clone & Install Dependencies
 ```bash
-git clone https://github.com/{meta['git'].get('owner', 'user')}/{name}.git
+git clone https://github.com/{meta["git"].get("owner", "user")}/{name}.git
 cd {name}
 {pm} install
 ```
@@ -289,7 +307,7 @@ cd {name}
 
 ### 3. Start Local Development Server
 ```bash
-{meta['scripts'].get('dev', f'{pm} run dev')}
+{meta["scripts"].get("dev", f"{pm} run dev")}
 ```
 Open [http://localhost:3000](http://localhost:3000) to view the application.
 
@@ -298,19 +316,19 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 ## Testing & Quality Assurance
 ```bash
 # Run unit & integration tests
-{meta['scripts'].get('test', f'{pm} test')}
+{meta["scripts"].get("test", f"{pm} test")}
 
 # Run linter
-{meta['scripts'].get('lint', f'{pm} run lint')}
+{meta["scripts"].get("lint", f"{pm} run lint")}
 
 # Build production bundle
-{meta['scripts'].get('build', f'{pm} run build')}
+{meta["scripts"].get("build", f"{pm} run build")}
 ```
 
 ---
 
 ## License
-{meta['license']} © [{meta['git'].get('owner', 'Author')}](LICENSE)
+{meta["license"]} © [{meta["git"].get("owner", "Author")}](LICENSE)
 """
 
 
@@ -383,13 +401,13 @@ uvicorn app.main:app --reload --port 8000
 
 ## Testing
 ```bash
-{meta['scripts'].get('test', 'pytest')}
+{meta["scripts"].get("test", "pytest")}
 ```
 
 ---
 
 ## License
-{meta['license']} © [{meta['git'].get('owner', 'Author')}](LICENSE)
+{meta["license"]} © [{meta["git"].get("owner", "Author")}](LICENSE)
 """
 
 
@@ -423,7 +441,7 @@ Ensure your environment meets these runtime requirements:
 
 ```bash
 # Clone the repository containing this skill
-git clone https://github.com/{meta['git'].get('owner', 'user')}/skills.git
+git clone https://github.com/{meta["git"].get("owner", "user")}/skills.git
 cd skills/{name}
 
 # Validate skill portability and schema
@@ -489,7 +507,7 @@ Contributions are welcome! Please ensure all newly added scripts are zero-depend
 ---
 
 ## License
-{meta['license']} © [{meta['git'].get('owner', 'Author')}](LICENSE)
+{meta["license"]} © [{meta["git"].get("owner", "Author")}](LICENSE)
 """
 
 
@@ -535,7 +553,9 @@ def main() -> None:
         help="Destination path to write README.md (default: README.md in project dir).",
     )
     parser.add_argument(
-        "--dry-run", action="store_true", help="Print generated markdown to stdout without writing file."
+        "--dry-run",
+        action="store_true",
+        help="Print generated markdown to stdout without writing file.",
     )
 
     args = parser.parse_args()

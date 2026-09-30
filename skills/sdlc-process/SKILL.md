@@ -38,6 +38,7 @@ or greenfield systems:
 ```
 
 ### Phase 1: Inception & Discovery (Spec-Driven Development)
+
 1. **Clarify Intent & Problem Space**:
    - Extract the core problem, affected user personas, and business value.
    - Screen for unstated assumptions and establish strict **Non-Goals** to prevent scope creep.
@@ -51,6 +52,7 @@ or greenfield systems:
    ```
 
 ### Phase 2: Architecture & Technical Design (ADRs & Contracts)
+
 1. **Design System Boundaries (C4 Model)**:
    - Define System Context (actors and external dependencies), Container boundaries (APIs, databases, frontends), and Component contracts.
 2. **Draft Technical RFC & Architecture Decision Records (ADRs)**:
@@ -64,6 +66,7 @@ or greenfield systems:
    ```
 
 ### Phase 3: Implementation & Atomic Execution
+
 1. **Decompose into Verifiable Tasks**:
    - Break design specifications into small, sequential work packages (< 200 lines per task).
    - Maintain a dependency-ordered task graph before touching production code.
@@ -75,6 +78,7 @@ or greenfield systems:
    - Preserve existing comments and update code docstrings inline.
 
 ### Phase 4: DevSecOps & Continuous Quality Assurance
+
 1. **Execute STRIDE Threat Modeling**:
    - Assess risks across software boundaries: Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, and Elevation of Privilege.
    - See [references/devsecops-and-threat-modeling.md](references/devsecops-and-threat-modeling.md).
@@ -91,6 +95,7 @@ or greenfield systems:
    ```
 
 ### Phase 5: Release Engineering & Deployment
+
 1. **Configure Continuous Delivery (CI/CD)**:
    - Automate pipeline stages: Lint → Test → Security Scan → Build Artifact → Deploy Staging → Smoke Test → Deploy Production.
 2. **Apply Progressive Delivery & Feature Flags**:
@@ -102,6 +107,7 @@ or greenfield systems:
    - Explicit thresholds for error rates (5xx spikes > 1%), latency degradation (> 50% p99 rise), or failed health checks.
 
 ### Phase 6: Observability, Operations & Continuous Feedback
+
 1. **Instrument the Three Pillars of Observability**:
    - Structured JSON logs with trace and span IDs.
    - High-cardinality metrics (rate, errors, duration - RED method).
@@ -137,11 +143,11 @@ These non-negotiable engineering principles govern all deliverables:
 
 ## 3. Tooling & Automation Reference
 
-| Utility Script | Purpose | Example Usage |
-| :--- | :--- | :--- |
-| `scripts/scaffold_sdlc_artifact.py` | Scaffolds PRDs, RFCs, ADRs (with auto-incrementing numbers), Threat Models, Test Plans, and Post-Mortems. | `python scripts/scaffold_sdlc_artifact.py --type adr --title "Switch-To-Postgres" --out-dir docs/adr` |
-| `scripts/verify_sdlc_readiness.py` | Audits repository health, git branch hygiene, commit conventions, secret leaks, test configs, and documentation gates. | `python scripts/verify_sdlc_readiness.py --dir .` |
-| `scripts/calculate_dora_metrics.py` | Analyzes git history to compute Deployment Frequency, Lead Time, and Rework Rate. | `python scripts/calculate_dora_metrics.py --dir . --days 60` |
+| Utility Script                      | Purpose                                                                                                                | Example Usage                                                                                         |
+| :---------------------------------- | :--------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| `scripts/scaffold_sdlc_artifact.py` | Scaffolds PRDs, RFCs, ADRs (with auto-incrementing numbers), Threat Models, Test Plans, and Post-Mortems.              | `python scripts/scaffold_sdlc_artifact.py --type adr --title "Switch-To-Postgres" --out-dir docs/adr` |
+| `scripts/verify_sdlc_readiness.py`  | Audits repository health, git branch hygiene, commit conventions, secret leaks, test configs, and documentation gates. | `python scripts/verify_sdlc_readiness.py --dir .`                                                     |
+| `scripts/calculate_dora_metrics.py` | Analyzes git history to compute Deployment Frequency, Lead Time, and Rework Rate.                                      | `python scripts/calculate_dora_metrics.py --dir . --days 60`                                          |
 
 ---
 

@@ -1,6 +1,6 @@
 # Architecture Documentation & The C4 Model
 
-> *"If you can't describe your system architecture in text-based code that lives in version control alongside your source code, your architecture documentation is already obsolete."*
+> _"If you can't describe your system architecture in text-based code that lives in version control alongside your source code, your architecture documentation is already obsolete."_
 
 Software architecture documentation communicates the high-level design, boundaries, responsibilities, and structural decisions of a system to engineers, architects, and stakeholders.
 
@@ -22,9 +22,11 @@ The **C4 Model** provides a hierarchical "Google Maps" approach to zooming in on
 ```
 
 ### Level 1: System Context Diagram
+
 Shows the software system in the center, surrounded by the human users who interact with it and the external third-party software systems it integrates with.
 
 #### Mermaid Syntax Example:
+
 ```mermaid
 flowchart TD
     User["Customer (Web/Mobile)"]
@@ -46,9 +48,11 @@ flowchart TD
 ---
 
 ### Level 2: Container Diagram
+
 Zooms inside the system boundary to show the high-level deployable units (containers): web frontends, backend APIs, background workers, relational databases, cache clusters, and object stores.
 
 #### Mermaid Syntax Example:
+
 ```mermaid
 flowchart TD
     Client["Browser / Single Page App (TypeScript + Vue)"]
@@ -70,9 +74,11 @@ flowchart TD
 ---
 
 ### Level 3: Component Diagram
+
 Zooms inside a single container (such as the API Gateway) to reveal its internal modular components, service interfaces, and data repositories.
 
 #### Mermaid Syntax Example:
+
 ```mermaid
 flowchart LR
     Router["HTTP Route Handler"]
@@ -104,27 +110,33 @@ An **Architecture Decision Record (ADR)** captures a significant architectural c
 - **Consulted**: Database Administrator, Compliance Lead
 
 ## Context & Problem Statement
+
 Our financial ledger requires an immutable audit trail to comply with SOC2 and financial regulations. Traditional relational updates (`UPDATE accounts SET balance = ...`) lose historical mutation sequences and leave the system vulnerable to undetected tampering.
 
 ## Decision Drivers
+
 - Absolute non-repudiation of financial transactions.
 - Capability to reconstruct state at any historical point in time.
 - High write throughput during market open spikes.
 
 ## Considered Options
+
 1. **Event Sourcing with PostgreSQL Append-Only Log**
 2. **Traditional Relational Updates with PostgreSQL Audit Triggers**
 3. **Dedicated EventStoreDB Cluster**
 
 ## Decision Outcome
+
 Chosen option: **Option 1 (Event Sourcing with PostgreSQL Append-Only Log)**.
 
 ### Positive Consequences
+
 - Guarantees complete, tamper-evident transaction history.
 - Leverages existing PostgreSQL expertise and infrastructure without introducing another cluster technology.
 - Simplifies debugging by replaying event streams locally.
 
 ### Negative Consequences
+
 - Increased query complexity: requires projections (read models) for fast dashboard balance queries.
 - Developers must learn event-driven modeling conventions.
 ```

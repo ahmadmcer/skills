@@ -7,17 +7,19 @@ A guide to integrating GitHub-native **Mermaid diagrams**, annotated **ASCII tre
 ## 1. Why Visuals Matter
 
 Developers scan READMEs visually before committing to reading prose. A well-placed diagram answers the architectural questions:
-- *How do the components talk to each other?*
-- *Where does this service sit in the infrastructure stack?*
-- *What is the request/response lifecycle?*
+
+- _How do the components talk to each other?_
+- _Where does this service sit in the infrastructure stack?_
+- _What is the request/response lifecycle?_
 
 ---
 
 ## 2. GitHub-Native Mermaid Diagram Recipes
 
-GitHub renders Mermaid diagrams natively in markdown fences using ```` ```mermaid ```` blocks.
+GitHub renders Mermaid diagrams natively in markdown fences using ` ```mermaid ` blocks.
 
 ### 1. Fullstack Architecture Flowchart
+
 ```mermaid
 flowchart TD
     subgraph Clients["Frontend Layer"]
@@ -55,6 +57,7 @@ flowchart TD
 ```
 
 ### 2. Request & Authentication Sequence Diagram
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -75,6 +78,7 @@ sequenceDiagram
 ```
 
 ### 3. Asynchronous Data Pipeline
+
 ```mermaid
 flowchart LR
     Source[Raw Ingestion / Webhook] --> Queue[(RabbitMQ / SQS)]
@@ -102,6 +106,7 @@ When describing codebase architecture, a full directory dump overwhelms the read
 ```
 
 ### Example Annotated Tree:
+
 ```
 my-platform/
 ├── apps/
@@ -124,6 +129,7 @@ my-platform/
 ## 4. Media & Terminal Demos
 
 ### Guidelines for Screenshots & Recordings:
+
 1. **Compress Images**: Keep images under 200 KB. Use WebP or compressed PNG.
 2. **Terminal Recordings**: For CLI tools, use [VHS](https://github.com/charmbracelet/vhs) to generate crisp, deterministic terminal GIFs or SVGs.
 3. **Contrast & Theme**: Ensure text within screenshots is clearly legible in both GitHub Dark Mode and Light Mode.

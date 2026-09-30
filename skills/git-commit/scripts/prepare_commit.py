@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import subprocess
 import sys
@@ -25,7 +24,12 @@ SECRET_RULES = [
     ("Google API Key", re.compile(r"\bAIza[0-9A-Za-z\-_]{35}\b")),
     ("Slack API Token", re.compile(r"\bxox[baprs]-[0-9a-zA-Z-]{10,}\b")),
     ("Stripe Secret Key", re.compile(r"\bsk_live_[0-9a-zA-Z]{24}\b")),
-    ("Generic Auth Token Assignment", re.compile(r"(?i)(?:api_key|secret_key|auth_token|client_secret)\s*[:=]\s*['\"][A-Za-z0-9_\-\.]{20,}['\"]")),
+    (
+        "Generic Auth Token Assignment",
+        re.compile(
+            r"(?i)(?:api_key|secret_key|auth_token|client_secret)\s*[:=]\s*['\"][A-Za-z0-9_\-\.]{20,}['\"]"
+        ),
+    ),
 ]
 
 
@@ -78,7 +82,10 @@ def scan_staged_diff_for_secrets(root: Path) -> list[str]:
         if fm:
             current_file = fm.group(1)
             # Check for high-risk sensitive filenames
-            if any(current_file.endswith(sfx) for sfx in (".env", ".env.local", ".pem", ".key", "id_rsa")):
+            if any(
+                current_file.endswith(sfx)
+                for sfx in (".env", ".env.local", ".pem", ".key", "id_rsa")
+            ):
                 findings.append(f"{current_file}: Sensitive credential file name")
             continue
 
@@ -139,7 +146,10 @@ def infer_scope_and_type(staged_files: list[tuple[str, str]]) -> tuple[str, str 
 
 
 def build_commit_message(
-    commit_type: str, scope: str | None, staged_files: list[tuple[str, str]], custom_desc: str | None
+    commit_type: str,
+    scope: str | None,
+    staged_files: list[tuple[str, str]],
+    custom_desc: str | None,
 ) -> tuple[str, str]:
     scope_part = f"({scope})" if scope else ""
     if custom_desc:
@@ -170,9 +180,13 @@ def build_commit_message(
 def main() -> int:
     parser = argparse.ArgumentParser(description="Prepare, audit, and execute Conventional Commits")
     parser.add_argument("--dir", default=".", help="Root directory of the git repository")
-    parser.add_argument("--stage-all", action="store_true", help="Stage all tracked modified files before analysis")
+    parser.add_argument(
+        "--stage-all", action="store_true", help="Stage all tracked modified files before analysis"
+    )
     parser.add_argument("--message", "-m", help="Explicit commit description or subject override")
-    parser.add_argument("--dry-run", action="store_true", help="Audit and display proposed commit without executing")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Audit and display proposed commit without executing"
+    )
     parser.add_argument("--commit", action="store_true", help="Execute git commit if audit passes")
     parser.add_argument("--json", action="store_true", help="Output results in JSON format")
 
@@ -212,12 +226,18 @@ def main() -> int:
     # 5. Security audit for secret leaks
     secrets = scan_staged_diff_for_secrets(root)
     if secrets:
-        err_msg = f"SECURITY ALERT: Found {len(secrets)} potential secret(s) in staged diff:\n" + "\n".join(f"  - {s}" for s in secrets)
+        err_msg = (
+            f"SECURITY ALERT: Found {len(secrets)} potential secret(s) in staged diff:\n"
+            + "\n".join(f"  - {s}" for s in secrets)
+        )
         if args.json:
             print(json.dumps({"error": "secrets_detected", "findings": secrets}))
         else:
             print(err_msg, file=sys.stderr)
-            print("\nCommit ABORTED to prevent credential leakage. Please unstage sensitive files.", file=sys.stderr)
+            print(
+                "\nCommit ABORTED to prevent credential leakage. Please unstage sensitive files.",
+                file=sys.stderr,
+            )
         return 2
 
     # 6. Generate Conventional Commit message
@@ -241,7 +261,7 @@ def main() -> int:
             if body:
                 cmd.extend(["-m", body])
             ccode, cstdout, cstderr = run_git(cmd, root)
-            result_data["committed"] = (ccode == 0)
+            result_data["committed"] = ccode == 0
             result_data["commit_output"] = cstdout or cstderr
         print(json.dumps(result_data, indent=2))
         return 0
@@ -251,7 +271,7 @@ def main() -> int:
     print("=" * 60)
     print(f"Author:           {name} <{email}>")
     print(f"Staged Files:     {len(staged_files)}")
-    print(f"Security Audit:   CLEAN (0 secrets detected)")
+    print("Security Audit:   CLEAN (0 secrets detected)")
     print(f"Inferred Type:    {commit_type}")
     print(f"Inferred Scope:   {scope or 'none'}")
     print("-" * 60)

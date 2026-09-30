@@ -21,87 +21,94 @@ Usage:
 
 import argparse
 import json
-import os
-import re
-import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import dal
 from dal import (
-    LOG_LINES_DEFAULT, ProgressTimer, RailwayContext,
-    _init_context, progress, run_railway_command, run_ssh_query,
-    get_railway_status, get_deployment_status,
-    get_all_metrics_from_api, _analyze_window, _build_metrics_history,
+    LOG_LINES_DEFAULT,
+    RailwayContext,
+    _format_uptime,
+    _init_context,
+    _safe_float,
+    _safe_int,
+    _trend_indicator,
+    get_all_metrics_from_api,
+    get_deployment_status,
+    get_railway_status,
     get_recent_logs,
-    _safe_int, _safe_float, _format_uptime, _trend_indicator,
+    progress,
+    run_ssh_query,
 )
-
 
 # ---------------------------------------------------------------------------
 # Result container
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class MySQLAnalysisResult:
     """Container for MySQL analysis results."""
+
     service: str
     db_type: str
     timestamp: str
     deployment_status: str = "UNKNOWN"
 
     # Resource metrics from Railway API
-    disk_usage: Optional[Dict[str, Any]] = None
-    cpu_memory: Optional[Dict[str, Any]] = None
-    metrics_history: Optional[Dict[str, Any]] = None
+    disk_usage: dict[str, Any] | None = None
+    cpu_memory: dict[str, Any] | None = None
+    metrics_history: dict[str, Any] | None = None
 
     # MySQL data
-    overview: Optional[Dict[str, Any]] = None
-    query_throughput: Optional[Dict[str, Any]] = None
-    innodb_row_ops: Optional[Dict[str, Any]] = None
-    query_efficiency: Optional[Dict[str, Any]] = None
-    innodb_buffer_pool: Optional[Dict[str, Any]] = None
-    innodb_io: Optional[Dict[str, Any]] = None
-    network: Optional[Dict[str, Any]] = None
-    locks: Optional[Dict[str, Any]] = None
-    table_cache: Optional[Dict[str, Any]] = None
-    top_queries: List[Dict[str, Any]] = field(default_factory=list)
-    top_queries_status: Optional[str] = None
-    tables: List[Dict[str, Any]] = field(default_factory=list)
-    active_processes: List[Dict[str, Any]] = field(default_factory=list)
+    overview: dict[str, Any] | None = None
+    query_throughput: dict[str, Any] | None = None
+    innodb_row_ops: dict[str, Any] | None = None
+    query_efficiency: dict[str, Any] | None = None
+    innodb_buffer_pool: dict[str, Any] | None = None
+    innodb_io: dict[str, Any] | None = None
+    network: dict[str, Any] | None = None
+    locks: dict[str, Any] | None = None
+    table_cache: dict[str, Any] | None = None
+    top_queries: list[dict[str, Any]] = field(default_factory=list)
+    top_queries_status: str | None = None
+    tables: list[dict[str, Any]] = field(default_factory=list)
+    active_processes: list[dict[str, Any]] = field(default_factory=list)
 
     # Logs
-    recent_logs: List[str] = field(default_factory=list)
-    recent_errors: List[str] = field(default_factory=list)
+    recent_logs: list[str] = field(default_factory=list)
+    recent_errors: list[str] = field(default_factory=list)
 
     # Metadata
-    collection_status: Dict[str, Dict[str, Any]] = field(default_factory=dict)
-    errors: List[str] = field(default_factory=list)
-    recommendations: List[Dict[str, str]] = field(default_factory=list)
+    collection_status: dict[str, dict[str, Any]] = field(default_factory=dict)
+    errors: list[str] = field(default_factory=list)
+    recommendations: list[dict[str, str]] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
 # MySQL-specific helpers
 # ---------------------------------------------------------------------------
 
-def run_mysql_query(service: str, query: str, timeout: int = 30) -> Tuple[int, str]:
+
+def run_mysql_query(service: str, query: str, timeout: int = 30) -> tuple[int, str]:
     """Run a MySQL query via SSH and return (returncode, output).
 
     Uses -B (batch) mode which produces tab-separated output with headers.
     Filters out the mysql CLI password warning.
     """
     import base64
+
     query = " ".join(query.split())
     # Base64-encode the query to avoid all shell quoting issues
     # (single quotes in SQL IN clauses break bash -c '...' wrapping)
     encoded = base64.b64encode(query.encode()).decode()
     command = (
-        f'''bash +H -c 'echo {encoded} | base64 -d | MYSQL_PWD="$MYSQLPASSWORD" mysql -h localhost -P 3306 '''
-        f'''-u "$MYSQLUSER" -D "$MYSQLDATABASE" --default-character-set=utf8mb4 '''
-        f'''-B' '''
+        f"""bash +H -c 'echo {encoded} | base64 -d | MYSQL_PWD="$MYSQLPASSWORD" mysql -h localhost -P 3306 """
+        f"""-u "$MYSQLUSER" -D "$MYSQLDATABASE" --default-character-set=utf8mb4 """
+        f"""-B' """
     )
     code, stdout, stderr = run_ssh_query(service, command, timeout)
     # Filter out the password warning from stdout (mysql sometimes writes it there)
@@ -114,14 +121,13 @@ def run_mysql_query(service: str, query: str, timeout: int = 30) -> Tuple[int, s
     if code != 0:
         # Also filter warning from stderr
         stderr_clean = "\n".join(
-            l for l in stderr.split("\n")
-            if "Using a password on the command line" not in l
+            l for l in stderr.split("\n") if "Using a password on the command line" not in l
         )
         return code, stderr_clean or stdout
     return 0, stdout
 
 
-def parse_mysql_batch(output: str) -> List[Dict[str, str]]:
+def parse_mysql_batch(output: str) -> list[dict[str, str]]:
     """Parse MySQL -B (batch/tab-separated) output into list of dicts.
 
     First line is column headers, subsequent lines are values.
@@ -138,10 +144,10 @@ def parse_mysql_batch(output: str) -> List[Dict[str, str]]:
     return rows
 
 
-def parse_mysql_kv(output: str) -> Dict[str, str]:
+def parse_mysql_kv(output: str) -> dict[str, str]:
     """Parse MySQL SHOW output (Variable_name / Value pairs) into a dict."""
     rows = parse_mysql_batch(output)
-    result: Dict[str, str] = {}
+    result: dict[str, str] = {}
     for row in rows:
         name = row.get("Variable_name", "")
         value = row.get("Value", "")
@@ -173,7 +179,8 @@ QUERY_TOP_QUERIES = """SELECT DIGEST, LEFT(DIGEST_TEXT, 200) AS DIGEST_TEXT, COU
 # MySQL data collection
 # ---------------------------------------------------------------------------
 
-def collect_mysql_data(service: str, timeout: int = 30) -> Dict[str, Any]:
+
+def collect_mysql_data(service: str, timeout: int = 30) -> dict[str, Any]:
     """Collect all MySQL metrics via SSH.
 
     Batches queries into two SSH calls for efficiency:
@@ -182,7 +189,7 @@ def collect_mysql_data(service: str, timeout: int = 30) -> Dict[str, Any]:
 
     Returns a dict with raw parsed data keyed by section.
     """
-    data: Dict[str, Any] = {
+    data: dict[str, Any] = {
         "global_status": {},
         "variables": {},
         "tables": [],
@@ -215,20 +222,26 @@ def collect_mysql_data(service: str, timeout: int = 30) -> Dict[str, Any]:
         if code2 != 0:
             data["errors"].append(f"Batch 2 (tables/processlist) failed: {output}")
         else:
-            sections = _split_mysql_resultsets_multi(output2, [
-                "TABLE_NAME",
-                "Id",
-            ])
+            sections = _split_mysql_resultsets_multi(
+                output2,
+                [
+                    "TABLE_NAME",
+                    "Id",
+                ],
+            )
             if len(sections) >= 1:
                 data["tables"] = parse_mysql_batch(sections[0])
             if len(sections) >= 2:
                 data["processlist"] = parse_mysql_batch(sections[1])
     else:
-        sections = _split_mysql_resultsets_multi(output, [
-            "TABLE_NAME",
-            "Id",
-            "DIGEST",
-        ])
+        sections = _split_mysql_resultsets_multi(
+            output,
+            [
+                "TABLE_NAME",
+                "Id",
+                "DIGEST",
+            ],
+        )
         if len(sections) >= 1:
             data["tables"] = parse_mysql_batch(sections[0])
         if len(sections) >= 2:
@@ -239,11 +252,11 @@ def collect_mysql_data(service: str, timeout: int = 30) -> Dict[str, Any]:
     return data
 
 
-def _split_mysql_resultsets(output: str, header_key: str) -> List[str]:
+def _split_mysql_resultsets(output: str, header_key: str) -> list[str]:
     """Split concatenated MySQL batch output into sections by header line."""
     lines = output.strip().split("\n")
-    sections: List[List[str]] = []
-    current: List[str] = []
+    sections: list[list[str]] = []
+    current: list[str] = []
 
     for line in lines:
         if line.startswith(header_key + "\t") or line.strip() == header_key:
@@ -258,11 +271,11 @@ def _split_mysql_resultsets(output: str, header_key: str) -> List[str]:
     return sections
 
 
-def _split_mysql_resultsets_multi(output: str, header_keys: List[str]) -> List[str]:
+def _split_mysql_resultsets_multi(output: str, header_keys: list[str]) -> list[str]:
     """Split concatenated MySQL batch output into sections by multiple different header keys."""
     lines = output.strip().split("\n")
-    sections: List[List[str]] = []
-    current: List[str] = []
+    sections: list[list[str]] = []
+    current: list[str] = []
     expected_idx = 0
 
     for line in lines:
@@ -300,7 +313,8 @@ def _split_mysql_resultsets_multi(output: str, header_keys: List[str]) -> List[s
 # Parse collected data into result
 # ---------------------------------------------------------------------------
 
-def parse_mysql_data(data: Dict[str, Any], result: MySQLAnalysisResult) -> None:
+
+def parse_mysql_data(data: dict[str, Any], result: MySQLAnalysisResult) -> None:
     """Transform raw MySQL data into structured result sections."""
     gs = data.get("global_status", {})
     vs = data.get("variables", {})
@@ -314,7 +328,9 @@ def parse_mysql_data(data: Dict[str, Any], result: MySQLAnalysisResult) -> None:
     max_connections = _safe_int(vs.get("max_connections"), 1)
     aborted_clients = _safe_int(gs.get("Aborted_clients"))
     aborted_connects = _safe_int(gs.get("Aborted_connects"))
-    connection_usage_pct = round(max_used_connections / max_connections * 100, 1) if max_connections > 0 else 0
+    connection_usage_pct = (
+        round(max_used_connections / max_connections * 100, 1) if max_connections > 0 else 0
+    )
 
     result.overview = {
         "version": version,
@@ -364,7 +380,9 @@ def parse_mysql_data(data: Dict[str, Any], result: MySQLAnalysisResult) -> None:
     handler_first = _safe_int(gs.get("Handler_read_first"))
     handler_key = _safe_int(gs.get("Handler_read_key"))
     scan_total = handler_rnd_next + handler_first + handler_key
-    table_scan_pct = round((handler_rnd_next + handler_first) / scan_total * 100, 1) if scan_total > 0 else 0
+    table_scan_pct = (
+        round((handler_rnd_next + handler_first) / scan_total * 100, 1) if scan_total > 0 else 0
+    )
     select_full_join = _safe_int(gs.get("Select_full_join"))
     select_range = _safe_int(gs.get("Select_range"))
     sort_merge_passes = _safe_int(gs.get("Sort_merge_passes"))
@@ -439,7 +457,9 @@ def parse_mysql_data(data: Dict[str, Any], result: MySQLAnalysisResult) -> None:
     open_tables = _safe_int(gs.get("Open_tables"))
     opened_tables = _safe_int(gs.get("Opened_tables"))
     table_open_cache = _safe_int(vs.get("table_open_cache"))
-    cache_utilization_pct = round(open_tables / table_open_cache * 100, 1) if table_open_cache > 0 else 0
+    cache_utilization_pct = (
+        round(open_tables / table_open_cache * 100, 1) if table_open_cache > 0 else 0
+    )
     opens_per_sec = round(opened_tables / uptime_sec, 2) if uptime_sec > 0 else 0
 
     result.table_cache = {
@@ -452,17 +472,19 @@ def parse_mysql_data(data: Dict[str, Any], result: MySQLAnalysisResult) -> None:
 
     # --- Top Queries ---
     for row in data.get("top_queries", []):
-        result.top_queries.append({
-            "digest": row.get("DIGEST", ""),
-            "digest_text": row.get("DIGEST_TEXT", ""),
-            "count_star": _safe_int(row.get("COUNT_STAR")),
-            "total_latency_ms": _safe_float(row.get("TOTAL_LATENCY_MS")),
-            "avg_latency_ms": _safe_float(row.get("AVG_LATENCY_MS")),
-            "rows_examined": _safe_int(row.get("SUM_ROWS_EXAMINED")),
-            "rows_sent": _safe_int(row.get("SUM_ROWS_SENT")),
-            "tmp_disk_tables": _safe_int(row.get("SUM_CREATED_TMP_DISK_TABLES")),
-            "no_index_used": _safe_int(row.get("SUM_NO_INDEX_USED")),
-        })
+        result.top_queries.append(
+            {
+                "digest": row.get("DIGEST", ""),
+                "digest_text": row.get("DIGEST_TEXT", ""),
+                "count_star": _safe_int(row.get("COUNT_STAR")),
+                "total_latency_ms": _safe_float(row.get("TOTAL_LATENCY_MS")),
+                "avg_latency_ms": _safe_float(row.get("AVG_LATENCY_MS")),
+                "rows_examined": _safe_int(row.get("SUM_ROWS_EXAMINED")),
+                "rows_sent": _safe_int(row.get("SUM_ROWS_SENT")),
+                "tmp_disk_tables": _safe_int(row.get("SUM_CREATED_TMP_DISK_TABLES")),
+                "no_index_used": _safe_int(row.get("SUM_NO_INDEX_USED")),
+            }
+        )
 
     if result.top_queries:
         result.top_queries_status = "ok"
@@ -477,30 +499,35 @@ def parse_mysql_data(data: Dict[str, Any], result: MySQLAnalysisResult) -> None:
 
     # --- Tables ---
     for row in data.get("tables", []):
-        result.tables.append({
-            "name": row.get("TABLE_NAME", ""),
-            "rows": _safe_int(row.get("TABLE_ROWS")),
-            "data_length": _safe_int(row.get("DATA_LENGTH")),
-            "index_length": _safe_int(row.get("INDEX_LENGTH")),
-            "total_size": _safe_int(row.get("TOTAL_SIZE")),
-        })
+        result.tables.append(
+            {
+                "name": row.get("TABLE_NAME", ""),
+                "rows": _safe_int(row.get("TABLE_ROWS")),
+                "data_length": _safe_int(row.get("DATA_LENGTH")),
+                "index_length": _safe_int(row.get("INDEX_LENGTH")),
+                "total_size": _safe_int(row.get("TOTAL_SIZE")),
+            }
+        )
 
     # --- Active Processes ---
     for row in data.get("processlist", []):
-        result.active_processes.append({
-            "id": row.get("Id", ""),
-            "user": row.get("User", ""),
-            "db": row.get("db", ""),
-            "command": row.get("Command", ""),
-            "time": _safe_int(row.get("Time")),
-            "state": row.get("State", ""),
-            "info": row.get("Info", ""),
-        })
+        result.active_processes.append(
+            {
+                "id": row.get("Id", ""),
+                "user": row.get("User", ""),
+                "db": row.get("db", ""),
+                "command": row.get("Command", ""),
+                "time": _safe_int(row.get("Time")),
+                "state": row.get("State", ""),
+                "info": row.get("Info", ""),
+            }
+        )
 
 
 # ---------------------------------------------------------------------------
 # Formatting helpers
 # ---------------------------------------------------------------------------
+
 
 def _format_count(n: int) -> str:
     """Format large numbers with K/M/G suffix."""
@@ -536,26 +563,32 @@ def _status_ok_warn_crit(value: float, warn_threshold: float, crit_threshold: fl
 # Recommendations
 # ---------------------------------------------------------------------------
 
-def generate_recommendations(result: MySQLAnalysisResult) -> List[Dict[str, str]]:
-    recs: List[Dict[str, str]] = []
+
+def generate_recommendations(result: MySQLAnalysisResult) -> list[dict[str, str]]:
+    recs: list[dict[str, str]] = []
 
     # Collection failures — surface critical issues when SSH/introspection failed
     if result.collection_status:
-        failed = {k: v for k, v in result.collection_status.items()
-                  if v.get("status") in ("failed", "error")}
+        failed = {
+            k: v
+            for k, v in result.collection_status.items()
+            if v.get("status") in ("failed", "error")
+        }
         ssh_sources = {"mysql_query"}
         ssh_failed = {k: v for k, v in failed.items() if k in ssh_sources}
         if ssh_failed:
             sources = ", ".join(ssh_failed.keys())
             errors = "; ".join(v.get("error", "unknown") for v in ssh_failed.values())
-            recs.append({
-                "severity": "critical",
-                "category": "collection",
-                "message": f"SSH introspection failed — unable to collect {sources}. "
-                           f"Error: {errors}. "
-                           f"Analysis is incomplete: InnoDB buffer pool, query throughput, "
-                           f"locks, and tuning parameters could not be evaluated.",
-            })
+            recs.append(
+                {
+                    "severity": "critical",
+                    "category": "collection",
+                    "message": f"SSH introspection failed — unable to collect {sources}. "
+                    f"Error: {errors}. "
+                    f"Analysis is incomplete: InnoDB buffer pool, query throughput, "
+                    f"locks, and tuning parameters could not be evaluated.",
+                }
+            )
 
     def rec(severity: str, message: str):
         recs.append({"severity": severity, "message": message})
@@ -571,7 +604,10 @@ def generate_recommendations(result: MySQLAnalysisResult) -> List[Dict[str, str]
     conn_pct = ov.get("connection_usage_percent", 0)
     max_conn = ov.get("max_connections", 0)
     if conn_pct >= 90:
-        rec("critical", f"Connection usage critical at {conn_pct}%. Approaching max_connections ({max_conn}).")
+        rec(
+            "critical",
+            f"Connection usage critical at {conn_pct}%. Approaching max_connections ({max_conn}).",
+        )
     elif conn_pct >= 70:
         rec("warning", f"Connection usage at {conn_pct}%. Consider increasing max_connections.")
 
@@ -580,7 +616,10 @@ def generate_recommendations(result: MySQLAnalysisResult) -> List[Dict[str, str]
     if hit_ratio < 95:
         rec("critical", f"Buffer pool hit ratio at {hit_ratio}%. Increase innodb_buffer_pool_size.")
     elif hit_ratio < 99:
-        rec("warning", f"Buffer pool hit ratio at {hit_ratio}% -- room for improvement with more RAM.")
+        rec(
+            "warning",
+            f"Buffer pool hit ratio at {hit_ratio}% -- room for improvement with more RAM.",
+        )
 
     # Buffer pool usage
     bp_usage = bp.get("usage_percent", 0)
@@ -592,76 +631,124 @@ def generate_recommendations(result: MySQLAnalysisResult) -> List[Dict[str, str]
     created_disk = qe.get("created_tmp_disk_tables", 0)
     created_total = qe.get("created_tmp_tables", 0)
     if tmp_pct > 25:
-        rec("warning", f"{tmp_pct}% of temp tables going to disk. Increase tmp_table_size/max_heap_table_size or optimize queries.")
+        rec(
+            "warning",
+            f"{tmp_pct}% of temp tables going to disk. Increase tmp_table_size/max_heap_table_size or optimize queries.",
+        )
     elif tmp_pct > 10:
-        rec("info", f"Temp tables to disk at {tmp_pct}%. Watch for queries creating large temporary results.")
+        rec(
+            "info",
+            f"Temp tables to disk at {tmp_pct}%. Watch for queries creating large temporary results.",
+        )
 
     # Table scan ratio
     scan_pct = qe.get("table_scan_percent", 0)
     if scan_pct > 75:
-        rec("critical", f"Table scan ratio at {scan_pct}%. Most reads are full scans -- add indexes.")
+        rec(
+            "critical",
+            f"Table scan ratio at {scan_pct}%. Most reads are full scans -- add indexes.",
+        )
     elif scan_pct > 50:
-        rec("warning", f"Table scan ratio at {scan_pct}%. Consider indexing frequently queried columns.")
+        rec(
+            "warning",
+            f"Table scan ratio at {scan_pct}%. Consider indexing frequently queried columns.",
+        )
 
     # Full joins
     full_joins = qe.get("select_full_join", 0)
     if full_joins > 100:
-        rec("warning", f"{_format_count(full_joins)} full joins detected. These scan entire tables -- add indexes to join columns.")
+        rec(
+            "warning",
+            f"{_format_count(full_joins)} full joins detected. These scan entire tables -- add indexes to join columns.",
+        )
 
     # Sort merge passes
     sort_passes = qe.get("sort_merge_passes", 0)
     if sort_passes > 0:
-        rec("info", f"Sort merge passes ({_format_count(sort_passes)}). Increase sort_buffer_size or optimize queries.")
+        rec(
+            "info",
+            f"Sort merge passes ({_format_count(sort_passes)}). Increase sort_buffer_size or optimize queries.",
+        )
 
     # Row lock waits
     row_lock_waits = lk.get("row_lock_waits", 0)
     if row_lock_waits > 1000:
-        rec("warning", f"InnoDB row lock waits ({_format_count(row_lock_waits)}). Check for lock contention in concurrent writes.")
+        rec(
+            "warning",
+            f"InnoDB row lock waits ({_format_count(row_lock_waits)}). Check for lock contention in concurrent writes.",
+        )
     elif row_lock_waits > 0:
-        rec("info", f"InnoDB row lock waits ({_format_count(row_lock_waits)}). Check for lock contention in concurrent writes.")
+        rec(
+            "info",
+            f"InnoDB row lock waits ({_format_count(row_lock_waits)}). Check for lock contention in concurrent writes.",
+        )
 
     # Table lock contention
     tl_contention = lk.get("table_lock_contention", 0)
     if tl_contention > 5:
-        rec("warning", f"Table lock contention at {tl_contention}%. May indicate MyISAM tables -- convert to InnoDB.")
+        rec(
+            "warning",
+            f"Table lock contention at {tl_contention}%. May indicate MyISAM tables -- convert to InnoDB.",
+        )
 
     # Slow queries
     slow = qt.get("slow_queries", 0)
     threshold = qt.get("long_query_time", "10")
     if slow > 0:
-        rec("info", f"{_format_count(slow)} slow queries (threshold: {threshold}s). Review with performance_schema or slow query log.")
+        rec(
+            "info",
+            f"{_format_count(slow)} slow queries (threshold: {threshold}s). Review with performance_schema or slow query log.",
+        )
 
     # Aborted clients
     aborted_clients = ov.get("aborted_clients", 0)
     if aborted_clients > 0:
-        rec("info", f"{_format_count(aborted_clients)} aborted clients. Applications may not be closing connections properly.")
+        rec(
+            "info",
+            f"{_format_count(aborted_clients)} aborted clients. Applications may not be closing connections properly.",
+        )
 
     # Aborted connects
     aborted_connects = ov.get("aborted_connects", 0)
     if aborted_connects > 0:
-        rec("info", f"{_format_count(aborted_connects)} aborted connection attempts. Check authentication issues or connection limits.")
+        rec(
+            "info",
+            f"{_format_count(aborted_connects)} aborted connection attempts. Check authentication issues or connection limits.",
+        )
 
     # No index used in top queries
     if result.top_queries:
         no_index_count = sum(1 for q in result.top_queries if q.get("no_index_used", 0) > 0)
         if no_index_count > 0:
-            rec("warning", f"Top queries using no index ({no_index_count} of {len(result.top_queries)}). Missing indexes are likely impacting performance.")
+            rec(
+                "warning",
+                f"Top queries using no index ({no_index_count} of {len(result.top_queries)}). Missing indexes are likely impacting performance.",
+            )
 
     # Table cache
     tc = result.table_cache or {}
     opens_per_sec = tc.get("opens_per_second", 0)
     cache_util = tc.get("cache_utilization_percent", 0)
     if cache_util >= 95:
-        rec("warning", f"Table cache {cache_util}% full ({tc.get('open_tables')}/{tc.get('table_open_cache')}). Increase table_open_cache.")
+        rec(
+            "warning",
+            f"Table cache {cache_util}% full ({tc.get('open_tables')}/{tc.get('table_open_cache')}). Increase table_open_cache.",
+        )
     if opens_per_sec > 5:
-        rec("warning", f"Table opens at {opens_per_sec}/sec — cache may be undersized. Increase table_open_cache.")
+        rec(
+            "warning",
+            f"Table opens at {opens_per_sec}/sec — cache may be undersized. Increase table_open_cache.",
+        )
 
     # Top queries diagnostic
     if not result.top_queries:
         if result.top_queries_status == "performance_schema_disabled":
             pass  # Off by default on Railway; overhead (~400MB+) is too high to recommend casually
         elif result.top_queries_status == "no_queries_recorded":
-            rec("info", "performance_schema is ON but no queries recorded. Database may be idle or recently restarted.")
+            rec(
+                "info",
+                "performance_schema is ON but no queries recorded. Database may be idle or recently restarted.",
+            )
 
     return recs
 
@@ -670,8 +757,9 @@ def generate_recommendations(result: MySQLAnalysisResult) -> List[Dict[str, str]
 # Report formatter
 # ---------------------------------------------------------------------------
 
+
 def format_report(result: MySQLAnalysisResult) -> str:
-    lines: List[str] = []
+    lines: list[str] = []
 
     def heading(title: str, level: int = 2):
         prefix = "#" * level
@@ -737,7 +825,11 @@ def format_report(result: MySQLAnalysisResult) -> str:
         table_sep(3)
         table_row("Total Queries", _format_count(qt["questions"]), "")
         slow_status = "WARN" if qt["slow_queries"] > 0 else "OK"
-        table_row("Slow Queries", f"{_format_count(qt['slow_queries'])} (> {qt['long_query_time']}s threshold)", slow_status)
+        table_row(
+            "Slow Queries",
+            f"{_format_count(qt['slow_queries'])} (> {qt['long_query_time']}s threshold)",
+            slow_status,
+        )
         table_row("SELECT", _format_count(qt["com_select"]), "")
         table_row("INSERT", _format_count(qt["com_insert"]), "")
         table_row("UPDATE", _format_count(qt["com_update"]), "")
@@ -815,7 +907,10 @@ def format_report(result: MySQLAnalysisResult) -> str:
         heading("Table Cache")
         table_row("Metric", "Value")
         table_sep(2)
-        table_row("Open Tables", f"{_format_count(tc['open_tables'])} / {_format_count(tc.get('table_open_cache', 0))}")
+        table_row(
+            "Open Tables",
+            f"{_format_count(tc['open_tables'])} / {_format_count(tc.get('table_open_cache', 0))}",
+        )
         table_row("Cache Utilization", f"{tc.get('cache_utilization_percent', 0)}%")
         table_row("Table Opens/sec", f"{tc.get('opens_per_second', 0)}")
 
@@ -825,7 +920,9 @@ def format_report(result: MySQLAnalysisResult) -> str:
         table_row("Query", "Calls", "Avg Latency", "Total Latency", "Rows Examined", "Rows Sent")
         table_sep(6)
         for q in result.top_queries[:15]:
-            digest = q["digest_text"][:60] + "..." if len(q["digest_text"]) > 60 else q["digest_text"]
+            digest = (
+                q["digest_text"][:60] + "..." if len(q["digest_text"]) > 60 else q["digest_text"]
+            )
             # Escape pipe chars in query text
             digest = digest.replace("|", "\\|")
             table_row(
@@ -840,7 +937,9 @@ def format_report(result: MySQLAnalysisResult) -> str:
         heading("Top Queries (by total latency)")
         if result.top_queries_status == "performance_schema_disabled":
             lines.append("performance_schema is disabled — no query-level data available.")
-            lines.append("Note: enabling it requires ~400MB+ additional memory; only advisable on larger instances.")
+            lines.append(
+                "Note: enabling it requires ~400MB+ additional memory; only advisable on larger instances."
+            )
         elif result.top_queries_status == "no_queries_recorded":
             lines.append("No queries recorded. Database may be idle or recently restarted.")
         else:
@@ -932,11 +1031,17 @@ def format_report(result: MySQLAnalysisResult) -> str:
 # Main analysis function
 # ---------------------------------------------------------------------------
 
-def analyze_mysql(service: str, timeout: int = 60, quiet: bool = False,
-                  skip_logs: bool = False, metrics_hours: int = 168,
-                  project_id: Optional[str] = None,
-                  environment_id: Optional[str] = None,
-                  service_id: Optional[str] = None) -> MySQLAnalysisResult:
+
+def analyze_mysql(
+    service: str,
+    timeout: int = 60,
+    quiet: bool = False,
+    skip_logs: bool = False,
+    metrics_hours: int = 168,
+    project_id: str | None = None,
+    environment_id: str | None = None,
+    service_id: str | None = None,
+) -> MySQLAnalysisResult:
     """Run complete MySQL analysis."""
     if not quiet:
         print(f"Analyzing mysql database: {service}", file=sys.stderr)
@@ -953,9 +1058,15 @@ def analyze_mysql(service: str, timeout: int = 60, quiet: bool = False,
     dal._progress_timer.start()
 
     if environment_id and service_id:
-        dal._ctx = RailwayContext(project_id=project_id, environment_id=environment_id, service_id=service_id)
+        dal._ctx = RailwayContext(
+            project_id=project_id, environment_id=environment_id, service_id=service_id
+        )
         if not quiet:
-            print(f"        using explicit IDs (env={environment_id[:8]}..., svc={service_id[:8]}...)", file=sys.stderr, flush=True)
+            print(
+                f"        using explicit IDs (env={environment_id[:8]}..., svc={service_id[:8]}...)",
+                file=sys.stderr,
+                flush=True,
+            )
     else:
         railway_status = get_railway_status()
         if railway_status:
@@ -977,7 +1088,9 @@ def analyze_mysql(service: str, timeout: int = 60, quiet: bool = False,
     ssh_stderr = ""
     ssh_attempts = [30, 60, 90]
     for attempt, attempt_timeout in enumerate(ssh_attempts, 1):
-        ssh_code, ssh_stdout, ssh_stderr = run_ssh_query(service, "echo ok", timeout=attempt_timeout)
+        ssh_code, ssh_stdout, ssh_stderr = run_ssh_query(
+            service, "echo ok", timeout=attempt_timeout
+        )
         if ssh_code == 0 and "ok" in ssh_stdout:
             ssh_available = True
             if not quiet:
@@ -989,9 +1102,17 @@ def analyze_mysql(service: str, timeout: int = 60, quiet: bool = False,
         if not quiet:
             remaining = len(ssh_attempts) - attempt
             if remaining > 0:
-                print(f"        SSH attempt {attempt}/{len(ssh_attempts)} failed ({ssh_stderr or 'no response'}), retrying with {ssh_attempts[attempt]}s timeout...", file=sys.stderr, flush=True)
+                print(
+                    f"        SSH attempt {attempt}/{len(ssh_attempts)} failed ({ssh_stderr or 'no response'}), retrying with {ssh_attempts[attempt]}s timeout...",
+                    file=sys.stderr,
+                    flush=True,
+                )
             else:
-                print(f"        SSH attempt {attempt}/{len(ssh_attempts)} failed ({ssh_stderr or 'no response'}), giving up", file=sys.stderr, flush=True)
+                print(
+                    f"        SSH attempt {attempt}/{len(ssh_attempts)} failed ({ssh_stderr or 'no response'}), giving up",
+                    file=sys.stderr,
+                    flush=True,
+                )
 
     # === PARALLEL EXECUTION ===
     progress(3, 5, "Running analysis (metrics, queries, logs in parallel)...", quiet)
@@ -1013,9 +1134,9 @@ def analyze_mysql(service: str, timeout: int = 60, quiet: bool = False,
     def task_logs():
         if skip_logs:
             return []
-        return get_recent_logs(service, lines=LOG_LINES_DEFAULT,
-                               environment_id=environment_id,
-                               service_id=service_id)
+        return get_recent_logs(
+            service, lines=LOG_LINES_DEFAULT, environment_id=environment_id, service_id=service_id
+        )
 
     with ThreadPoolExecutor(max_workers=3) as executor:
         future_metrics = executor.submit(task_metrics)
@@ -1063,7 +1184,8 @@ def analyze_mysql(service: str, timeout: int = 60, quiet: bool = False,
         result.recent_logs = logs_result
         result.collection_status["logs_api"] = {"status": "success", "lines": len(logs_result)}
         result.recent_errors = [
-            line for line in result.recent_logs
+            line
+            for line in result.recent_logs
             if "ERROR" in line.upper() or "FATAL" in line.upper()
         ][:100]
     else:
@@ -1087,6 +1209,7 @@ def analyze_mysql(service: str, timeout: int = 60, quiet: bool = False,
 # ---------------------------------------------------------------------------
 # Single-step debugging
 # ---------------------------------------------------------------------------
+
 
 def run_single_step(args) -> int:
     """Run a single collection step for debugging."""
@@ -1112,9 +1235,9 @@ def run_single_step(args) -> int:
 
     elif args.step == "logs":
         print(f"Fetching logs for: {service}", file=sys.stderr)
-        logs = get_recent_logs(service, lines=LOG_LINES_DEFAULT,
-                               environment_id=environment_id,
-                               service_id=service_id)
+        logs = get_recent_logs(
+            service, lines=LOG_LINES_DEFAULT, environment_id=environment_id, service_id=service_id
+        )
         print(f"Lines fetched: {len(logs)}")
         for line in logs:
             print(line)
@@ -1141,6 +1264,7 @@ def run_single_step(args) -> int:
 # Main entry point
 # ---------------------------------------------------------------------------
 
+
 def main():
     parser = argparse.ArgumentParser(
         description="MySQL analysis for Railway services.",
@@ -1148,18 +1272,25 @@ def main():
     )
 
     parser.add_argument("--service", required=True, help="Service name")
-    parser.add_argument("--json", action="store_true",
-                        help="Output as JSON")
-    parser.add_argument("--timeout", type=int, default=60,
-                        help="Timeout in seconds for SSH queries (default: 60)")
-    parser.add_argument("--quiet", "-q", action="store_true",
-                        help="Suppress progress messages")
-    parser.add_argument("--skip-logs", action="store_true",
-                        help="Skip log fetching for faster analysis")
-    parser.add_argument("--metrics-hours", type=int, default=168,
-                        help="Hours of metrics history to fetch (default: 168, max: 168)")
-    parser.add_argument("--step", choices=["ssh-test", "query", "logs", "metrics"],
-                        help="Run a single collection step for debugging")
+    parser.add_argument("--json", action="store_true", help="Output as JSON")
+    parser.add_argument(
+        "--timeout", type=int, default=60, help="Timeout in seconds for SSH queries (default: 60)"
+    )
+    parser.add_argument("--quiet", "-q", action="store_true", help="Suppress progress messages")
+    parser.add_argument(
+        "--skip-logs", action="store_true", help="Skip log fetching for faster analysis"
+    )
+    parser.add_argument(
+        "--metrics-hours",
+        type=int,
+        default=168,
+        help="Hours of metrics history to fetch (default: 168, max: 168)",
+    )
+    parser.add_argument(
+        "--step",
+        choices=["ssh-test", "query", "logs", "metrics"],
+        help="Run a single collection step for debugging",
+    )
     parser.add_argument("--project-id", help="Project ID (bypasses railway link)")
     parser.add_argument("--environment-id", help="Environment ID (bypasses railway link)")
     parser.add_argument("--service-id", help="Service ID (bypasses railway link)")

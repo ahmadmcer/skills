@@ -206,18 +206,10 @@ def main() -> None:
         "reference",
         help="Reference string (e.g. 'Genesis 1:1', 'Pirkei Avot 1:1', 'Shabbat 31a').",
     )
-    parser.add_argument(
-        "--offline", action="store_true", help="Force offline cache lookup only."
-    )
-    parser.add_argument(
-        "--hebrew-only", action="store_true", help="Print only Hebrew text."
-    )
-    parser.add_argument(
-        "--english-only", action="store_true", help="Print only English text."
-    )
-    parser.add_argument(
-        "--json", action="store_true", help="Output result as JSON."
-    )
+    parser.add_argument("--offline", action="store_true", help="Force offline cache lookup only.")
+    parser.add_argument("--hebrew-only", action="store_true", help="Print only Hebrew text.")
+    parser.add_argument("--english-only", action="store_true", help="Print only English text.")
+    parser.add_argument("--json", action="store_true", help="Output result as JSON.")
 
     args = parser.parse_args()
 

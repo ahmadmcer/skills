@@ -19,10 +19,10 @@ Tracing is two switches on each service instance, so they are set per service an
 
 **Agent path:** two MCP tools read and change these settings, and `railway trace` does the same from the CLI. Resolve IDs from the URL or `railway status --json` first, and read before writing. Both tools use the `production` environment when `environmentId` is omitted, so pass it whenever the user is looking at another environment. On a Railway cloud agent in a dashboard chat session the `railway` CLI is unauthenticated, so resolve IDs with `list-services` and stay on the MCP tools throughout.
 
-| Tool | Access | Purpose |
-|---|---|---|
-| `get-tracing` | viewer | The `environment` and, per service in it, `tracingEnabled`, `autoInstrumentationEnabled` and whether it is `autoInstrumentationActive` (both on). Pass `serviceId` for one service, omit it for every service in the environment |
-| `set-service-tracing` | member | `tracingEnabled` and `autoInstrumentationEnabled` for one service in one environment. Each is optional and independent; omit what should stay as it is. Returns the service's state in that environment |
+| Tool                  | Access | Purpose                                                                                                                                                                                                                          |
+| --------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `get-tracing`         | viewer | The `environment` and, per service in it, `tracingEnabled`, `autoInstrumentationEnabled` and whether it is `autoInstrumentationActive` (both on). Pass `serviceId` for one service, omit it for every service in the environment |
+| `set-service-tracing` | member | `tracingEnabled` and `autoInstrumentationEnabled` for one service in one environment. Each is optional and independent; omit what should stay as it is. Returns the service's state in that environment                          |
 
 Both take `projectId` and an optional `environmentId`. `describe-service` reports the same tracing state for one service in the environment it was asked about.
 
@@ -101,13 +101,13 @@ A plan shows a tracing change as a `resource.update` with `field: "tracing"`. Tu
 
 **Recommend the OpenTelemetry SDK.** Spans the service exports itself are much higher quality than what automatic instrumentation can recover from outside the process: they carry the route, the query, the business identifiers and the errors the code knows about; they nest under handler-level spans, so the trace shows which step of a request took the time instead of a flat list of calls; they continue the trace through queue consumers, cron work and TLS callees; and they work in any language. Automatic instrumentation is the fallback for a service whose code can't be changed right now, or a first look while the SDK is being added. Present it as a stopgap, not the destination. When a user asks to "instrument my app", default to the SDK unless they ask for the no-code path.
 
-| | Automatic instrumentation (OBI) | OpenTelemetry SDK |
-|---|---|---|
-| Code changes | None | Install the SDK, load it before the app serves requests |
-| Takes effect | About a minute after enabling, no redeploy | Next deploy |
-| Runtimes | Node.js, Go, Python, Ruby, Java. Not Bun, so not [Functions](#instrument-a-function-bun) | Any language with an OTel SDK |
-| Captures | Incoming HTTP/gRPC, plaintext outgoing HTTP/gRPC, decoded DB and cache protocols | Whatever the SDK's instrumentations cover, plus custom spans and attributes |
-| Misses | Outbound TLS callees don't join the trace; queue consumers, cron work and background jobs start new traces; Node.js and Python context propagation is best effort | Nothing structural; depends on the instrumentations you enable |
+|              | Automatic instrumentation (OBI)                                                                                                                                   | OpenTelemetry SDK                                                           |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Code changes | None                                                                                                                                                              | Install the SDK, load it before the app serves requests                     |
+| Takes effect | About a minute after enabling, no redeploy                                                                                                                        | Next deploy                                                                 |
+| Runtimes     | Node.js, Go, Python, Ruby, Java. Not Bun, so not [Functions](#instrument-a-function-bun)                                                                          | Any language with an OTel SDK                                               |
+| Captures     | Incoming HTTP/gRPC, plaintext outgoing HTTP/gRPC, decoded DB and cache protocols                                                                                  | Whatever the SDK's instrumentations cover, plus custom spans and attributes |
+| Misses       | Outbound TLS callees don't join the trace; queue consumers, cron work and background jobs start new traces; Node.js and Python context propagation is best effort | Nothing structural; depends on the instrumentations you enable              |
 
 Pick one per service. Running an SDK in a service that also has automatic instrumentation produces duplicate spans for every request. When moving from OBI to an SDK, deploy the SDK first, confirm its spans arrive, then switch the service to manual instrumentation.
 
@@ -115,13 +115,13 @@ Pick one per service. Running an SDK in a service that also has automatic instru
 
 When tracing is on for a service in an environment, its next deploy there gets these variables. They show up in the service's **Variables** tab alongside the other Railway-provided variables and every OpenTelemetry SDK reads them, so an SDK configured without an explicit endpoint exports to Railway:
 
-| Variable | Value |
-|---|---|
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | Railway's OTLP receiver on the host running the service |
-| `OTEL_EXPORTER_OTLP_PROTOCOL` | `http/protobuf` |
-| `OTEL_EXPORTER_OTLP_HEADERS` | A header the receiver requires on every export |
-| `OTEL_SERVICE_NAME` | The Railway service name |
-| `OTEL_SERVICE_VERSION` | The commit SHA, or the deployment ID for image and CLI deploys |
+| Variable                      | Value                                                          |
+| ----------------------------- | -------------------------------------------------------------- |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Railway's OTLP receiver on the host running the service        |
+| `OTEL_EXPORTER_OTLP_PROTOCOL` | `http/protobuf`                                                |
+| `OTEL_EXPORTER_OTLP_HEADERS`  | A header the receiver requires on every export                 |
+| `OTEL_SERVICE_NAME`           | The Railway service name                                       |
+| `OTEL_SERVICE_VERSION`        | The commit SHA, or the deployment ID for image and CLI deploys |
 
 Rules the agent must apply:
 
@@ -151,7 +151,7 @@ Instrumentation libraries give a trace its skeleton: a server span per request a
    - **Rust**: `sqlx` emits tracing events, not spans; wrap queries in a span. `reqwest` needs `reqwest-tracing`.
    - **Deno**: `OTEL_DENO=true` covers `fetch`, `Deno.serve` and `node:http`; npm database drivers need their own instrumentation or a hand-written span.
    - **Java, Ruby, .NET, PHP**: the agent, `opentelemetry-instrumentation-all`, the per-library packages (`Npgsql.OpenTelemetry`, `OpenTelemetry.Instrumentation.SqlClient`, ...) and `opentelemetry-auto-pdo` cover JDBC, ActiveRecord, ADO.NET and PDO; confirm the package for the driver in use is present.
-   A server span with no client spans under it means this layer was skipped. Before opening the PR, run the app once with the console exporter (`OTEL_TRACES_EXPORTER=console` or the runtime's equivalent) and hit a route that queries the database: a `CLIENT` span carrying `db.system`, even a failed one, proves the driver is patched. List each client and the instrumentation that covers it, or why it is not covered, in the PR description.
+     A server span with no client spans under it means this layer was skipped. Before opening the PR, run the app once with the console exporter (`OTEL_TRACES_EXPORTER=console` or the runtime's equivalent) and hit a route that queries the database: a `CLIENT` span carrying `db.system`, even a failed one, proves the driver is patched. List each client and the instrumentation that covers it, or why it is not covered, in the PR description.
 
 3. **Logical units of work.** A function that groups several I/O calls into one meaningful step (`checkout`, `syncUser`, `renderInvoice`), or one that is CPU-heavy on its own (parsing a large payload, image resizing, template rendering, serialising a big response). Give each an `INTERNAL` span carrying the identifiers a person debugging it would want (`order.id`, `tenant`, item counts). This turns twelve sibling `SELECT` spans under a handler into a tree that reads like the code and says which step took the time. Rule of thumb: if you would want log lines saying "starting X" and "finished X in N ms", X is a span.
 
@@ -238,10 +238,10 @@ Docs: [Functions](https://docs.railway.com/observability/tracing/functions).
 
 Traces are read through **Remote MCP** (the default agent path), `railway trace list` and `railway trace get` on the CLI, or the dashboard. The `traces`, `trace` and `tracingStatus` queries are on the public GraphQL API as well, so `railway api` can fetch them where neither fits.
 
-| Tool | Access | Purpose |
-|---|---|---|
-| `list-traces` | viewer | Traces of an environment, newest first, one row per request with at least one span matching `filter`. Optional `serviceId`, `startDate`/`endDate` (ISO 8601 with timezone; defaults to the last hour), `limit` (default 100, max 500) |
-| `get-trace` | viewer | One trace as an indented span tree (each line shows the span kind and the attribute that says what it talked to: `db.system`, `http.route`, `url.full` or `server.address`), with every span's attributes, events and links in the structured result. Takes `traceId` (32 hex characters); `maxSpans` caps the result and the output says when it was hit |
+| Tool                   | Access | Purpose                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ---------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `list-traces`          | viewer | Traces of an environment, newest first, one row per request with at least one span matching `filter`. Optional `serviceId`, `startDate`/`endDate` (ISO 8601 with timezone; defaults to the last hour), `limit` (default 100, max 500)                                                                                                                                                                                                                                                |
+| `get-trace`            | viewer | One trace as an indented span tree (each line shows the span kind and the attribute that says what it talked to: `db.system`, `http.route`, `url.full` or `server.address`), with every span's attributes, events and links in the structured result. Takes `traceId` (32 hex characters); `maxSpans` caps the result and the output says when it was hit                                                                                                                            |
 | `get-tracing-coverage` | viewer | What one service's own instrumentation covers: its spans in the window (default the last hour) by span kind, by the remote system they name (`db.system`, `messaging.system`, `rpc.system`, or `http` for HTTP client spans) and by the instrumentation scope that emitted them (`@opentelemetry/instrumentation-pg`, ...). Takes `serviceId`; optional `startDate`/`endDate`. Edge and proxy spans are left out. The one call that answers "are the database queries instrumented?" |
 
 Both take `projectId` and an optional `environmentId`; omit it and the `production` environment is used, so pass the ID explicitly when the user is looking at another environment. Traces belong to the environment they were exported from.

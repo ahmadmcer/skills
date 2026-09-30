@@ -12,8 +12,6 @@ Generates spec-compliant, accessible SVG templates:
 
 import argparse
 import os
-import sys
-from typing import Dict, Any
 
 
 def generate_primary_logo_svg(name: str, primary_color: str, neutral_color: str) -> str:
@@ -97,9 +95,7 @@ def generate_app_icon_svg(name: str, primary_color: str) -> str:
 """
 
 
-def generate_og_card_svg(
-    name: str, tagline: str, primary_color: str, neutral_color: str
-) -> str:
+def generate_og_card_svg(name: str, tagline: str, primary_color: str, neutral_color: str) -> str:
     """Generate 1200x630 OpenGraph social share card SVG."""
     return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" fill="none" role="img" aria-label="{name} OpenGraph Card">
   <defs>
@@ -155,24 +151,18 @@ def generate_og_card_svg(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Scaffold responsive SVG brand templates."
-    )
+    parser = argparse.ArgumentParser(description="Scaffold responsive SVG brand templates.")
     parser.add_argument("--name", default="Acme", help="Brand name")
     parser.add_argument(
         "--tagline",
         default="The developer platform for high-velocity teams",
         help="Brand tagline",
     )
-    parser.add_argument(
-        "--primary", default="#2563eb", help="Primary brand color (hex)"
-    )
+    parser.add_argument("--primary", default="#2563eb", help="Primary brand color (hex)")
     parser.add_argument(
         "--neutral", default="#0f172a", help="Neutral dark color for wordmark (hex)"
     )
-    parser.add_argument(
-        "--out-dir", default="./brand-assets/svg", help="Output directory"
-    )
+    parser.add_argument("--out-dir", default="./brand-assets/svg", help="Output directory")
 
     args = parser.parse_args()
     os.makedirs(args.out_dir, exist_ok=True)
@@ -199,9 +189,7 @@ def main():
         with open(fpath, "w", encoding="utf-8") as f:
             f.write(content)
 
-    print(
-        f"Successfully generated {len(files_generated)} SVG assets in '{args.out_dir}':"
-    )
+    print(f"Successfully generated {len(files_generated)} SVG assets in '{args.out_dir}':")
     for fname, _ in files_generated:
         print(f"  - {fname}")
 

@@ -20,27 +20,29 @@ They cannot be run with piped input - the user must confirm directly.
 """
 
 import argparse
-import sys
 import json
-from typing import Tuple, List, Optional, Dict, Any
+import sys
 from dataclasses import dataclass
 
-from dal import run_psql_query, info, error, confirm_with_user
+from dal import confirm_with_user, error, info, run_psql_query
 
 
 @dataclass
 class Extension:
     """PostgreSQL extension info."""
+
     name: str
     default_version: str
-    installed_version: Optional[str]
+    installed_version: str | None
     comment: str
 
 
-def list_extensions(service: str, json_output: bool = False) -> List[Extension]:
+def list_extensions(service: str, json_output: bool = False) -> list[Extension]:
     """List all available and installed extensions."""
     # Query available extensions
-    available_query = "SELECT name, default_version, comment FROM pg_available_extensions ORDER BY name"
+    available_query = (
+        "SELECT name, default_version, comment FROM pg_available_extensions ORDER BY name"
+    )
     code, output = run_psql_query(service, available_query)
     if code != 0:
         error(f"Failed to query available extensions: {output}")
@@ -81,17 +83,25 @@ def list_extensions(service: str, json_output: bool = False) -> List[Extension]:
             name=name,
             default_version=info["version"],
             installed_version=installed.get(name),
-            comment=info["comment"]
+            comment=info["comment"],
         )
         extensions.append(ext)
 
     if json_output:
-        print(json.dumps([{
-            "name": e.name,
-            "defaultVersion": e.default_version,
-            "installedVersion": e.installed_version,
-            "comment": e.comment
-        } for e in extensions], indent=2))
+        print(
+            json.dumps(
+                [
+                    {
+                        "name": e.name,
+                        "defaultVersion": e.default_version,
+                        "installedVersion": e.installed_version,
+                        "comment": e.comment,
+                    }
+                    for e in extensions
+                ],
+                indent=2,
+            )
+        )
     else:
         # Print formatted output
         installed_exts = [e for e in extensions if e.installed_version]
@@ -108,7 +118,13 @@ def list_extensions(service: str, json_output: bool = False) -> List[Extension]:
         print(f"\n{len(available_exts)} Extension(s) available:")
         print("-" * 60)
         for e in sorted(available_exts, key=lambda x: x.name)[:30]:
-            desc = f" - {e.comment[:50]}..." if e.comment and len(e.comment) > 50 else f" - {e.comment}" if e.comment else ""
+            desc = (
+                f" - {e.comment[:50]}..."
+                if e.comment and len(e.comment) > 50
+                else f" - {e.comment}"
+                if e.comment
+                else ""
+            )
             print(f"  {e.name} (v{e.default_version}){desc}")
         if len(available_exts) > 30:
             print(f"  ... and {len(available_exts) - 30} more")
@@ -116,7 +132,7 @@ def list_extensions(service: str, json_output: bool = False) -> List[Extension]:
     return extensions
 
 
-def get_extension_dependencies(service: str, extension: str) -> List[str]:
+def get_extension_dependencies(service: str, extension: str) -> list[str]:
     """Get dependencies for an extension."""
     query = f"""
         SELECT DISTINCT unnest(pev.requires) as dependency
@@ -135,7 +151,7 @@ def get_extension_dependencies(service: str, extension: str) -> List[str]:
     return deps
 
 
-def get_extension_dependents(service: str, extension: str) -> List[str]:
+def get_extension_dependents(service: str, extension: str) -> list[str]:
     """Get extensions that depend on this extension."""
     query = f"""
         SELECT e.extname AS dependent_extension
@@ -158,7 +174,7 @@ def get_extension_dependents(service: str, extension: str) -> List[str]:
     return dependents
 
 
-def is_extension_installed(service: str, extension: str) -> Tuple[bool, Optional[str]]:
+def is_extension_installed(service: str, extension: str) -> tuple[bool, str | None]:
     """Check if extension is installed, return (installed, version)."""
     query = f"SELECT extversion FROM pg_extension WHERE extname = '{extension}'"
     code, output = run_psql_query(service, query)
@@ -174,7 +190,7 @@ def is_extension_available(service: str, extension: str) -> bool:
     return code == 0 and output.strip() == "1"
 
 
-def install_extension(service: str, extension: str, version: Optional[str] = None) -> bool:
+def install_extension(service: str, extension: str, version: str | None = None) -> bool:
     """Install an extension with CASCADE (auto-install dependencies)."""
     # Check if available
     if not is_extension_available(service, extension):
@@ -231,7 +247,9 @@ def uninstall_extension(service: str, extension: str) -> bool:
     # Check for dependents
     dependents = get_extension_dependents(service, extension)
     if dependents:
-        error(f"Cannot uninstall '{extension}' - these extensions depend on it: {', '.join(dependents)}")
+        error(
+            f"Cannot uninstall '{extension}' - these extensions depend on it: {', '.join(dependents)}"
+        )
 
     # Confirm - REQUIRES interactive terminal
     print(f"\nAbout to uninstall '{extension}' (v{ver})")
@@ -279,14 +297,19 @@ def extension_info(service: str, extension: str, json_output: bool = False):
     dependents = get_extension_dependents(service, extension) if installed else []
 
     if json_output:
-        print(json.dumps({
-            "name": name,
-            "defaultVersion": default_version,
-            "installedVersion": installed_version,
-            "comment": comment,
-            "dependencies": deps,
-            "dependents": dependents
-        }, indent=2))
+        print(
+            json.dumps(
+                {
+                    "name": name,
+                    "defaultVersion": default_version,
+                    "installedVersion": installed_version,
+                    "comment": comment,
+                    "dependencies": deps,
+                    "dependents": dependents,
+                },
+                indent=2,
+            )
+        )
     else:
         print(f"\nExtension: {name}")
         print("-" * 40)
@@ -322,7 +345,7 @@ Examples:
 
 IMPORTANT: Install and uninstall require interactive terminal confirmation.
 They cannot be automated or run with piped input.
-        """
+        """,
     )
 
     parser.add_argument("--service", required=True, help="Service name (requires linked project)")
@@ -334,12 +357,16 @@ They cannot be automated or run with piped input.
     list_parser = subparsers.add_parser("list", help="List available and installed extensions")
 
     # install command (requires interactive confirmation)
-    install_parser = subparsers.add_parser("install", help="Install an extension (requires confirmation)")
+    install_parser = subparsers.add_parser(
+        "install", help="Install an extension (requires confirmation)"
+    )
     install_parser.add_argument("extension", help="Extension name")
     install_parser.add_argument("--version", "-v", help="Specific version to install")
 
     # uninstall command (requires interactive confirmation)
-    uninstall_parser = subparsers.add_parser("uninstall", help="Uninstall an extension (requires confirmation)")
+    uninstall_parser = subparsers.add_parser(
+        "uninstall", help="Uninstall an extension (requires confirmation)"
+    )
     uninstall_parser.add_argument("extension", help="Extension name")
 
     # info command

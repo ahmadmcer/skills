@@ -13,7 +13,6 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from pathlib import Path
 
 getattr(sys.stdout, "reconfigure", lambda **_: None)(encoding="utf-8", errors="replace")
 getattr(sys.stderr, "reconfigure", lambda **_: None)(encoding="utf-8", errors="replace")
@@ -127,9 +126,17 @@ def fetch_bible_passage(passage: str, translation: str = "kjv") -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Query verified Bible passages across translations")
-    parser.add_argument("--passage", required=True, help="Bible reference (e.g. 'John 3:16', 'Genesis 1:1-3', 'Psalm 23:1-6')")
-    parser.add_argument("--translation", default="kjv", help="Translation ID: kjv (default), web, bbe")
+    parser = argparse.ArgumentParser(
+        description="Query verified Bible passages across translations"
+    )
+    parser.add_argument(
+        "--passage",
+        required=True,
+        help="Bible reference (e.g. 'John 3:16', 'Genesis 1:1-3', 'Psalm 23:1-6')",
+    )
+    parser.add_argument(
+        "--translation", default="kjv", help="Translation ID: kjv (default), web, bbe"
+    )
     parser.add_argument("--json", action="store_true", help="Output results in JSON format")
 
     args = parser.parse_args()
@@ -143,7 +150,7 @@ def main() -> int:
         print("=" * 60)
         print(f" SCRIPTURE: {res['reference']} [{res['translation_id']}]")
         print("=" * 60)
-        print(f"\n\"{res['text']}\"\n")
+        print(f'\n"{res["text"]}"\n')
         print(f"Translation:  {res['translation_name']}")
         print(f"SBL Citation: {res['sbl_citation']}")
         print("=" * 60)

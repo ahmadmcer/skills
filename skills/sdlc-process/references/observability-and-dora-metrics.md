@@ -22,6 +22,7 @@ True observability allows you to understand internal system states strictly thro
 ```
 
 ### The RED Method for Request-Driven Services
+
 - **Rate**: Requests served per second.
 - **Errors**: Number of failing requests (4xx / 5xx) per second.
 - **Duration**: Distribution of response times (p50, p95, p99 histograms).
@@ -41,14 +42,15 @@ True observability allows you to understand internal system states strictly thro
 
 DORA (DevOps Research and Assessment) metrics provide an empirical scorecard of delivery throughput and operational stability:
 
-| DORA Metric | Definition | Elite Performance Benchmark |
-| :--- | :--- | :--- |
-| **Deployment Frequency (DF)** | How often the team successfully deploys code to production. | Multiple deploys per day |
-| **Lead Time for Changes (LTTC)** | Time elapsed between code commit and running in production. | Less than one hour |
-| **Change Failure Rate (CFR)** | Percentage of production deployments causing degraded service requiring rollback or hotfix. | 0% – 15% |
-| **Failed Deployment Recovery Time (FDRT)** | Time taken to restore service when a production incident occurs. | Less than one hour |
+| DORA Metric                                | Definition                                                                                  | Elite Performance Benchmark |
+| :----------------------------------------- | :------------------------------------------------------------------------------------------ | :-------------------------- |
+| **Deployment Frequency (DF)**              | How often the team successfully deploys code to production.                                 | Multiple deploys per day    |
+| **Lead Time for Changes (LTTC)**           | Time elapsed between code commit and running in production.                                 | Less than one hour          |
+| **Change Failure Rate (CFR)**              | Percentage of production deployments causing degraded service requiring rollback or hotfix. | 0% – 15%                    |
+| **Failed Deployment Recovery Time (FDRT)** | Time taken to restore service when a production incident occurs.                            | Less than one hour          |
 
 ### Modern Metric: AI Rework Rate
+
 In the era of AI coding agents, high deployment throughput can sometimes mask high code churn.
 Track **Rework Rate**: The percentage of code modified or reverted within 14 days of original authoring. If rework rate spikes above 15%, strengthen spec-driven development and contract testing gates.
 
@@ -68,15 +70,18 @@ Incident Commander: [Name]
 Authors: [Names]
 
 ## Executive Summary
+
 A concise 2-3 sentence overview: what broke, what was the customer impact,
 how long did it last, and what restored service?
 
 ## Impact Assessment
+
 - Duration: [Start Time UTC] to [Resolution Time UTC] (Total: X minutes)
 - Customers Impacted: [Number or percentage of users affected]
 - Revenue / SLA Impact: [Error budget consumed, financial loss]
 
 ## Detailed Timeline (UTC)
+
 - 14:02 - Automated deployment v2.4.0 started.
 - 14:07 - Telemetry alert: 5xx error rate spiked to 3.8%.
 - 14:12 - On-call engineer paged and acknowledged incident.
@@ -84,6 +89,7 @@ how long did it last, and what restored service?
 - 14:22 - 5xx error rate returned to normal baseline (0.01%).
 
 ## Root Cause (5 Whys Analysis)
+
 1. Why did 5xx errors spike? A null reference exception occurred in user profile lookups.
 2. Why was the reference null? The database migration had not yet populated the new field.
 3. Why was the field not populated? The deploy ran before the asynchronous backfill completed.
@@ -91,9 +97,10 @@ how long did it last, and what restored service?
 5. Why was there no gate check? The change was expedited without following the expand/contract pattern.
 
 ## Action Items & Preventative Measures
-| Action Item | Type | Owner | Target Date |
-| :--- | :--- | :--- | :--- |
-| Add CI migration completion check | Prevent | @engineer | YYYY-MM-DD |
-| Implement automated canary health gate | Detect | @devops | YYYY-MM-DD |
-| Update deployment runbook with checklist | Mitigate | @lead | YYYY-MM-DD |
+
+| Action Item                              | Type     | Owner     | Target Date |
+| :--------------------------------------- | :------- | :-------- | :---------- |
+| Add CI migration completion check        | Prevent  | @engineer | YYYY-MM-DD  |
+| Implement automated canary health gate   | Detect   | @devops   | YYYY-MM-DD  |
+| Update deployment runbook with checklist | Mitigate | @lead     | YYYY-MM-DD  |
 ```

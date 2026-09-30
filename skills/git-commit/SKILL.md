@@ -35,21 +35,28 @@ Follow this standardized sequence whenever committing changes:
 ```
 
 ### Step 1: Pre-Flight Identity Check
+
 Before attempting a commit, ensure the author identity is properly configured:
+
 ```bash
 git config user.name
 git config user.email
 ```
+
 If either value is unconfigured:
+
 - Check existing git config in parent directories or user profile (`~/.gitconfig`).
 - If completely unconfigured, ask the user or set local/global configuration appropriately to prevent Git author identity failures.
 
 ### Step 2: Staged State Verification
+
 Check what changes are currently staged in the index:
+
 ```bash
 git status --short
 git diff --cached --stat
 ```
+
 - **If files are staged**: Proceed directly to Step 3.
 - **If nothing is staged**:
   - Inspect `git status` for unstaged or untracked changes.
@@ -57,16 +64,20 @@ git diff --cached --stat
   - Do NOT create empty commits unless explicitly instructed (`--allow-empty`).
 
 ### Step 3: Security & Secret Leak Audit
+
 Scan all staged changes for sensitive data before committing:
+
 ```bash
 python <skill_path>/scripts/prepare_commit.py --dry-run
 ```
+
 - **Hard Gate**: If staged files include `.env`, private keys (`BEGIN PRIVATE KEY`), AWS access keys (`AKIA...`), GitHub personal access tokens (`ghp_...`), or hardcoded API credentials:
   - **IMMEDIATELY ABORT** the commit.
   - Inform the user of the specific file and matched pattern.
   - Direct the user to unstage the sensitive file or add it to `.gitignore`.
 
 ### Step 4: Semantic Message Generation (Conventional Commits 1.0.0)
+
 Structure the commit message using Conventional Commits 1.0.0 syntax:
 
 ```text
@@ -78,6 +89,7 @@ Structure the commit message using Conventional Commits 1.0.0 syntax:
 ```
 
 #### Commit Types
+
 - `feat`: A new feature or user-facing capability (triggers SemVer MINOR).
 - `fix`: A bug fix or defect remediation (triggers SemVer PATCH).
 - `docs`: Documentation-only changes (README, guides, comments).
@@ -90,19 +102,22 @@ Structure the commit message using Conventional Commits 1.0.0 syntax:
 - `style`: Formatting, missing semicolons, whitespace (no code logic change).
 
 #### Header Rules
-1. **Imperative Mood**: Use imperative present tense (*"add"*, not *"added"* or *"adds"*).
+
+1. **Imperative Mood**: Use imperative present tense (_"add"_, not _"added"_ or _"adds"_).
 2. **Lowercase Description**: Start the description with a lowercase letter.
 3. **No Trailing Period**: Never end the subject header line with a period (`.`).
 4. **Length Constraint**: Keep the header line under 72 characters (ideally <= 50).
 5. **Scope**: Identify the affected module or directory in parentheses (e.g. `feat(auth):`, `fix(cli):`, `docs(api):`).
 
 #### Body & Footer Rules
+
 - Separate header from body with an empty line.
 - For non-trivial changes, provide bullet points explaining **what** was changed and **why**.
 - For breaking changes, append `!` to the type/scope (e.g., `feat(api)!:`) or add a `BREAKING CHANGE:` footer.
 - Reference issues or PRs in the footer (e.g., `Closes #123`, `Refs #456`).
 
 ### Step 5: Execution & Verification
+
 1. Execute the commit:
    ```bash
    git commit -m "<subject>" -m "<body>"
@@ -127,16 +142,17 @@ Structure the commit message using Conventional Commits 1.0.0 syntax:
 
 ## 3. Tooling Reference
 
-| Utility Script | Purpose | Example Usage |
-| :--- | :--- | :--- |
-| `scripts/prepare_commit.py` | Inspects staged diffs, audits for secrets, determines type and scope, and optionally commits. | `python scripts/prepare_commit.py --dir . --dry-run` |
-| `scripts/verify_commit_msg.py` | Lints a commit message string or file against Conventional Commits 1.0.0. | `python scripts/verify_commit_msg.py "feat(auth): add oauth2 provider"` |
+| Utility Script                 | Purpose                                                                                       | Example Usage                                                           |
+| :----------------------------- | :-------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
+| `scripts/prepare_commit.py`    | Inspects staged diffs, audits for secrets, determines type and scope, and optionally commits. | `python scripts/prepare_commit.py --dir . --dry-run`                    |
+| `scripts/verify_commit_msg.py` | Lints a commit message string or file against Conventional Commits 1.0.0.                     | `python scripts/verify_commit_msg.py "feat(auth): add oauth2 provider"` |
 
 ---
 
 ## 4. Deep Reference Guides
 
 Read the dedicated reference guides when handling complex scenarios:
+
 - [Conventional Commits & Types](references/conventional-commits-and-types.md): Comprehensive type taxonomy, scope guidelines, and breaking change rules.
 - [Atomic Commits & Diff Slicing](references/atomic-commits-and-diff-slicing.md): Strategies for atomic commits, splitting large diffs, and interactive staging.
 - [Pre-Commit Safety & Secrets Prevention](references/pre-commit-safety-and-secrets.md): Secret detection patterns, handling credentials, and author identity configuration.

@@ -315,7 +315,9 @@ def parse_and_format(raw_citation: str, version: str | None = None) -> dict:
             }
 
     # 5. Check Halakhic Codes: Mishneh Torah & Shulchan Aruch
-    mt_match = re.search(r"mishneh\s+torah[,\s]+(?:hilkhot\s+)?([a-zA-Z\s]+?)\s+(\d+[:\.]\d+.*)", clean_lower)
+    mt_match = re.search(
+        r"mishneh\s+torah[,\s]+(?:hilkhot\s+)?([a-zA-Z\s]+?)\s+(\d+[:\.]\d+.*)", clean_lower
+    )
     if mt_match:
         section = mt_match.group(1).title()
         loc = normalize_range(mt_match.group(2).replace(".", ":"))
@@ -382,9 +384,7 @@ def main() -> None:
         "--version",
         help="Translation version (e.g. 'NJPS', 'JPS', 'Koren', 'Alter').",
     )
-    parser.add_argument(
-        "--json", action="store_true", help="Output result as JSON."
-    )
+    parser.add_argument("--json", action="store_true", help="Output result as JSON.")
 
     args = parser.parse_args()
 

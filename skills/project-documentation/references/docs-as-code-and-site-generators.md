@@ -1,6 +1,6 @@
 # Docs-as-Code & Modern Site Generators
 
-> *"Docs-as-Code (DaC) means writing, reviewing, testing, and deploying technical documentation using the exact same workflows, version control systems, and CI/CD pipelines as software code."*
+> _"Docs-as-Code (DaC) means writing, reviewing, testing, and deploying technical documentation using the exact same workflows, version control systems, and CI/CD pipelines as software code."_
 
 By treating documentation as code, teams eliminate out-of-sync documentation, enforce peer review on changes, prevent link rot with automated linters, and deploy high-performance static sites.
 
@@ -8,15 +8,15 @@ By treating documentation as code, teams eliminate out-of-sync documentation, en
 
 ## 1. Comparing the Top Documentation Generators
 
-| Feature | VitePress | Docusaurus | Starlight (Astro) | Material for MkDocs |
-| :--- | :--- | :--- | :--- | :--- |
-| **Foundation** | Vue 3 + Vite | React 18 | Astro | Python |
-| **Best For** | High speed, Vue/TS stacks | Large enterprise projects | Modern modern stacks | Python, CLI, Data teams |
-| **Build Speed** | Ultra-fast (Vite) | Moderate | Very Fast | Fast |
-| **Multi-Versioning** | Manual or custom | **Native built-in** | Community / Astro | `mike` plugin |
-| **Internationalization** | Built-in | **Built-in** | **Built-in** | Third-party plugin |
-| **Markdown Flavor** | Markdown + Vue components | MDX (Markdown + React) | MDX / Markdoc | Python-Markdown extensions |
-| **Configuration** | `.vitepress/config.mts` | `docusaurus.config.ts` | `astro.config.mjs` | `mkdocs.yml` |
+| Feature                  | VitePress                 | Docusaurus                | Starlight (Astro)    | Material for MkDocs        |
+| :----------------------- | :------------------------ | :------------------------ | :------------------- | :------------------------- |
+| **Foundation**           | Vue 3 + Vite              | React 18                  | Astro                | Python                     |
+| **Best For**             | High speed, Vue/TS stacks | Large enterprise projects | Modern modern stacks | Python, CLI, Data teams    |
+| **Build Speed**          | Ultra-fast (Vite)         | Moderate                  | Very Fast            | Fast                       |
+| **Multi-Versioning**     | Manual or custom          | **Native built-in**       | Community / Astro    | `mike` plugin              |
+| **Internationalization** | Built-in                  | **Built-in**              | **Built-in**         | Third-party plugin         |
+| **Markdown Flavor**      | Markdown + Vue components | MDX (Markdown + React)    | MDX / Markdoc        | Python-Markdown extensions |
+| **Configuration**        | `.vitepress/config.mts`   | `docusaurus.config.ts`    | `astro.config.mjs`   | `mkdocs.yml`               |
 
 ---
 
@@ -68,8 +68,9 @@ tags:
 ## 4. Configuration Recipes for the "Big Three"
 
 ### 1. VitePress Configuration (`.vitepress/config.mts`)
+
 ```typescript
-import { defineConfig } from 'vitepress'
+import { defineConfig } from "vitepress";
 
 export default defineConfig({
   title: "Project Documentation",
@@ -79,53 +80,52 @@ export default defineConfig({
       { text: "Tutorials", link: "/tutorials/01-getting-started" },
       { text: "How-To", link: "/how-to/deployment" },
       { text: "Reference", link: "/reference/cli" },
-      { text: "Explanation", link: "/explanation/architecture" }
+      { text: "Explanation", link: "/explanation/architecture" },
     ],
     sidebar: {
       "/tutorials/": [
         {
           text: "Tutorials",
-          items: [
-            { text: "Getting Started", link: "/tutorials/01-getting-started" }
-          ]
-        }
+          items: [{ text: "Getting Started", link: "/tutorials/01-getting-started" }],
+        },
       ],
       "/how-to/": [
         {
           text: "How-To Guides",
           items: [
             { text: "Production Deployment", link: "/how-to/deployment" },
-            { text: "OAuth2 Configuration", link: "/how-to/authentication" }
-          ]
-        }
-      ]
+            { text: "OAuth2 Configuration", link: "/how-to/authentication" },
+          ],
+        },
+      ],
     },
     search: {
-      provider: 'local'
-    }
-  }
-})
+      provider: "local",
+    },
+  },
+});
 ```
 
 ### 2. Docusaurus Configuration (`docusaurus.config.ts`)
+
 ```typescript
-import { Config } from '@docusaurus/types';
+import { Config } from "@docusaurus/types";
 
 const config: Config = {
-  title: 'Project Documentation',
-  tagline: 'Production-grade engineering documentation',
-  url: 'https://docs.example.com',
-  baseUrl: '/',
+  title: "Project Documentation",
+  tagline: "Production-grade engineering documentation",
+  url: "https://docs.example.com",
+  baseUrl: "/",
   presets: [
     [
-      'classic',
+      "classic",
       {
         docs: {
-          sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/org/repo/tree/main/',
+          sidebarPath: "./sidebars.ts",
+          editUrl: "https://github.com/org/repo/tree/main/",
         },
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: "./src/css/custom.css",
         },
       },
     ],
@@ -136,6 +136,7 @@ export default config;
 ```
 
 ### 3. Material for MkDocs (`mkdocs.yml`)
+
 ```yaml
 site_name: Project Documentation
 site_url: https://docs.example.com

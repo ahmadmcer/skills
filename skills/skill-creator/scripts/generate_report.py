@@ -36,9 +36,7 @@ def generate_html(data: dict, auto_refresh: bool = False, skill_name: str = "") 
                     }
                 )
 
-    refresh_tag = (
-        '    <meta http-equiv="refresh" content="5">\n' if auto_refresh else ""
-    )
+    refresh_tag = '    <meta http-equiv="refresh" content="5">\n' if auto_refresh else ""
 
     html_parts = [
         """<!DOCTYPE html>
@@ -225,13 +223,11 @@ def generate_html(data: dict, auto_refresh: bool = False, skill_name: str = "") 
 
     # Find best iteration for highlighting
     if test_queries:
-        best_iter = max(history, key=lambda h: h.get("test_passed") or 0).get(
+        best_iter = max(history, key=lambda h: h.get("test_passed") or 0).get("iteration")
+    else:
+        best_iter = max(history, key=lambda h: h.get("train_passed", h.get("passed", 0))).get(
             "iteration"
         )
-    else:
-        best_iter = max(
-            history, key=lambda h: h.get("train_passed", h.get("passed", 0))
-        ).get("iteration")
 
     # Add rows for each iteration
     for h in history:
@@ -331,15 +327,9 @@ def generate_html(data: dict, auto_refresh: bool = False, skill_name: str = "") 
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Generate HTML report from run_loop output"
-    )
-    parser.add_argument(
-        "input", help="Path to JSON output from run_loop.py (or - for stdin)"
-    )
-    parser.add_argument(
-        "-o", "--output", default=None, help="Output HTML file (default: stdout)"
-    )
+    parser = argparse.ArgumentParser(description="Generate HTML report from run_loop output")
+    parser.add_argument("input", help="Path to JSON output from run_loop.py (or - for stdin)")
+    parser.add_argument("-o", "--output", default=None, help="Output HTML file (default: stdout)")
     parser.add_argument(
         "--skill-name", default="", help="Skill name to include in the report title"
     )

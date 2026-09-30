@@ -578,26 +578,46 @@ def scaffold(generator: str, target_dir: str, project_name: str) -> None:
 
     # Write Markdown content files
     files = {
-        os.path.join(target_dir, "index.md"): INDEX_TEMPLATE.format(project_name=project_name, package_slug=package_slug),
-        os.path.join(target_dir, "tutorials", "01-getting-started.md"): TUTORIAL_TEMPLATE.format(project_name=project_name, package_slug=package_slug),
-        os.path.join(target_dir, "how-to", "deploy-production.md"): HOWTO_TEMPLATE.format(project_name=project_name, package_slug=package_slug),
-        os.path.join(target_dir, "reference", "cli.md"): REFERENCE_TEMPLATE.format(project_name=project_name, package_slug=package_slug),
-        os.path.join(target_dir, "explanation", "architecture-overview.md"): EXPLANATION_TEMPLATE.format(project_name=project_name, package_slug=package_slug),
-        os.path.join(target_dir, "architecture", "adr-0001.md"): ADR_TEMPLATE.format(project_name=project_name, package_slug=package_slug),
-        os.path.join(target_dir, "api", "endpoints.md"): API_TEMPLATE.format(project_name=project_name, package_slug=package_slug),
+        os.path.join(target_dir, "index.md"): INDEX_TEMPLATE.format(
+            project_name=project_name, package_slug=package_slug
+        ),
+        os.path.join(target_dir, "tutorials", "01-getting-started.md"): TUTORIAL_TEMPLATE.format(
+            project_name=project_name, package_slug=package_slug
+        ),
+        os.path.join(target_dir, "how-to", "deploy-production.md"): HOWTO_TEMPLATE.format(
+            project_name=project_name, package_slug=package_slug
+        ),
+        os.path.join(target_dir, "reference", "cli.md"): REFERENCE_TEMPLATE.format(
+            project_name=project_name, package_slug=package_slug
+        ),
+        os.path.join(
+            target_dir, "explanation", "architecture-overview.md"
+        ): EXPLANATION_TEMPLATE.format(project_name=project_name, package_slug=package_slug),
+        os.path.join(target_dir, "architecture", "adr-0001.md"): ADR_TEMPLATE.format(
+            project_name=project_name, package_slug=package_slug
+        ),
+        os.path.join(target_dir, "api", "endpoints.md"): API_TEMPLATE.format(
+            project_name=project_name, package_slug=package_slug
+        ),
     }
 
     # Generator-specific configuration
     if generator == "vitepress":
         vp_dir = os.path.join(target_dir, ".vitepress")
         os.makedirs(vp_dir, exist_ok=True)
-        files[os.path.join(vp_dir, "config.mts")] = VITEPRESS_CONFIG_TEMPLATE.format(project_name=project_name)
+        files[os.path.join(vp_dir, "config.mts")] = VITEPRESS_CONFIG_TEMPLATE.format(
+            project_name=project_name
+        )
     elif generator == "docusaurus":
         files[os.path.join(target_dir, "sidebars.ts")] = DOCUSAURUS_SIDEBARS_TEMPLATE
     elif generator == "mkdocs":
-        files[os.path.join(target_dir, "mkdocs.yml")] = MKDOCS_CONFIG_TEMPLATE.format(project_name=project_name)
+        files[os.path.join(target_dir, "mkdocs.yml")] = MKDOCS_CONFIG_TEMPLATE.format(
+            project_name=project_name
+        )
     elif generator == "starlight":
-        files[os.path.join(target_dir, "astro.config.mjs")] = STARLIGHT_CONFIG_TEMPLATE.format(project_name=project_name)
+        files[os.path.join(target_dir, "astro.config.mjs")] = STARLIGHT_CONFIG_TEMPLATE.format(
+            project_name=project_name
+        )
 
     for path, content in files.items():
         with open(path, "w", encoding="utf-8") as f:
@@ -627,18 +647,14 @@ def main():
         "--generator",
         choices=["vitepress", "docusaurus", "starlight", "mkdocs"],
         default="vitepress",
-        help="Documentation site generator preset (default: vitepress)"
+        help="Documentation site generator preset (default: vitepress)",
     )
     parser.add_argument(
         "--target-dir",
         default="./docs",
-        help="Target directory for documentation portal (default: ./docs)"
+        help="Target directory for documentation portal (default: ./docs)",
     )
-    parser.add_argument(
-        "--project-name",
-        default="My Project",
-        help="Human-readable project title"
-    )
+    parser.add_argument("--project-name", default="My Project", help="Human-readable project title")
 
     args = parser.parse_args()
     scaffold(args.generator, args.target_dir, args.project_name)

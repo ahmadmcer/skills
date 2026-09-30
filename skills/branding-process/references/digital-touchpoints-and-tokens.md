@@ -17,8 +17,12 @@ Modern brand engineering utilizes the **W3C Design Tokens Community Group (DTCG)
   "color": {
     "brand": {
       "primary": {
-        "50":  { "$type": "color", "$value": "#eff6ff" },
-        "500": { "$type": "color", "$value": "#2563eb", "$description": "Core signature brand color" },
+        "50": { "$type": "color", "$value": "#eff6ff" },
+        "500": {
+          "$type": "color",
+          "$value": "#2563eb",
+          "$description": "Core signature brand color"
+        },
         "900": { "$type": "color", "$value": "#1e3a8a" },
         "DEFAULT": { "$type": "color", "$value": "{color.brand.primary.500}" }
       },
@@ -28,7 +32,7 @@ Modern brand engineering utilizes the **W3C Design Tokens Community Group (DTCG)
       }
     },
     "neutral": {
-      "50":  { "$type": "color", "$value": "#f8fafc" },
+      "50": { "$type": "color", "$value": "#f8fafc" },
       "200": { "$type": "color", "$value": "#e2e8f0" },
       "800": { "$type": "color", "$value": "#1e293b" },
       "950": { "$type": "color", "$value": "#090d16" }
@@ -36,13 +40,13 @@ Modern brand engineering utilizes the **W3C Design Tokens Community Group (DTCG)
   },
   "fontFamily": {
     "display": { "$type": "fontFamily", "$value": "Inter Tight, sans-serif" },
-    "body":    { "$type": "fontFamily", "$value": "system-ui, -apple-system, sans-serif" },
-    "mono":    { "$type": "fontFamily", "$value": "JetBrains Mono, monospace" }
+    "body": { "$type": "fontFamily", "$value": "system-ui, -apple-system, sans-serif" },
+    "mono": { "$type": "fontFamily", "$value": "JetBrains Mono, monospace" }
   },
   "borderRadius": {
-    "sm":   { "$type": "dimension", "$value": "4px" },
-    "md":   { "$type": "dimension", "$value": "8px" },
-    "lg":   { "$type": "dimension", "$value": "12px" },
+    "sm": { "$type": "dimension", "$value": "4px" },
+    "md": { "$type": "dimension", "$value": "8px" },
+    "lg": { "$type": "dimension", "$value": "12px" },
     "full": { "$type": "dimension", "$value": "9999px" }
   }
 }
@@ -58,9 +62,9 @@ Tokens must be compiled to CSS Custom Properties to allow instant theme-swapping
 /* brand-tokens.css */
 :root {
   /* Brand Typography */
-  --brand-font-display: 'Inter Tight', sans-serif;
+  --brand-font-display: "Inter Tight", sans-serif;
   --brand-font-body: system-ui, -apple-system, sans-serif;
-  --brand-font-mono: 'JetBrains Mono', monospace;
+  --brand-font-mono: "JetBrains Mono", monospace;
 
   /* Primary Brand Tonal Scale */
   --brand-primary-50: #eff6ff;
@@ -122,34 +126,34 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          50: 'var(--brand-primary-50)',
-          100: 'var(--brand-primary-100)',
-          500: 'var(--brand-primary-500)',
-          600: 'var(--brand-primary-600)',
-          900: 'var(--brand-primary-900)',
-          DEFAULT: 'var(--brand-primary)',
+          50: "var(--brand-primary-50)",
+          100: "var(--brand-primary-100)",
+          500: "var(--brand-primary-500)",
+          600: "var(--brand-primary-600)",
+          900: "var(--brand-primary-900)",
+          DEFAULT: "var(--brand-primary)",
         },
         surface: {
-          canvas: 'var(--surface-canvas)',
-          raised: 'var(--surface-raised)',
-          card: 'var(--surface-card)',
+          canvas: "var(--surface-canvas)",
+          raised: "var(--surface-raised)",
+          card: "var(--surface-card)",
         },
         content: {
-          primary: 'var(--text-primary)',
-          secondary: 'var(--text-secondary)',
-          muted: 'var(--text-muted)',
-          'on-brand': 'var(--text-on-brand)',
+          primary: "var(--text-primary)",
+          secondary: "var(--text-secondary)",
+          muted: "var(--text-muted)",
+          "on-brand": "var(--text-on-brand)",
         },
       },
       fontFamily: {
-        display: ['var(--brand-font-display)', 'sans-serif'],
-        body: ['var(--brand-font-body)', 'sans-serif'],
-        mono: ['var(--brand-font-mono)', 'monospace'],
+        display: ["var(--brand-font-display)", "sans-serif"],
+        body: ["var(--brand-font-body)", "sans-serif"],
+        mono: ["var(--brand-font-mono)", "monospace"],
       },
       borderRadius: {
-        sm: 'var(--radius-sm)',
-        md: 'var(--radius-md)',
-        lg: 'var(--radius-lg)',
+        sm: "var(--radius-sm)",
+        md: "var(--radius-md)",
+        lg: "var(--radius-lg)",
       },
     },
   },
@@ -163,17 +167,20 @@ module.exports = {
 Every digital brand requires an orchestrated suite of production assets:
 
 ### A. The Favicon & Web Application Manifest Suite
-| Asset File | Size / Format | Purpose |
-| :--- | :--- | :--- |
-| `favicon.svg` | SVG (Vector, 32x32 viewBox) | Modern browsers (Chrome, Firefox, Safari); adapts to dark mode. |
-| `favicon.ico` | Multi-size ICO (16x16, 32x32, 48x48) | Legacy browser fallback and bookmarks. |
-| `apple-touch-icon.png` | 180x180 PNG | iOS home screen bookmarks and Safari mobile tabs. |
-| `icon-192.png` | 192x192 PNG | Android PWA home screen icon. |
-| `icon-512.png` | 512x512 PNG | PWA splash screens and app store representations. |
-| `site.webmanifest` | JSON Manifest | Web application title, theme colors, and icon routing. |
+
+| Asset File             | Size / Format                        | Purpose                                                         |
+| :--------------------- | :----------------------------------- | :-------------------------------------------------------------- |
+| `favicon.svg`          | SVG (Vector, 32x32 viewBox)          | Modern browsers (Chrome, Firefox, Safari); adapts to dark mode. |
+| `favicon.ico`          | Multi-size ICO (16x16, 32x32, 48x48) | Legacy browser fallback and bookmarks.                          |
+| `apple-touch-icon.png` | 180x180 PNG                          | iOS home screen bookmarks and Safari mobile tabs.               |
+| `icon-192.png`         | 192x192 PNG                          | Android PWA home screen icon.                                   |
+| `icon-512.png`         | 512x512 PNG                          | PWA splash screens and app store representations.               |
+| `site.webmanifest`     | JSON Manifest                        | Web application title, theme colors, and icon routing.          |
 
 ### B. OpenGraph & Social Media Cards (1200x630px)
+
 When shared on X/Twitter, LinkedIn, Slack, or Discord, links render an OpenGraph card.
+
 - **Canvas Size**: `1200 x 630 px` (Standard 1.91:1 aspect ratio).
 - **Safe Zone**: Keep all essential headlines, badges, and brand logos within an **interior 1000 x 530 px box** (100px padding left/right, 50px top/bottom) to prevent clipping in social feed previews.
 - **Composition**:
@@ -183,6 +190,7 @@ When shared on X/Twitter, LinkedIn, Slack, or Discord, links render an OpenGraph
   - Background: Brand gradient glow over dark neutral canvas (`#090D16`).
 
 ### C. Digital Platform Header Banners
+
 - **X / Twitter Banner**: `1500 x 500 px` (Account for profile avatar cut-out on bottom-left, especially on mobile).
 - **LinkedIn Company Page Banner**: `1584 x 396 px`.
 - **GitHub Repository Social Preview**: `1280 x 640 px`.

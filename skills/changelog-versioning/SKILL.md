@@ -19,13 +19,13 @@ While [git-commit](../git-commit/SKILL.md) ensures clean, atomic Conventional Co
 Every release and changelog managed under this skill must adhere strictly to these six release laws:
 
 1. **The Human-Centric Invariant (Keep a Changelog)**:
-   Changelogs are curated for *human users*, not machines or CI pipelines. Never dump raw git logs, SHA prefixes, or internal merge commit noise. Focus on user-facing outcomes.
+   Changelogs are curated for _human users_, not machines or CI pipelines. Never dump raw git logs, SHA prefixes, or internal merge commit noise. Focus on user-facing outcomes.
 2. **The SemVer 2.0.0 Guarantee**:
    Version numbers follow `MAJOR.MINOR.PATCH`:
    - `MAJOR`: Incompatible API breaking changes.
    - `MINOR`: Backward-compatible new functionality or deprecations.
    - `PATCH`: Backward-compatible bug fixes or security patches.
-   In zero-major (`0.y.z`), breaking changes bump the `MINOR` version.
+     In zero-major (`0.y.z`), breaking changes bump the `MINOR` version.
 3. **The Six Canonical Categories**:
    Group all changes exclusively under these six standard H3 headings:
    - `### Added`: New user-facing capabilities or APIs.
@@ -64,10 +64,12 @@ Follow this standardized workflow whenever preparing a release or updating relea
 ### Step 1: Git History Extraction & Tag Discovery
 
 Discover the baseline release tag and extract all commits since that tag:
+
 ```bash
 git describe --tags --abbrev=0
 git log <latest_tag>..HEAD --oneline
 ```
+
 - If no tags exist in the repository, scan the entire commit history to establish the initial version (e.g. `0.1.0` or `1.0.0`).
 - Extract the full commit message body to capture `BREAKING CHANGE:` footers and pull request references (`#123`).
 
@@ -81,14 +83,14 @@ Calculate the required version bump by analyzing commit types (see [semver-2-spe
 python scripts/determine_version.py
 ```
 
-| Commit Signals | Zero-Major (`0.y.z`) Impact | Stable (`>= 1.0.0`) Impact | Category Destination |
-| :--- | :--- | :--- | :--- |
-| `BREAKING CHANGE:` footer or `feat!:` / `fix!:` | **MINOR** bump (`0.1.0` $\to$ `0.2.0`) | **MAJOR** bump (`1.2.0` $\to$ `2.0.0`) | `Changed` / `Removed` |
-| `feat:` | **PATCH** or **MINOR** | **MINOR** bump (`1.2.0` $\to$ `1.3.0`) | `Added` |
-| `fix:` | **PATCH** bump | **PATCH** bump (`1.2.0` $\to$ `1.2.1`) | `Fixed` |
-| `perf:` | **PATCH** bump | **PATCH** bump (`1.2.0` $\to$ `1.2.1`) | `Changed` |
-| `revert:` | **PATCH** bump | **PATCH** bump (`1.2.0` $\to$ `1.2.1`) | `Changed` or `Fixed` |
-| `chore:`, `ci:`, `test:`, `style:` | No bump (omitted or internal) | No bump (omitted or internal) | Filtered from user notes |
+| Commit Signals                                  | Zero-Major (`0.y.z`) Impact            | Stable (`>= 1.0.0`) Impact             | Category Destination     |
+| :---------------------------------------------- | :------------------------------------- | :------------------------------------- | :----------------------- |
+| `BREAKING CHANGE:` footer or `feat!:` / `fix!:` | **MINOR** bump (`0.1.0` $\to$ `0.2.0`) | **MAJOR** bump (`1.2.0` $\to$ `2.0.0`) | `Changed` / `Removed`    |
+| `feat:`                                         | **PATCH** or **MINOR**                 | **MINOR** bump (`1.2.0` $\to$ `1.3.0`) | `Added`                  |
+| `fix:`                                          | **PATCH** bump                         | **PATCH** bump (`1.2.0` $\to$ `1.2.1`) | `Fixed`                  |
+| `perf:`                                         | **PATCH** bump                         | **PATCH** bump (`1.2.0` $\to$ `1.2.1`) | `Changed`                |
+| `revert:`                                       | **PATCH** bump                         | **PATCH** bump (`1.2.0` $\to$ `1.2.1`) | `Changed` or `Fixed`     |
+| `chore:`, `ci:`, `test:`, `style:`              | No bump (omitted or internal)          | No bump (omitted or internal)          | Filtered from user notes |
 
 - **Pre-releases**: Support pre-release suffixes (e.g. `1.3.0-rc.1`, `2.0.0-beta.2`).
 
@@ -98,10 +100,10 @@ python scripts/determine_version.py
 
 Translate developer commit shorthand into clear, professional release notes (see [conventional-commits-mapping.md](references/conventional-commits-mapping.md)):
 
-- **Prune Noise**: Strip out commits that have no impact on the end user (e.g., *"ci: update github action version"*, *"chore: fix typo in comment"*, *"test: add unit test for util"*).
+- **Prune Noise**: Strip out commits that have no impact on the end user (e.g., _"ci: update github action version"_, _"chore: fix typo in comment"_, _"test: add unit test for util"_).
 - **Rephrase for the User**:
-  - ❌ *"fix(auth): null pointer in jwt parser"*
-  - ✅ *"Fix intermittent crash when authenticating with expired JWT tokens ([#42](https://github.com/org/repo/pull/42))."*
+  - ❌ _"fix(auth): null pointer in jwt parser"_
+  - ✅ _"Fix intermittent crash when authenticating with expired JWT tokens ([#42](https://github.com/org/repo/pull/42))."_
 - **Categorize Strictly**: Sort items under `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, or `Security`.
 
 ---
@@ -120,9 +122,11 @@ python scripts/update_changelog.py --repo-url "https://github.com/org/repo"
      ## [1.3.0] - 2026-09-30
 
      ### Added
+
      - Native dark mode support in user settings.
 
      ### Fixed
+
      - Memory leak during batch PDF export.
      ```
    - Reset the `## [Unreleased]` section at the top.
@@ -145,11 +149,12 @@ python scripts/audit_changelog.py --file CHANGELOG.md
 ```
 
 The audit tool checks:
+
 - Standard preamble referencing Keep a Changelog and SemVer.
 - `[Unreleased]` section presence.
 - ISO 8601 date formatting on all releases.
 - Reverse chronological SemVer order.
-- Adherence to the 6 canonical category names (rejects non-standard headers like *"Features"*, *"Bugfixes"*, *"Updates"*).
+- Adherence to the 6 canonical category names (rejects non-standard headers like _"Features"_, _"Bugfixes"_, _"Updates"_).
 - Absence of raw git log dumps (commit SHAs, merge commit headers).
 - Complete and unbroken reference compare links.
 
@@ -159,11 +164,11 @@ The audit tool checks:
 
 This skill equips agents with three zero-dependency Python tools:
 
-| Script | Purpose | Common Invocation |
-| :--- | :--- | :--- |
-| `scripts/determine_version.py` | Analyzes git history and breaking change flags to calculate the next SemVer bump | `python scripts/determine_version.py` |
-| `scripts/update_changelog.py` | Generates or updates `CHANGELOG.md` with curated categories and compare links | `python scripts/update_changelog.py --repo-url "https://github.com/org/repo"` |
-| `scripts/audit_changelog.py` | Scores `CHANGELOG.md` against Keep a Changelog 1.1.0 (0-100 score) and reports action items | `python scripts/audit_changelog.py --file CHANGELOG.md` |
+| Script                         | Purpose                                                                                     | Common Invocation                                                             |
+| :----------------------------- | :------------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------- |
+| `scripts/determine_version.py` | Analyzes git history and breaking change flags to calculate the next SemVer bump            | `python scripts/determine_version.py`                                         |
+| `scripts/update_changelog.py`  | Generates or updates `CHANGELOG.md` with curated categories and compare links               | `python scripts/update_changelog.py --repo-url "https://github.com/org/repo"` |
+| `scripts/audit_changelog.py`   | Scores `CHANGELOG.md` against Keep a Changelog 1.1.0 (0-100 score) and reports action items | `python scripts/audit_changelog.py --file CHANGELOG.md`                       |
 
 ---
 

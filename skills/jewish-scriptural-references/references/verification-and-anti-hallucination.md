@@ -25,6 +25,7 @@ Due to the repetitive, dialectical structure and specialized pagination of rabbi
 ## 2. Invariant 1: The Rule of Daf 2a
 
 In the standard **Vilna Shas** (the universal pagination system for the Babylonian Talmud established by the Romm printing house in 1880–1886):
+
 - Every single tractate begins on **Daf 2a** (folio 2, side a).
 - Page 1 is the front cover, title page, and approbation page. There is **no Daf 1a or 1b** anywhere in the Babylonian Talmud.
 
@@ -55,10 +56,11 @@ One of the most frequently quoted passages in world literature is the teaching o
 ```
 
 ### Analytical Guidelines:
+
 1. When asked to cite or analyze this passage, **explicitly present both textual traditions**.
 2. Explain the philological evidence:
-   - The phrase *"from Israel"* (מישראל - *mi-Yisrael*) is found in the standard printed Babylonian Talmud (Vilna Shas).
-   - In contrast, the earliest extant authoritative manuscripts of the Mishnah (Codex Kaufmann A 50, Parma de Rossi 138, Cambridge Add. 470.1), the Jerusalem Talmud (y. Sanhedrin 4:9 / 22a), and medieval citations by Maimonides (*Mishneh Torah, Hilkhot Sanhedrin 12:3*) omit *mi-Yisrael*, presenting the universal formulation for all humanity as descended from the single primordial Adam.
+   - The phrase _"from Israel"_ (מישראל - _mi-Yisrael_) is found in the standard printed Babylonian Talmud (Vilna Shas).
+   - In contrast, the earliest extant authoritative manuscripts of the Mishnah (Codex Kaufmann A 50, Parma de Rossi 138, Cambridge Add. 470.1), the Jerusalem Talmud (y. Sanhedrin 4:9 / 22a), and medieval citations by Maimonides (_Mishneh Torah, Hilkhot Sanhedrin 12:3_) omit _mi-Yisrael_, presenting the universal formulation for all humanity as descended from the single primordial Adam.
 
 ---
 
@@ -66,23 +68,24 @@ One of the most frequently quoted passages in world literature is the teaching o
 
 Never conflate the generational strata of rabbinic authorities:
 
-| Generation Era | Time Period | Hebrew Term | Prominent Sages | Canonical Texts |
-| :--- | :--- | :--- | :--- | :--- |
-| **Zugot** (Pairs) | c. 150 BCE – 10 CE | זוּגוֹת | Hillel and Shammai, Shemaya and Avtalyon | Early Mishnaic traditions |
-| **Tannaim** | c. 10 – 220 CE | תַּנָּאִים | Rabban Yochanan ben Zakkai, Rabbi Akiva, Rabbi Meir, Rabbi Shimon bar Yochai, Rabbi Yehuda HaNasi | Mishnah, Tosefta, Halakhic Midrashim |
-| **Amoraim** | c. 220 – 500 CE | אָמוֹרָאִים | Rav, Shmuel, Rabbi Yochanan, Reish Lakish, Abaye, Rava, Rav Ashi | Gemara (Talmud Bavli and Yerushalmi) |
-| **Savoraim & Geonim**| c. 500 – 1038 CE | גְּאוֹנִים | Saadia Gaon, Sherira Gaon, Hai Gaon | Talmudic redaction, Halakhic responsa |
-| **Rishonim** | c. 1038 – 1500 CE | רִאשׁוֹנִים | Rashi, Tosafot, Rambam, Ramban, Ibn Ezra, Rosh, Tur | Classical commentaries, early codes |
-| **Acharonim** | c. 1500 CE – Present | אַחֲרוֹנִים | Yosef Karo, Rema, Vilna Gaon, Chofetz Chaim, Rav Kook | Shulchan Aruch, modern halakha |
+| Generation Era        | Time Period          | Hebrew Term | Prominent Sages                                                                                   | Canonical Texts                       |
+| :-------------------- | :------------------- | :---------- | :------------------------------------------------------------------------------------------------ | :------------------------------------ |
+| **Zugot** (Pairs)     | c. 150 BCE – 10 CE   | זוּגוֹת     | Hillel and Shammai, Shemaya and Avtalyon                                                          | Early Mishnaic traditions             |
+| **Tannaim**           | c. 10 – 220 CE       | תַּנָּאִים  | Rabban Yochanan ben Zakkai, Rabbi Akiva, Rabbi Meir, Rabbi Shimon bar Yochai, Rabbi Yehuda HaNasi | Mishnah, Tosefta, Halakhic Midrashim  |
+| **Amoraim**           | c. 220 – 500 CE      | אָמוֹרָאִים | Rav, Shmuel, Rabbi Yochanan, Reish Lakish, Abaye, Rava, Rav Ashi                                  | Gemara (Talmud Bavli and Yerushalmi)  |
+| **Savoraim & Geonim** | c. 500 – 1038 CE     | גְּאוֹנִים  | Saadia Gaon, Sherira Gaon, Hai Gaon                                                               | Talmudic redaction, Halakhic responsa |
+| **Rishonim**          | c. 1038 – 1500 CE    | רִאשׁוֹנִים | Rashi, Tosafot, Rambam, Ramban, Ibn Ezra, Rosh, Tur                                               | Classical commentaries, early codes   |
+| **Acharonim**         | c. 1500 CE – Present | אַחֲרוֹנִים | Yosef Karo, Rema, Vilna Gaon, Chofetz Chaim, Rav Kook                                             | Shulchan Aruch, modern halakha        |
 
 > [!IMPORTANT]
-> If a quote begins with *"The Mishnah states..."*, verify that it appears in the 63 tractates of the Mishnah. If it is an Amoraic discussion or story (such as Hillel and the convert in Shabbat 31a, or the Oven of Akhnai in Bava Metzia 59b), cite it as the **Gemara** (*Talmud Bavli*), not the Mishnah.
+> If a quote begins with _"The Mishnah states..."_, verify that it appears in the 63 tractates of the Mishnah. If it is an Amoraic discussion or story (such as Hillel and the convert in Shabbat 31a, or the Oven of Akhnai in Bava Metzia 59b), cite it as the **Gemara** (_Talmud Bavli_), not the Mishnah.
 
 ---
 
 ## 5. Invariant 4: Divine Names & Scribal Etiquette
 
-Traditional Jewish law (*Halakha*) forbids erasing, destroying, or treating disrespectfully the seven biblical Names of God:
+Traditional Jewish law (_Halakha_) forbids erasing, destroying, or treating disrespectfully the seven biblical Names of God:
+
 1. **The Tetragrammaton (יהוה - YHWH)**: The ineffable four-letter Name. It is never pronounced as spelled. In liturgy it is vocalized as **Adonai** ("my Lord"); in ordinary study and speech, it is referred to as **Hashem** ("The Name").
 2. **El (אֵל)** / **Elohim (אֱלֹהִים)**
 3. **Eloha (אֱלוֹהַּ)**
@@ -92,14 +95,16 @@ Traditional Jewish law (*Halakha*) forbids erasing, destroying, or treating disr
 7. **Adonai (אֲדֹנָי)**
 
 ### English Publication Customs:
-- In traditional Orthodox and observant Jewish English publications, the practice of writing **G-d** and **the L-rd** with a hyphen is maintained to prevent the name from being printed on paper that might later be discarded into the trash (rather than placed in a *Genizah*).
-- When producing content for Jewish educational or religious contexts, use **G-d**, **Hashem**, or standard academic terms (*the Holy One, Blessed be He* - *HaKadosh Barukh Hu*) appropriately according to user tone.
+
+- In traditional Orthodox and observant Jewish English publications, the practice of writing **G-d** and **the L-rd** with a hyphen is maintained to prevent the name from being printed on paper that might later be discarded into the trash (rather than placed in a _Genizah_).
+- When producing content for Jewish educational or religious contexts, use **G-d**, **Hashem**, or standard academic terms (_the Holy One, Blessed be He_ - _HaKadosh Barukh Hu_) appropriately according to user tone.
 
 ---
 
 ## 6. Invariant 5: Anti-Pseudo-Rabbinic Memes
 
 Verify common internet sayings attributed to the Talmud:
+
 - **"To save a life is to save the world"**: Real, but check the exact text (Mishnah Sanhedrin 4:5 / Sanhedrin 37a).
 - **"What is hateful to you do not do to your fellow"**: Real (Hillel to the prospective convert, b. Shabbat 31a).
 - **"The day is short, the work is great, the laborers are lazy..."**: Real (Rabbi Tarfon, Pirkei Avot 2:15).

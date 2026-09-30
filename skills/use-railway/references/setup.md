@@ -8,7 +8,7 @@ A brand-new user with no Railway account is onboarded through the same unified O
 
 - **Deploy from the current directory** → `railway up` (interactive) or `railway up -y` (skips the confirm prompt). When unauthenticated it opens a browser to sign in / sign up, then creates a project + service and deploys. Run it yourself; do not ask the user to `railway login` first.
 - **New project from cwd when already signed in** → `railway up --new` (`--name <name>` to override the project name).
-- **Sign up with a deployable app in cwd → `railway up`** (signs up *and* deploys — bare `up` works for a detected agent, even if the user only said "sign me up"; add `-y` to skip prompts / force it non-interactively). Sign in, or sign up with nothing to deploy → `railway login` (creates new accounts on the fly).
+- **Sign up with a deployable app in cwd → `railway up`** (signs up _and_ deploys — bare `up` works for a detected agent, even if the user only said "sign me up"; add `-y` to skip prompts / force it non-interactively). Sign in, or sign up with nothing to deploy → `railway login` (creates new accounts on the fly).
 
 `railway up` and `railway login` self-validate auth — don't run `railway whoami` before them.
 
@@ -92,18 +92,18 @@ railway add                                   # interactive only — do not use 
 
 **Always pass `--json` to `railway add`.** Without it, a successful database create writes nothing to stdout — only a `> What do you need? Database` echo on stderr that looks identical to a stalled interactive prompt. Retrying based on "no stdout came back" silently provisions a second database. With `--json`, success prints `{"serviceId":"…","serviceName":"…"}` and failure exits non-zero.
 
-**`--database` is cumulative, not last-wins.** `railway add --database postgres --database redis` creates *both* in a single call. Don't repeat the flag — issue one `railway add` per database.
+**`--database` is cumulative, not last-wins.** `railway add --database postgres --database redis` creates _both_ in a single call. Don't repeat the flag — issue one `railway add` per database.
 
 **If `railway add` output looks ambiguous, never retry blind.** Run `railway service list --json` (or query `project.services` via [request.md](request.md)) first and compare against what you expected to exist. Treat the service list as the source of truth, not the CLI's stdout shape.
 
 Before adding a database — and before retrying any `railway add` whose output you can't interpret — list existing services to avoid duplicates. Run `railway service list --json` for a fast count, or `railway environment config --json` and inspect `source.image` per service when you need to identify the engine:
 
-| Image pattern | Database |
-|---|---|
+| Image pattern                               | Database |
+| ------------------------------------------- | -------- |
 | `ghcr.io/railway/postgres*` or `postgres:*` | Postgres |
-| `ghcr.io/railway/redis*` or `redis:*` | Redis |
-| `ghcr.io/railway/mysql*` or `mysql:*` | MySQL |
-| `ghcr.io/railway/mongo*` or `mongo:*` | MongoDB |
+| `ghcr.io/railway/redis*` or `redis:*`       | Redis    |
+| `ghcr.io/railway/mysql*` or `mysql:*`       | MySQL    |
+| `ghcr.io/railway/mongo*` or `mongo:*`       | MongoDB  |
 
 If a matching database already exists, skip creation and wire the existing service's variables to the app.
 
@@ -113,12 +113,12 @@ Empty services have no source until you configure one. This is the right pattern
 
 After `railway add --database <type>`, the database creates connection variables automatically. Wire them to your app service using variable references:
 
-| Database | Connection variable |
-|---|---|
+| Database | Connection variable          |
+| -------- | ---------------------------- |
 | Postgres | `${{Postgres.DATABASE_URL}}` |
-| Redis | `${{Redis.REDIS_URL}}` |
-| MySQL | `${{MySQL.MYSQL_URL}}` |
-| MongoDB | `${{MongoDB.MONGO_URL}}` |
+| Redis    | `${{Redis.REDIS_URL}}`       |
+| MySQL    | `${{MySQL.MYSQL_URL}}`       |
+| MongoDB  | `${{MongoDB.MONGO_URL}}`     |
 
 ```bash
 railway variable set DATABASE_URL='${{Postgres.DATABASE_URL}}' --service <app-service>
@@ -236,11 +236,11 @@ railway bucket create --region iad --json                 # auto-named, JSON out
 
 Available regions:
 
-| Code | Location |
-|---|---|
-| `sjc` | US West (California) |
-| `iad` | US East (Virginia) |
-| `ams` | EU West (Amsterdam) |
+| Code  | Location                 |
+| ----- | ------------------------ |
+| `sjc` | US West (California)     |
+| `iad` | US East (Virginia)       |
+| `ams` | EU West (Amsterdam)      |
 | `sin` | Asia Pacific (Singapore) |
 
 Without `--region`, the CLI prompts interactively. For scripted use, always pass `--region`.
@@ -313,22 +313,22 @@ All subcommands support `--bucket (-b)` and `--environment (-e)` as global flags
 
 When setting up a new service from source, detect the project type from marker files:
 
-| Marker file | Type |
-|---|---|
-| `package.json` | Node.js |
-| `requirements.txt` or `pyproject.toml` | Python |
-| `go.mod` | Go |
-| `Cargo.toml` | Rust |
-| `index.html` (no package.json) | Static site |
+| Marker file                            | Type        |
+| -------------------------------------- | ----------- |
+| `package.json`                         | Node.js     |
+| `requirements.txt` or `pyproject.toml` | Python      |
+| `go.mod`                               | Go          |
+| `Cargo.toml`                           | Rust        |
+| `index.html` (no package.json)         | Static site |
 
 ### Monorepo detection
 
-| Marker | Monorepo type |
-|---|---|
-| `pnpm-workspace.yaml` | pnpm workspace (shared) |
-| `package.json` with `workspaces` field | npm/yarn workspace (shared) |
-| `turbo.json` | Turborepo (shared) |
-| Multiple subdirectories with separate `package.json`, no workspace config | Isolated monorepo |
+| Marker                                                                    | Monorepo type               |
+| ------------------------------------------------------------------------- | --------------------------- |
+| `pnpm-workspace.yaml`                                                     | pnpm workspace (shared)     |
+| `package.json` with `workspaces` field                                    | npm/yarn workspace (shared) |
+| `turbo.json`                                                              | Turborepo (shared)          |
+| Multiple subdirectories with separate `package.json`, no workspace config | Isolated monorepo           |
 
 **Isolated monorepo** (apps don't share code): set `rootDirectory` to the app's subdirectory (for example, `/apps/api`).
 

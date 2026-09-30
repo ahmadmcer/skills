@@ -8,7 +8,6 @@ import sys
 from pathlib import Path
 from urllib.parse import unquote
 
-
 ALLOWED_FIELDS = {
     "name",
     "description",

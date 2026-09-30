@@ -66,16 +66,8 @@ def _parse_trigger_response(text: str, skill_name: str) -> bool:
         return match.group(1).lower() == "true"
 
     # Tool call or skill invocation text indicator
-    if (
-        f'"{skill_name}"' in clean
-        or f"'{skill_name}'" in clean
-        or f"`{skill_name}`" in clean
-    ):
-        if (
-            "invoke" in clean.lower()
-            or "trigger" in clean.lower()
-            or "activate" in clean.lower()
-        ):
+    if f'"{skill_name}"' in clean or f"'{skill_name}'" in clean or f"`{skill_name}`" in clean:
+        if "invoke" in clean.lower() or "trigger" in clean.lower() or "activate" in clean.lower():
             return True
 
     return False
@@ -157,11 +149,7 @@ def _query_command(
     )
 
     # Avoid environment recursion conflicts
-    env = {
-        k: v
-        for k, v in os.environ.items()
-        if k not in ("CLAUDECODE", "OPENCODE_SUBPROCESS")
-    }
+    env = {k: v for k, v in os.environ.items() if k not in ("CLAUDECODE", "OPENCODE_SUBPROCESS")}
     env["OPENCODE_SUBPROCESS"] = "1"
 
     result = subprocess.run(
@@ -189,13 +177,9 @@ def _query_heuristic(query: str, skill_name: str, skill_description: str) -> boo
 
     # Check for negative trigger phrases in description
     exclusions = []
-    excl_match = re.search(
-        r"(?:do not use|not for|skip for|avoid for)\s+([^.]+)", desc_lower
-    )
+    excl_match = re.search(r"(?:do not use|not for|skip for|avoid for)\s+([^.]+)", desc_lower)
     if excl_match:
-        exclusions = [
-            w.strip() for w in excl_match.group(1).split(",") if len(w.strip()) > 3
-        ]
+        exclusions = [w.strip() for w in excl_match.group(1).split(",") if len(w.strip()) > 3]
 
     for excl in exclusions:
         if excl in q_lower:
@@ -258,9 +242,7 @@ def run_single_query(
             return False
 
     # 2. Configured or discovered API endpoint
-    effective_api_key = (
-        api_key or os.environ.get("OPENAI_API_KEY") or os.environ.get("LLM_API_KEY")
-    )
+    effective_api_key = api_key or os.environ.get("OPENAI_API_KEY") or os.environ.get("LLM_API_KEY")
     effective_api_base = (
         api_base
         or os.environ.get("OPENAI_BASE_URL")
@@ -280,9 +262,7 @@ def run_single_query(
                 timeout=timeout,
             )
         except Exception as e:
-            print(
-                f"Warning: API query failed ({e}); checking fallback", file=sys.stderr
-            )
+            print(f"Warning: API query failed ({e}); checking fallback", file=sys.stderr)
 
     # 3. Fallback to heuristic matcher
     return _query_heuristic(query, skill_name, skill_description)
@@ -372,41 +352,25 @@ def run_eval(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Run trigger evaluation for a skill description"
-    )
+    parser = argparse.ArgumentParser(description="Run trigger evaluation for a skill description")
     parser.add_argument("--eval-set", required=True, help="Path to eval set JSON file")
     parser.add_argument("--skill-path", required=True, help="Path to skill directory")
-    parser.add_argument(
-        "--description", default=None, help="Override description to test"
-    )
-    parser.add_argument(
-        "--num-workers", type=int, default=10, help="Number of parallel workers"
-    )
-    parser.add_argument(
-        "--timeout", type=int, default=30, help="Timeout per query in seconds"
-    )
-    parser.add_argument(
-        "--runs-per-query", type=int, default=3, help="Number of runs per query"
-    )
+    parser.add_argument("--description", default=None, help="Override description to test")
+    parser.add_argument("--num-workers", type=int, default=10, help="Number of parallel workers")
+    parser.add_argument("--timeout", type=int, default=30, help="Timeout per query in seconds")
+    parser.add_argument("--runs-per-query", type=int, default=3, help="Number of runs per query")
     parser.add_argument(
         "--trigger-threshold", type=float, default=0.5, help="Trigger rate threshold"
     )
-    parser.add_argument(
-        "--model", default=None, help="Model identifier to use for evaluation"
-    )
+    parser.add_argument("--model", default=None, help="Model identifier to use for evaluation")
     parser.add_argument("--api-key", default=None, help="API key for model evaluation")
-    parser.add_argument(
-        "--api-base", default=None, help="Base URL for model API endpoint"
-    )
+    parser.add_argument("--api-base", default=None, help="Base URL for model API endpoint")
     parser.add_argument(
         "--runner-cmd",
         default=None,
         help="CLI command template to invoke for each query",
     )
-    parser.add_argument(
-        "--verbose", action="store_true", help="Print progress to stderr"
-    )
+    parser.add_argument("--verbose", action="store_true", help="Print progress to stderr")
     args = parser.parse_args()
 
     eval_set = json.loads(Path(args.eval_set).read_text(encoding="utf-8"))
@@ -440,9 +404,7 @@ def main():
 
     if args.verbose:
         summary = output["summary"]
-        print(
-            f"Results: {summary['passed']}/{summary['total']} passed", file=sys.stderr
-        )
+        print(f"Results: {summary['passed']}/{summary['total']} passed", file=sys.stderr)
         for r in output["results"]:
             status = "PASS" if r["pass"] else "FAIL"
             rate_str = f"{r['triggers']}/{r['runs']}"

@@ -9,12 +9,15 @@
 ---
 
 ## Overview
+
 This repository contains an autonomous Agent Skill engineered for Google Antigravity and portable agent architectures.
 
 ---
 
 ## Prerequisites
+
 Ensure your environment meets these runtime requirements:
+
 - **Python**: `>= 3.10`
 - **Google Antigravity CLI** or compliant Agent Skill runtime
 
@@ -34,12 +37,15 @@ python ../skill-creator/scripts/validate_skill.py .
 ---
 
 ## Trigger Guidelines
+
 Activate this skill whenever the user asks to:
+
 - Perform domain analysis for `create-readme`.
 - Inspect, format, or validate `create-readme` artifacts.
 - Execute automated workflows bundled with this skill.
 
 Do NOT activate this skill for:
+
 - Unrelated generic programming tasks without `create-readme` context.
 - Single-line typos or isolated non-domain queries.
 
@@ -69,14 +75,16 @@ python scripts/run_workflow.py
 python scripts/run_workflow.py --json
 ```
 
-| Script | Purpose | Example Usage |
-| :--- | :--- | :--- |
+| Script                    | Purpose                | Example Usage                    |
+| :------------------------ | :--------------------- | :------------------------------- |
 | `scripts/run_workflow.py` | Primary execution tool | `python scripts/run_workflow.py` |
 
 ---
 
 ## Testing & Quality Assurance
+
 Verify that this skill conforms strictly to the portable Agent Skill specification:
+
 ```bash
 # Run automated skill structure audit
 python skills/skill-creator/scripts/validate_skill.py skills/create-readme
@@ -85,9 +93,11 @@ python skills/skill-creator/scripts/validate_skill.py skills/create-readme
 ---
 
 ## Contributing
+
 Contributions are welcome! Please ensure all newly added scripts are zero-dependency Python and pass `validate_skill.py` before submitting a pull request.
 
 ---
 
 ## License
+
 MIT © [](LICENSE)

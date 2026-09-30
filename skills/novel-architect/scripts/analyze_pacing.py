@@ -20,14 +20,14 @@ import json
 import os
 import re
 import sys
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 # Ensure safe UTF-8 output on Windows consoles
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 
-def parse_novel_source(path: str) -> Dict[str, Any]:
+def parse_novel_source(path: str) -> dict[str, Any]:
     """Parse novel project directory, novel.json, or outline/scene file."""
     if not os.path.exists(path):
         raise FileNotFoundError(f"Path does not exist: {path}")
@@ -44,7 +44,7 @@ def parse_novel_source(path: str) -> Dict[str, Any]:
         if os.path.exists(outline_dir):
             for fname in os.listdir(outline_dir):
                 if fname.endswith(".json"):
-                    with open(os.path.join(outline_dir, fname), "r", encoding="utf-8") as f:
+                    with open(os.path.join(outline_dir, fname), encoding="utf-8") as f:
                         return json.load(f)
             for fname in os.listdir(outline_dir):
                 if fname.endswith(".md"):
@@ -55,7 +55,7 @@ def parse_novel_source(path: str) -> Dict[str, Any]:
         # Check novel.json
         novel_json_path = os.path.join(path, "novel.json")
         if os.path.exists(novel_json_path):
-            with open(novel_json_path, "r", encoding="utf-8") as f:
+            with open(novel_json_path, encoding="utf-8") as f:
                 data = json.load(f)
                 if data.get("beats") or data.get("scenes"):
                     return data
@@ -65,7 +65,7 @@ def parse_novel_source(path: str) -> Dict[str, Any]:
 
     # Case 2: Direct JSON file
     if path.endswith(".json"):
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             return json.load(f)
 
     # Case 3: Markdown file
@@ -75,7 +75,7 @@ def parse_novel_source(path: str) -> Dict[str, Any]:
     raise ValueError(f"Unsupported input format for path: {path}")
 
 
-def scan_markdown_manuscript(dir_path: str) -> Dict[str, Any]:
+def scan_markdown_manuscript(dir_path: str) -> dict[str, Any]:
     """Scan markdown files in a directory to compute chapter/scene words and types."""
     scenes = []
     total_words = 0
@@ -87,7 +87,7 @@ def scan_markdown_manuscript(dir_path: str) -> Dict[str, Any]:
         for fname in sorted(files):
             if fname.endswith(".md") and not fname.startswith("README"):
                 fpath = os.path.join(root, fname)
-                with open(fpath, "r", encoding="utf-8", errors="ignore") as f:
+                with open(fpath, encoding="utf-8", errors="ignore") as f:
                     content = f.read()
 
                 words = len(content.split())
@@ -95,9 +95,19 @@ def scan_markdown_manuscript(dir_path: str) -> Dict[str, Any]:
 
                 # Detect act or scene type from content keywords
                 lower_content = content.lower()
-                is_sequel = any(k in lower_content for k in [
-                    "reaction", "reflection", "sequel", "dilemma", "decision", "grief", "aftermath", "processing"
-                ])
+                is_sequel = any(
+                    k in lower_content
+                    for k in [
+                        "reaction",
+                        "reflection",
+                        "sequel",
+                        "dilemma",
+                        "decision",
+                        "grief",
+                        "aftermath",
+                        "processing",
+                    ]
+                )
                 scene_type = "sequel" if is_sequel else "scene"
 
                 act = "Act 2A"
@@ -108,23 +118,25 @@ def scan_markdown_manuscript(dir_path: str) -> Dict[str, Any]:
                 elif any(x in lower_content for x in ["act 2b", "bad guys", "all is lost"]):
                     act = "Act 2B"
 
-                scenes.append({
-                    "title": fname.replace(".md", ""),
-                    "word_count": words,
-                    "type": scene_type,
-                    "act": act
-                })
+                scenes.append(
+                    {
+                        "title": fname.replace(".md", ""),
+                        "word_count": words,
+                        "type": scene_type,
+                        "act": act,
+                    }
+                )
 
     return {
         "title": os.path.basename(os.path.abspath(dir_path)),
         "total_words": total_words,
-        "scenes": scenes
+        "scenes": scenes,
     }
 
 
-def parse_markdown_outline_file(file_path: str) -> Dict[str, Any]:
+def parse_markdown_outline_file(file_path: str) -> dict[str, Any]:
     """Parse a markdown outline or beat sheet file."""
-    with open(file_path, "r", encoding="utf-8") as f:
+    with open(file_path, encoding="utf-8") as f:
         content = f.read()
 
     scenes = []
@@ -144,26 +156,38 @@ def parse_markdown_outline_file(file_path: str) -> Dict[str, Any]:
             words_match = re.search(r"~?(\d+[\d,]*)\s*words", meta)
             words = int(words_match.group(1).replace(",", "")) if words_match else 3000
 
-            is_sequel = "sequel" in meta.lower() or any(k in beat_name.lower() for k in [
-                "debate", "b story", "dark night", "reaction", "sequel", "dilemma", "reflection", "return"
-            ])
+            is_sequel = "sequel" in meta.lower() or any(
+                k in beat_name.lower()
+                for k in [
+                    "debate",
+                    "b story",
+                    "dark night",
+                    "reaction",
+                    "sequel",
+                    "dilemma",
+                    "reflection",
+                    "return",
+                ]
+            )
 
-            scenes.append({
-                "title": beat_name,
-                "word_count": words,
-                "type": "sequel" if is_sequel else "scene",
-                "act": current_act
-            })
+            scenes.append(
+                {
+                    "title": beat_name,
+                    "word_count": words,
+                    "type": "sequel" if is_sequel else "scene",
+                    "act": current_act,
+                }
+            )
 
     total_words = sum(s["word_count"] for s in scenes)
     return {
         "title": os.path.basename(file_path).replace(".md", ""),
         "total_words": total_words if total_words > 0 else 80000,
-        "scenes": scenes
+        "scenes": scenes,
     }
 
 
-def evaluate_pacing(novel_data: Dict[str, Any]) -> Dict[str, Any]:
+def evaluate_pacing(novel_data: dict[str, Any]) -> dict[str, Any]:
     """Execute pacing, act ratio, and scene/sequel balance diagnostics."""
     title = novel_data.get("title", "Untitled Novel")
     total_words = novel_data.get("total_words", 0)
@@ -180,20 +204,24 @@ def evaluate_pacing(novel_data: Dict[str, Any]) -> Dict[str, Any]:
             if w <= 0:
                 w = b.get("anchor_words", 3000)
 
-            items_to_eval.append({
-                "name": b_name,
-                "act": b.get("act", "Act 2A"),
-                "words": w,
-                "type": b_type,
-            })
+            items_to_eval.append(
+                {
+                    "name": b_name,
+                    "act": b.get("act", "Act 2A"),
+                    "words": w,
+                    "type": b_type,
+                }
+            )
     elif scenes:
         for s in scenes:
-            items_to_eval.append({
-                "name": s.get("title", s.get("name", "Scene")),
-                "act": s.get("act", "Act 2A"),
-                "words": s.get("word_count", 2500),
-                "type": s.get("type", "scene").lower(),
-            })
+            items_to_eval.append(
+                {
+                    "name": s.get("title", s.get("name", "Scene")),
+                    "act": s.get("act", "Act 2A"),
+                    "words": s.get("word_count", 2500),
+                    "type": s.get("type", "scene").lower(),
+                }
+            )
 
     if not items_to_eval:
         return {
@@ -202,35 +230,45 @@ def evaluate_pacing(novel_data: Dict[str, Any]) -> Dict[str, Any]:
             "pacing_score": 0,
             "grade": "N/A (No Scenes or Beats Found)",
             "act_distributions": {
-                "act_1_words": 0, "act_1_pct": 0.0,
-                "act_2a_words": 0, "act_2a_pct": 0.0,
-                "act_2b_words": 0, "act_2b_pct": 0.0,
-                "act_2_total_words": 0, "act_2_total_pct": 0.0,
-                "act_3_words": 0, "act_3_pct": 0.0,
+                "act_1_words": 0,
+                "act_1_pct": 0.0,
+                "act_2a_words": 0,
+                "act_2a_pct": 0.0,
+                "act_2b_words": 0,
+                "act_2b_pct": 0.0,
+                "act_2_total_words": 0,
+                "act_2_total_pct": 0.0,
+                "act_3_words": 0,
+                "act_3_pct": 0.0,
             },
             "scene_sequel_balance": {
-                "scene_words": 0, "scene_pct": 0.0,
-                "sequel_words": 0, "sequel_pct": 0.0,
-                "target_ratio": "65% Scene / 35% Sequel"
+                "scene_words": 0,
+                "scene_pct": 0.0,
+                "sequel_words": 0,
+                "sequel_pct": 0.0,
+                "target_ratio": "65% Scene / 35% Sequel",
             },
-            "midpoint_alignment": {
-                "midpoint_pct": 0.0,
-                "target_range": "48% - 52%"
-            },
+            "midpoint_alignment": {"midpoint_pct": 0.0, "target_range": "48% - 52%"},
             "deductions": ["No scene cards, beat sheet, or drafted manuscript chapters found."],
-            "risks": ["Workspace is in initial scaffolding state; no narrative structure drafted yet."],
+            "risks": [
+                "Workspace is in initial scaffolding state; no narrative structure drafted yet."
+            ],
             "recommendations": [
                 "Run `generate_beat_sheet.py` to produce a beat sheet.",
-                "Populate `02_OUTLINE/beat_sheet.md` with planned word targets and scenes."
+                "Populate `02_OUTLINE/beat_sheet.md` with planned word targets and scenes.",
             ],
-            "total_items_analyzed": 0
+            "total_items_analyzed": 0,
         }
 
     computed_total_words = sum(i["words"] for i in items_to_eval)
-    effective_total = computed_total_words if computed_total_words > 0 else (total_words if total_words > 0 else 80000)
+    effective_total = (
+        computed_total_words
+        if computed_total_words > 0
+        else (total_words if total_words > 0 else 80000)
+    )
 
     # 1. Act Distributions
-    act_counts: Dict[str, int] = {"Act 1": 0, "Act 2A": 0, "Act 2B": 0, "Act 3": 0}
+    act_counts: dict[str, int] = {"Act 1": 0, "Act 2A": 0, "Act 2B": 0, "Act 3": 0}
     for item in items_to_eval:
         raw_act = item["act"].upper()
         if "ACT 1" in raw_act:
@@ -288,59 +326,95 @@ def evaluate_pacing(novel_data: Dict[str, Any]) -> Dict[str, Any]:
     if act_pcts["Act 1"] > 28.0:
         pen = min(25, int((act_pcts["Act 1"] - 25.0) * 2))
         score -= pen
-        deductions.append(f"Act 1 is overly long ({act_pcts['Act 1']:.1f}% vs target 20-25%, -{pen} pts)")
+        deductions.append(
+            f"Act 1 is overly long ({act_pcts['Act 1']:.1f}% vs target 20-25%, -{pen} pts)"
+        )
         risks.append("Slower opening: Reader may lose momentum before crossing threshold.")
-        recommendations.append("Compress introductory scenes and move the Catalyst/Inciting Incident earlier.")
+        recommendations.append(
+            "Compress introductory scenes and move the Catalyst/Inciting Incident earlier."
+        )
     elif act_pcts["Act 1"] < 15.0 and act_pcts["Act 1"] > 0:
         pen = min(25, int((20.0 - act_pcts["Act 1"]) * 2))
         score -= pen
-        deductions.append(f"Act 1 is rushed ({act_pcts['Act 1']:.1f}% vs target 20-25%, -{pen} pts)")
-        risks.append("Underdeveloped stakes: Emotional connection with protagonist may feel superficial.")
-        recommendations.append("Deepen the protagonist's ordinary world, flaw, and internal conflict in Setup.")
+        deductions.append(
+            f"Act 1 is rushed ({act_pcts['Act 1']:.1f}% vs target 20-25%, -{pen} pts)"
+        )
+        risks.append(
+            "Underdeveloped stakes: Emotional connection with protagonist may feel superficial."
+        )
+        recommendations.append(
+            "Deepen the protagonist's ordinary world, flaw, and internal conflict in Setup."
+        )
 
     # Act 2 check: target 45-55%
     if act_pcts["Act 2_Total"] > 60.0:
         pen = min(30, int((act_pcts["Act 2_Total"] - 55.0) * 2))
         score -= pen
-        deductions.append(f"Act 2 is bloated ({act_pcts['Act 2_Total']:.1f}% vs target 50%, -{pen} pts)")
+        deductions.append(
+            f"Act 2 is bloated ({act_pcts['Act 2_Total']:.1f}% vs target 50%, -{pen} pts)"
+        )
         risks.append("Saggy Middle Risk: Wandering subplots, repetitive trial-and-error cycles.")
-        recommendations.append("Strengthen Midpoint reversal and tighten Bad Guys Close In pressure.")
+        recommendations.append(
+            "Strengthen Midpoint reversal and tighten Bad Guys Close In pressure."
+        )
     elif act_pcts["Act 2_Total"] < 40.0 and act_pcts["Act 2_Total"] > 0:
         pen = min(30, int((45.0 - act_pcts["Act 2_Total"]) * 2))
         score -= pen
-        deductions.append(f"Act 2 is underdeveloped ({act_pcts['Act 2_Total']:.1f}% vs target 50%, -{pen} pts)")
+        deductions.append(
+            f"Act 2 is underdeveloped ({act_pcts['Act 2_Total']:.1f}% vs target 50%, -{pen} pts)"
+        )
         risks.append("Rushed trials: Protagonist wins or reaches crisis without genuine struggle.")
-        recommendations.append("Expand the Fun & Games sequence or intensify the antagonist's counter-assault.")
+        recommendations.append(
+            "Expand the Fun & Games sequence or intensify the antagonist's counter-assault."
+        )
 
     # Act 3 check: target 18-26%
     if act_pcts["Act 3"] < 15.0 and act_pcts["Act 3"] > 0:
         pen = min(20, int((18.0 - act_pcts["Act 3"]) * 2))
         score -= pen
-        deductions.append(f"Act 3 is abbreviated ({act_pcts['Act 3']:.1f}% vs target 20-25%, -{pen} pts)")
+        deductions.append(
+            f"Act 3 is abbreviated ({act_pcts['Act 3']:.1f}% vs target 20-25%, -{pen} pts)"
+        )
         risks.append("Abrupt Climax: Payoffs may feel unearned or rushed.")
-        recommendations.append("Flesh out the 5-step Finale and allow space for emotional aftermath.")
+        recommendations.append(
+            "Flesh out the 5-step Finale and allow space for emotional aftermath."
+        )
 
     # Scene vs. Sequel ratio check: ideal 60-75% Scene, 25-40% Sequel
     if scene_pct > 80.0:
         pen = 15
         score -= pen
-        deductions.append(f"Scene ratio too high ({scene_pct:.1f}% Scene vs target 65%, -{pen} pts)")
-        risks.append("Reader Exhaustion Risk: Relentless physical action without adequate emotional digestion.")
-        recommendations.append("Insert reflective Sequel scenes (Reaction, Dilemma, Decision) following major disasters.")
+        deductions.append(
+            f"Scene ratio too high ({scene_pct:.1f}% Scene vs target 65%, -{pen} pts)"
+        )
+        risks.append(
+            "Reader Exhaustion Risk: Relentless physical action without adequate emotional digestion."
+        )
+        recommendations.append(
+            "Insert reflective Sequel scenes (Reaction, Dilemma, Decision) following major disasters."
+        )
     elif scene_pct < 50.0:
         pen = 15
         score -= pen
-        deductions.append(f"Sequel ratio too high ({sequel_pct:.1f}% Sequel vs target 35%, -{pen} pts)")
+        deductions.append(
+            f"Sequel ratio too high ({sequel_pct:.1f}% Sequel vs target 35%, -{pen} pts)"
+        )
         risks.append("Sluggish Propulsion Risk: Excessive introspection without external momentum.")
-        recommendations.append("Convert passive deliberations into proactive confrontations with clear immediate goals.")
+        recommendations.append(
+            "Convert passive deliberations into proactive confrontations with clear immediate goals."
+        )
 
     # Midpoint placement check: target 45-55%
     if midpoint_pct < 42.0 or midpoint_pct > 58.0:
         pen = 10
         score -= pen
         deductions.append(f"Midpoint off-center ({midpoint_pct:.1f}% vs target 50%, -{pen} pts)")
-        risks.append("Asymmetrical narrative arc: Imbalanced pacing between reactive and proactive halves.")
-        recommendations.append("Re-align the Midpoint reversal to occur within 48-52% of total length.")
+        risks.append(
+            "Asymmetrical narrative arc: Imbalanced pacing between reactive and proactive halves."
+        )
+        recommendations.append(
+            "Re-align the Midpoint reversal to occur within 48-52% of total length."
+        )
 
     score = max(0, min(100, score))
 
@@ -377,20 +451,17 @@ def evaluate_pacing(novel_data: Dict[str, Any]) -> Dict[str, Any]:
             "scene_pct": round(scene_pct, 1),
             "sequel_words": sequel_words,
             "sequel_pct": round(sequel_pct, 1),
-            "target_ratio": "65% Scene / 35% Sequel"
+            "target_ratio": "65% Scene / 35% Sequel",
         },
-        "midpoint_alignment": {
-            "midpoint_pct": round(midpoint_pct, 1),
-            "target_range": "48% - 52%"
-        },
+        "midpoint_alignment": {"midpoint_pct": round(midpoint_pct, 1), "target_range": "48% - 52%"},
         "deductions": deductions,
         "risks": risks,
         "recommendations": recommendations,
-        "total_items_analyzed": len(items_to_eval)
+        "total_items_analyzed": len(items_to_eval),
     }
 
 
-def format_report_markdown(report: Dict[str, Any]) -> str:
+def format_report_markdown(report: dict[str, Any]) -> str:
     """Format evaluation results as a readable markdown diagnostic report."""
     lines = [
         f"# Pacing & Structural Diagnostic: {report['title']}",
@@ -409,7 +480,14 @@ def format_report_markdown(report: Dict[str, Any]) -> str:
         ("Act 1 (Beginning)", "20 - 25%", act_data["act_1_words"], act_data["act_1_pct"], 20, 25),
         ("Act 2A (Rising Action)", "25%", act_data["act_2a_words"], act_data["act_2a_pct"], 20, 30),
         ("Act 2B (Complications)", "25%", act_data["act_2b_words"], act_data["act_2b_pct"], 20, 30),
-        ("Act 2 Total", "45 - 55%", act_data["act_2_total_words"], act_data["act_2_total_pct"], 45, 55),
+        (
+            "Act 2 Total",
+            "45 - 55%",
+            act_data["act_2_total_words"],
+            act_data["act_2_total_pct"],
+            45,
+            55,
+        ),
         ("Act 3 (Resolution)", "20 - 25%", act_data["act_3_words"], act_data["act_3_pct"], 18, 26),
     ]
 
@@ -426,15 +504,21 @@ def format_report_markdown(report: Dict[str, Any]) -> str:
     lines.append("## 2. Dwight Swain Scene & Sequel Mechanics")
     lines.append("")
     ss = report["scene_sequel_balance"]
-    lines.append(f"- **Scene (Action/Conflict/Disaster)**: `{ss['scene_pct']}%` ({ss['scene_words']:,} words)")
-    lines.append(f"- **Sequel (Reaction/Dilemma/Decision)**: `{ss['sequel_pct']}%` ({ss['sequel_words']:,} words)")
+    lines.append(
+        f"- **Scene (Action/Conflict/Disaster)**: `{ss['scene_pct']}%` ({ss['scene_words']:,} words)"
+    )
+    lines.append(
+        f"- **Sequel (Reaction/Dilemma/Decision)**: `{ss['sequel_pct']}%` ({ss['sequel_words']:,} words)"
+    )
     lines.append(f"- **Target Golden Ratio**: `{ss['target_ratio']}`")
     lines.append("")
 
     mid = report["midpoint_alignment"]
     lines.append("## 3. Midpoint Fulcrum Alignment")
     lines.append("")
-    lines.append(f"- **Midpoint Location**: `{mid['midpoint_pct']}%` mark (Target: `{mid['target_range']}`)")
+    lines.append(
+        f"- **Midpoint Location**: `{mid['midpoint_pct']}%` mark (Target: `{mid['target_range']}`)"
+    )
     lines.append("")
 
     if report["deductions"]:
@@ -457,7 +541,9 @@ def format_report_markdown(report: Dict[str, Any]) -> str:
         for r in report["recommendations"]:
             lines.append(f"1. {r}")
     else:
-        lines.append("1. Pacing is excellently balanced. Proceed with scene-level sensory drafting.")
+        lines.append(
+            "1. Pacing is excellently balanced. Proceed with scene-level sensory drafting."
+        )
     lines.append("")
 
     return "\n".join(lines)
@@ -470,18 +556,12 @@ def main():
     parser.add_argument(
         "--path",
         required=True,
-        help="Path to novel project directory, novel.json, or beat sheet JSON/MD"
+        help="Path to novel project directory, novel.json, or beat sheet JSON/MD",
     )
     parser.add_argument(
-        "--json",
-        action="store_true",
-        help="Output structured JSON instead of markdown"
+        "--json", action="store_true", help="Output structured JSON instead of markdown"
     )
-    parser.add_argument(
-        "--output",
-        default=None,
-        help="File path to save report to"
-    )
+    parser.add_argument("--output", default=None, help="File path to save report to")
 
     args = parser.parse_args()
 

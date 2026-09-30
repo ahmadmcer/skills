@@ -59,7 +59,9 @@ def validate_commit_message(message: str) -> list[str]:
 
     # 3. Allowed type check
     if commit_type not in ALLOWED_TYPES:
-        errors.append(f"Unknown commit type '{commit_type}'. Must be one of: {', '.join(sorted(ALLOWED_TYPES))}.")
+        errors.append(
+            f"Unknown commit type '{commit_type}'. Must be one of: {', '.join(sorted(ALLOWED_TYPES))}."
+        )
 
     # 4. Trailing period check
     if desc.endswith("."):
@@ -68,7 +70,9 @@ def validate_commit_message(message: str) -> list[str]:
     # 5. Casing check (imperative mood lowercase recommendation)
     if desc and desc[0].isupper() and not desc.split()[0].isupper():
         # Allow acronyms like API, URL, JWT, but flag normal words like "Add", "Update"
-        errors.append(f"Subject description should start with a lowercase letter (e.g. '{desc[0].lower() + desc[1:]}').")
+        errors.append(
+            f"Subject description should start with a lowercase letter (e.g. '{desc[0].lower() + desc[1:]}')."
+        )
 
     # 6. Blank line before body check
     if len(lines) > 1 and lines[1].strip():
@@ -78,8 +82,12 @@ def validate_commit_message(message: str) -> list[str]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Lint commit message against Conventional Commits 1.0.0")
-    parser.add_argument("message_or_file", help="Commit message string or path to commit message file")
+    parser = argparse.ArgumentParser(
+        description="Lint commit message against Conventional Commits 1.0.0"
+    )
+    parser.add_argument(
+        "message_or_file", help="Commit message string or path to commit message file"
+    )
     args = parser.parse_args()
 
     target = Path(args.message_or_file)

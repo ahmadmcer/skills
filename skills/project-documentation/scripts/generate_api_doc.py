@@ -20,11 +20,10 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 # Ensure safe UTF-8 output on Windows consoles
 if hasattr(sys.stdout, "reconfigure"):
@@ -34,6 +33,7 @@ if hasattr(sys.stderr, "reconfigure"):
 
 try:
     import yaml
+
     HAS_YAML = True
 except ImportError:
     HAS_YAML = False
@@ -48,7 +48,7 @@ def slugify(text: str) -> str:
     return text.strip("-")
 
 
-def parse_spec_file(spec_path: Path) -> Dict[str, Any]:
+def parse_spec_file(spec_path: Path) -> dict[str, Any]:
     """Parse JSON or YAML OpenAPI specification."""
     if not spec_path.exists():
         raise FileNotFoundError(f"OpenAPI spec file not found: {spec_path}")
@@ -77,7 +77,7 @@ def parse_spec_file(spec_path: Path) -> Dict[str, Any]:
             raise ValueError(f"Failed to parse OpenAPI JSON specification: {err}")
 
 
-def resolve_ref(ref: str, root_spec: Dict[str, Any]) -> Dict[str, Any]:
+def resolve_ref(ref: str, root_spec: dict[str, Any]) -> dict[str, Any]:
     """Resolve local JSON pointer reference like #/components/schemas/Pet."""
     if not ref.startswith("#/"):
         return {}
@@ -91,7 +91,9 @@ def resolve_ref(ref: str, root_spec: Dict[str, Any]) -> Dict[str, Any]:
     return curr if isinstance(curr, dict) else {}
 
 
-def generate_example_from_schema(schema: Dict[str, Any], root_spec: Dict[str, Any], depth: int = 0) -> Any:
+def generate_example_from_schema(
+    schema: dict[str, Any], root_spec: dict[str, Any], depth: int = 0
+) -> Any:
     """Generate a realistic mock JSON object from a JSON Schema / OpenAPI schema definition."""
     if depth > 5:
         return {}
@@ -145,7 +147,9 @@ def generate_example_from_schema(schema: Dict[str, Any], root_spec: Dict[str, An
     return {}
 
 
-def format_schema_table(schema: Dict[str, Any], root_spec: Dict[str, Any], prefix: str = "") -> List[Tuple[str, str, str, str]]:
+def format_schema_table(
+    schema: dict[str, Any], root_spec: dict[str, Any], prefix: str = ""
+) -> list[tuple[str, str, str, str]]:
     """Flatten schema properties into a list of (field_name, type, required, description) tuples."""
     if "$ref" in schema:
         schema = resolve_ref(schema["$ref"], root_spec)
@@ -177,7 +181,7 @@ def format_schema_table(schema: Dict[str, Any], root_spec: Dict[str, Any], prefi
     return rows
 
 
-def generate_rfc9457_example(status_code: str, title: str, detail: str) -> Dict[str, Any]:
+def generate_rfc9457_example(status_code: str, title: str, detail: str) -> dict[str, Any]:
     """Generate standard RFC 9457 Problem Details payload."""
     status_int = int(status_code) if status_code.isdigit() else 400
     return {
@@ -190,8 +194,8 @@ def generate_rfc9457_example(status_code: str, title: str, detail: str) -> Dict[
 
 
 def render_markdown(
-    spec: Dict[str, Any],
-    title_override: Optional[str] = None,
+    spec: dict[str, Any],
+    title_override: str | None = None,
     group_by: str = "tags",
     use_rfc9457: bool = True,
 ) -> str:
@@ -199,7 +203,9 @@ def render_markdown(
     info = spec.get("info", {})
     title = title_override or info.get("title", "API Reference")
     version = info.get("version", "1.0.0")
-    description = info.get("description", "Comprehensive API reference and endpoint specifications.")
+    description = info.get(
+        "description", "Comprehensive API reference and endpoint specifications."
+    )
 
     # Frontmatter
     lines = [
@@ -249,24 +255,26 @@ def render_markdown(
                     continue
                 # Merge parameters
                 op_params = list(common_params) + op.get("parameters", [])
-                operations.append({
-                    "path": path,
-                    "method": method.upper(),
-                    "summary": op.get("summary", f"{method.upper()} {path}"),
-                    "description": op.get("description", ""),
-                    "tags": op.get("tags", ["General"]),
-                    "operationId": op.get("operationId", f"{method}_{path}"),
-                    "parameters": op_params,
-                    "requestBody": op.get("requestBody", {}),
-                    "responses": op.get("responses", {}),
-                })
+                operations.append(
+                    {
+                        "path": path,
+                        "method": method.upper(),
+                        "summary": op.get("summary", f"{method.upper()} {path}"),
+                        "description": op.get("description", ""),
+                        "tags": op.get("tags", ["General"]),
+                        "operationId": op.get("operationId", f"{method}_{path}"),
+                        "parameters": op_params,
+                        "requestBody": op.get("requestBody", {}),
+                        "responses": op.get("responses", {}),
+                    }
+                )
 
     if not operations:
         lines.append("> No endpoints found in specification.")
         return "\n".join(lines)
 
     # Group operations
-    grouped: Dict[str, List[Dict[str, Any]]] = {}
+    grouped: dict[str, list[dict[str, Any]]] = {}
     if group_by == "tags":
         for op in operations:
             for tag in op["tags"]:
@@ -400,7 +408,9 @@ def render_markdown(
                                 lines.append("| Property | Type | Required | Description |")
                                 lines.append("| :--- | :--- | :---: | :--- |")
                                 for r_name, r_type, r_req, r_desc in rows:
-                                    lines.append(f"| `{r_name}` | `{r_type}` | {r_req} | {r_desc} |")
+                                    lines.append(
+                                        f"| `{r_name}` | `{r_type}` | {r_req} | {r_desc} |"
+                                    )
                                 lines.append("")
 
                             if "example" in rc_data:
@@ -419,12 +429,12 @@ def render_markdown(
                     else:
                         # If error status code and no content provided, provide RFC 9457 Problem Details example
                         if use_rfc9457 and status_code.startswith(("4", "5")):
-                            lines.append("**RFC 9457 Problem Details Schema** (`application/problem+json`):")
+                            lines.append(
+                                "**RFC 9457 Problem Details Schema** (`application/problem+json`):"
+                            )
                             lines.append("")
                             rfc_ex = generate_rfc9457_example(
-                                status_code,
-                                status_desc,
-                                f"An error occurred executing {m} {p}."
+                                status_code, status_desc, f"An error occurred executing {m} {p}."
                             )
                             lines.append("```json")
                             lines.append(json.dumps(rfc_ex, indent=2))

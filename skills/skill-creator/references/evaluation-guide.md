@@ -41,10 +41,7 @@ Each test case should contain:
   "prompt": "A realistic user request",
   "expected_output": "A human-readable definition of success",
   "files": ["evals/files/input.ext"],
-  "assertions": [
-    "A specific, observable requirement",
-    "A second requirement"
-  ]
+  "assertions": ["A specific, observable requirement", "A second requirement"]
 }
 ```
 

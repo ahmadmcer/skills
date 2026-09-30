@@ -36,6 +36,7 @@ Follow this sequence whenever quoting, analyzing, or verifying biblical passages
 ```
 
 ### Step 1: Identify Canon Scope & Book
+
 - Determine whether the passage belongs to:
   - **Old Testament / Hebrew Bible (Tanakh)**: 39 books shared across Protestant and Catholic Bibles.
   - **New Testament**: 27 books unanimously recognized across all major Christian branches.
@@ -43,7 +44,9 @@ Follow this sequence whenever quoting, analyzing, or verifying biblical passages
 - Map the book to its standard SBL abbreviation (e.g. `Gen`, `Exod`, `Ps`, `Matt`, `Rom`, `1 Cor`, `Rev`).
 
 ### Step 2: Retrieve Verified Text
+
 Never quote verses from memory:
+
 - Use the bundled lookup utility to retrieve verified texts across translations:
   ```bash
   # Lookup passage (KJV, WEB, etc.)
@@ -55,20 +58,24 @@ Never quote verses from memory:
 - If analyzing original languages, cross-reference the Masoretic Text (Biblical Hebrew) or the Nestle-Aland / UBS5 Critical Greek Text.
 
 ### Step 3: Clarify Translation Philosophy
+
 - Specify the translation edition being cited:
   - **Formal Equivalence (Word-for-Word)**: ESV, NASB, KJV, NKJV. Preserves literal idioms, grammatical structure, and literary parallelism.
   - **Dynamic Equivalence (Thought-for-Thought)**: NIV, NLT. Prioritizes natural contemporary English readability.
   - **Academic & Critical Standards**: NRSVue, RSV-2CE. Preferred in academic scholarship and ecumenical research.
 
 ### Step 4: Contextualize (Historical-Grammatical Hermeneutics)
-- Recognize the literary genre: Law (*Torah*), Historical Narrative, Wisdom/Poetry, Prophecy, Gospel, Pauline/General Epistle, or Apocalypse.
+
+- Recognize the literary genre: Law (_Torah_), Historical Narrative, Wisdom/Poetry, Prophecy, Gospel, Pauline/General Epistle, or Apocalypse.
 - Consult recognized historical and theological commentators:
   - **Patristic Era**: St. Augustine, St. John Chrysostom, St. Thomas Aquinas.
   - **Reformation Era**: John Calvin, Martin Luther.
-  - **Classic Expository**: Matthew Henry, Charles Spurgeon (*Treasury of David*).
+  - **Classic Expository**: Matthew Henry, Charles Spurgeon (_Treasury of David_).
 
 ### Step 5: Format Standard SBL Citation
+
 Standardize citations according to the SBL Handbook of Style:
+
 ```bash
 python <skill_path>/scripts/format_biblical_citation.py "1st Corinthians chapter 13 verses 4 through 8" --version ESV
 # Outputs: (1 Cor 13:4–8 ESV)
@@ -82,7 +89,7 @@ Every deliverable must adhere to these non-negotiable principles:
 
 1. **Zero Tolerance for Verse Hallucination**: Never invent, extrapolate, or misquote scripture. If a quote cannot be verified in a recognized biblical translation, state so explicitly.
 2. **Mandatory Translation Attribution**: Always name the translation edition (e.g. ESV, NIV, KJV, NASB, NRSVue) when quoting English scripture.
-3. **Respect Canon Boundaries**: Clearly indicate when citing Deuterocanonical or Apocryphal works (e.g., *"According to the book of Sirach in the Catholic/Orthodox canon..."*).
+3. **Respect Canon Boundaries**: Clearly indicate when citing Deuterocanonical or Apocryphal works (e.g., _"According to the book of Sirach in the Catholic/Orthodox canon..."_).
 4. **Preserve Gospel Distinction**: Do not homogenize or conflate parallel accounts between the Synoptic Gospels (Matthew, Mark, Luke) or the Gospel of John; cite the specific evangelist.
 5. **Acknowledge Major Textual Variants**: Note significant manuscript variants when relevant (e.g., Mark 16:9–20, John 7:53–8:11, 1 John 5:7–8).
 6. **SBL Punctuation Rules**:
@@ -95,16 +102,17 @@ Every deliverable must adhere to these non-negotiable principles:
 
 ## 3. Tooling Reference
 
-| Script | Purpose | Example Usage |
-| :--- | :--- | :--- |
-| `scripts/lookup_scripture.py` | Fetches verified biblical passages across translations (WEB, KJV) with offline caching. | `python scripts/lookup_scripture.py --passage "Romans 8:28"` |
-| `scripts/format_biblical_citation.py` | Normalizes colloquial references into official SBL Handbook of Style citations. | `python scripts/format_biblical_citation.py "psalms 23:1-6" --version ESV` |
+| Script                                | Purpose                                                                                 | Example Usage                                                              |
+| :------------------------------------ | :-------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
+| `scripts/lookup_scripture.py`         | Fetches verified biblical passages across translations (WEB, KJV) with offline caching. | `python scripts/lookup_scripture.py --passage "Romans 8:28"`               |
+| `scripts/format_biblical_citation.py` | Normalizes colloquial references into official SBL Handbook of Style citations.         | `python scripts/format_biblical_citation.py "psalms 23:1-6" --version ESV` |
 
 ---
 
 ## 4. Deep Reference Guides
 
 Read the dedicated reference guides when handling specialized topics:
+
 - [Biblical Canons & Manuscripts](references/biblical-canons-and-manuscripts.md): Protestant, Catholic, Orthodox canons, Masoretic Text, Septuagint (LXX), Dead Sea Scrolls, and Critical Greek texts.
 - [Translations & Textual Equivalence](references/translations-and-textual-equivalence.md): Formal vs. Dynamic vs. Optimal equivalence, detailed breakdown of ESV, NASB, KJV, NIV, NRSVue.
 - [SBL Citation & Abbreviations](references/sbl-citation-and-abbreviations.md): Complete SBL Handbook of Style tables for OT, NT, and Apocrypha, punctuation rules.

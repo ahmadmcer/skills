@@ -18,12 +18,12 @@ Runtime apps read **one scope** at a time (`project:<id>` or `workspace:<id>`) v
 
 Prefer **Remote MCP** tools when OAuth-scoped project access is enough:
 
-| Tool | Access | Purpose |
-|---|---|---|
-| `list-feature-flags` | viewer | List project flags; includes workspace flags when present |
-| `get-feature-flag` | viewer | Inspect one flag (`scope`: `project` or `workspace`) |
-| `set-feature-flag` | admin | Create a flag or update its default |
-| `delete-feature-flag` | admin | Delete a project-scoped flag |
+| Tool                  | Access | Purpose                                                   |
+| --------------------- | ------ | --------------------------------------------------------- |
+| `list-feature-flags`  | viewer | List project flags; includes workspace flags when present |
+| `get-feature-flag`    | viewer | Inspect one flag (`scope`: `project` or `workspace`)      |
+| `set-feature-flag`    | admin  | Create a flag or update its default                       |
+| `delete-feature-flag` | admin  | Delete a project-scoped flag                              |
 
 Always pass explicit `projectId` (from a Railway URL or `railway status --json`).
 

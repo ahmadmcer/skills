@@ -20,6 +20,7 @@ Modern software engineering favors the **Testing Trophy** over the classic unit-
 ```
 
 ### Layer Breakdown
+
 1. **Static Analysis**: TypeScript / Pyright type checking, linters (ESLint, Ruff), security rules. Eliminates typos and type errors before runtime.
 2. **Unit Tests**: Isolated testing of pure functions, algorithms, and domain entities. Avoid heavy mocking of external frameworks.
 3. **Integration Tests (Primary Focus)**: Verifies collaboration between components, database operations against test containers, and message queues. Provides maximum ROI.

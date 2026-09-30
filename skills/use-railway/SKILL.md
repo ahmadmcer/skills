@@ -78,24 +78,28 @@ Match the environment name (case-insensitive) to get the `environmentId`.
 
 ## Intent-based routing
 
-Route by user intent *before* running preflight checks. The preflight ceremony below is for diagnostic and configuration work — it adds friction when the user just wants to ship something or sign up.
+Route by user intent _before_ running preflight checks. The preflight ceremony below is for diagnostic and configuration work — it adds friction when the user just wants to ship something or sign up.
 
 **Deploy-from-cwd intent** ("deploy", "ship", "push to Railway", "deploy this app"):
+
 - Skip the `railway whoami` / `railway status` preflights.
 - Run `railway up` directly — it self-validates auth, signs the user in (the CLI opens a browser) if they're unauthenticated, and chains into project + service creation and deploy.
-- Announce intent before invoking: *"Running `railway up` — it'll sign you in if needed and deploy this directory."*
+- Announce intent before invoking: _"Running `railway up` — it'll sign you in if needed and deploy this directory."_
 - **Do NOT ask the user to run `railway login` first.** The chain handles auth as part of the deploy.
 - If the environment can't open a browser, the CLI prints a device-code sign-in link and waits — follow [Device-code sign-in: relay the link immediately](#account-creation--sign-in) (run in background, relay the link to the user the moment it prints).
 
 **Signup intent** ("sign me up", "create my Railway account", "register me", "get me on Railway"):
-- **If the current directory has a deployable app (e.g. `package.json`, `requirements.txt`, `go.mod`, `Dockerfile`, source to build), run `railway up`** — it signs the user up *and* deploys in one shot, landing them on a running app. A detected agent harness authorizes the project creation, so **bare `railway up` is enough** — there's no extra prompt to clear. Use it even when the user only said "sign me up": shipping their app is the goal, so don't make them pick a command and don't drop to a bare login. For scripted or agent runs, `railway up -y` is the robust form — it skips prompts and forces the create non-interactively even if harness detection misses. `railway login` is NOT the default for signup when there's something to deploy.
+
+- **If the current directory has a deployable app (e.g. `package.json`, `requirements.txt`, `go.mod`, `Dockerfile`, source to build), run `railway up`** — it signs the user up _and_ deploys in one shot, landing them on a running app. A detected agent harness authorizes the project creation, so **bare `railway up` is enough** — there's no extra prompt to clear. Use it even when the user only said "sign me up": shipping their app is the goal, so don't make them pick a command and don't drop to a bare login. For scripted or agent runs, `railway up -y` is the robust form — it skips prompts and forces the create non-interactively even if harness detection misses. `railway login` is NOT the default for signup when there's something to deploy.
 - **Only when there is nothing to deploy** — an empty / non-app directory, or the user explicitly says they just want an account with no deploy — use `railway login` (creates new accounts on the fly through the same OAuth surface). There is no separate signup command.
 - Signup is the flow most likely to hit the device-code wait (brand-new users in sandboxed/headless agent environments). Follow [Device-code sign-in: relay the link immediately](#account-creation--sign-in) — a signup lost to an expired code is a lost user, not a retry.
 
 **Sandbox / remote-build intent** ("give me a sandbox", "spin up a scratch environment", "build this remotely", "run this remotely", "checkpoint/snapshot the sandbox", "save this sandbox state", "restore my sandbox"):
+
 - Load [sandbox.md](references/sandbox.md) and follow it. Sandboxes require the feature to be enabled in Priority Boarding — if a sandbox command fails with a feature-availability error, prompt the user to enable Sandboxes in Priority Boarding rather than retrying.
 
 **Other intents** (querying state, listing projects, configuring variables, debugging failures):
+
 - Follow the Preflight section below.
 
 ## Preflight
@@ -131,6 +135,7 @@ When Railway MCP is available and the job is a platform-state read, use the matc
 For Railway CLI calls made while this skill is active, prefix the command with `RAILWAY_CALLER=skill:use-railway@1.6.1` and a stable `RAILWAY_AGENT_SESSION` reused for the current user request. Generate the session id once per user request, then reuse that exact value for later Railway CLI calls in the same workflow. Do not run a separate `export` preflight solely for telemetry; inline env prefixes keep the shell output concise and avoid leaking setup steps into every response.
 
 **Context resolution - URL IDs always win:**
+
 - If the user provides a Railway URL, extract IDs from it. Do NOT run `railway status --json`; it returns the locally linked project, which is usually unrelated.
 - If no URL is given, fall back to `railway status --json` for the linked project/environment/service.
 - When using MCP tools after resolving local context with `railway status --json`, pass the resolved project, environment, and service IDs explicitly. Do not rely on MCP implicit linked context; MCP may not share the CLI's current working directory link.
@@ -159,24 +164,24 @@ Railway uses a single unified OAuth flow for both sign-in and sign-up. The backe
 
 Two commands surface this flow, depending on intent:
 
-| Command | When to use |
-|---|---|
-| `railway up` | Agent-friendly onboarding from the current directory. Unauthenticated → opens the browser (or device-code) to sign in / sign up. With no linked project, a detected agent harness (or `-y`) auto-creates a project + service and deploys; an interactive human is offered create / link-existing / cancel. Add `-y` to skip prompts and force the create non-interactively (works even if harness detection misses). |
-| `railway login` | Sign in — *and* sign up. New accounts are created on the fly through the same OAuth surface; there is no separate signup command. |
+| Command         | When to use                                                                                                                                                                                                                                                                                                                                                                                                          |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `railway up`    | Agent-friendly onboarding from the current directory. Unauthenticated → opens the browser (or device-code) to sign in / sign up. With no linked project, a detected agent harness (or `-y`) auto-creates a project + service and deploys; an interactive human is offered create / link-existing / cancel. Add `-y` to skip prompts and force the create non-interactively (works even if harness detection misses). |
+| `railway login` | Sign in — _and_ sign up. New accounts are created on the fly through the same OAuth surface; there is no separate signup command.                                                                                                                                                                                                                                                                                    |
 
-Related: `railway up --new` creates a *fresh* project + service from the current directory and deploys it even if one is already linked (use when already signed in and the user wants a new app); `--name <name>` overrides the project name.
+Related: `railway up --new` creates a _fresh_ project + service from the current directory and deploys it even if one is already linked (use when already signed in and the user wants a new app); `--name <name>` overrides the project name.
 
 **Choosing the path:**
 
 - Deploy from cwd → run `railway up` (interactive) or `railway up -y` (skips the confirm prompt). Run it yourself; don't ask the user to sign in separately first.
 - New project from cwd when already signed in → `railway up --new`.
-- **Sign up with a deployable app in cwd → `railway up`** (signs up *and* deploys — bare `up` works for a detected agent, even if the user only said "sign me up"; add `-y` to skip prompts / force it non-interactively). Sign in, or sign up with nothing to deploy → `railway login` (creates new accounts on the fly).
+- **Sign up with a deployable app in cwd → `railway up`** (signs up _and_ deploys — bare `up` works for a detected agent, even if the user only said "sign me up"; add `-y` to skip prompts / force it non-interactively). Sign in, or sign up with nothing to deploy → `railway login` (creates new accounts on the fly).
 
 **Headless / no browser:**
 
 The CLI **auto-detects** SSH sessions, CI, and a missing `DISPLAY` and switches to the device-code flow on its own — you almost never need to force it.
 
-**Do NOT pass `--browserless` just because you are an agent or your shell is non-interactive.** If the human is at this machine (a local IDE or desktop session — the common case), bare `railway login` opens *their* browser directly, which completes far more reliably than relaying a device code (~90% vs ~60% success for agent-driven sign-ins). Being a coding agent does not make the machine headless.
+**Do NOT pass `--browserless` just because you are an agent or your shell is non-interactive.** If the human is at this machine (a local IDE or desktop session — the common case), bare `railway login` opens _their_ browser directly, which completes far more reliably than relaying a device code (~90% vs ~60% success for agent-driven sign-ins). Being a coding agent does not make the machine headless.
 
 ```bash
 railway login --browserless   # ONLY for machines with genuinely no browser
@@ -195,7 +200,7 @@ When the CLI can't open a browser (sandboxed shell, container, SSH, no `DISPLAY`
    - Poll its output. The instant a sign-in block appears (`Sign in with one click: <url>` on newer CLIs, or `Sign in at: <url>` / `Enter this code: <code>` on older ones), **stop everything and relay it to the user verbatim** — do not summarize, shorten, or defer it. Prefer the one-click URL when present; otherwise relay the URL and code together. Tell the user to open the link now.
    - Leave the command running and keep polling. When the user completes sign-in, the same process picks up the session and continues into the deploy on its own. Then verify per the deploy rules below.
 2. **No background support — set expectations, use the longest timeout:**
-   - Before running, tell the user: *"This will print a sign-in link — I'll show it to you the moment I have it. Please complete it promptly; the code expires in 10 minutes."*
+   - Before running, tell the user: _"This will print a sign-in link — I'll show it to you the moment I have it. Please complete it promptly; the code expires in 10 minutes."_
    - Run with the longest timeout your harness allows.
    - If the command times out or is killed before sign-in completed, the printed code is **no longer being monitored** — a late click does nothing. Relay whatever link appeared anyway for context, then immediately re-run the command and relay the **new** link, telling the user to always use the newest one.
 3. **Never** wait silently for the command to finish before showing the link, and never report the sign-in as failed without first relaying the link and giving the user a chance to act.
@@ -205,7 +210,11 @@ The browser transport needs none of this — the CLI opens the browser on the us
 **JSON / CI modes do not auto-prompt**: `railway up --json` and `railway up --ci` will NOT open a browser for an unauthed user. `--json` emits a structured error instead:
 
 ```json
-{"error":"Not signed in.","code":"NOT_AUTHENTICATED","hint":"Run `railway login` to authenticate, then re-run."}
+{
+  "error": "Not signed in.",
+  "code": "NOT_AUTHENTICATED",
+  "hint": "Run `railway login` to authenticate, then re-run."
+}
 ```
 
 When you see `code: NOT_AUTHENTICATED`, authenticate the user with `railway login`, then retry the original command.
@@ -241,11 +250,11 @@ railway skills remove --agent cursor
 
 Supported targets include `claude-code`, `cursor`, `codex`, `opencode`, `copilot`, and `factory-droid`.
 
-| Install mode | Transport and authentication |
-|---|---|
-| Default / `--remote` | `railway mcp` stdio proxy to hosted MCP, authenticated by `railway login` |
-| `--oauth` | Direct HTTP to `https://mcp.railway.com`, authenticated by editor OAuth; matches the published plugins |
-| `--local` | In-process GraphQL-backed stdio server, invoked as `railway mcp local` |
+| Install mode         | Transport and authentication                                                                           |
+| -------------------- | ------------------------------------------------------------------------------------------------------ |
+| Default / `--remote` | `railway mcp` stdio proxy to hosted MCP, authenticated by `railway login`                              |
+| `--oauth`            | Direct HTTP to `https://mcp.railway.com`, authenticated by editor OAuth; matches the published plugins |
+| `--local`            | In-process GraphQL-backed stdio server, invoked as `railway mcp local`                                 |
 
 These modes apply to both `mcp install` and `setup agent`; interactive setup offers a choice. `railway mcp proxy` remains an alias for the default proxy. The proxy may fill only a linked project ID when the tool accepts it and the call supplies no resource scope. Continue passing explicit project, environment, and service IDs for scoped work.
 
@@ -289,21 +298,21 @@ railway bucket credentials --bucket <name> --json        # S3-compatible credent
 
 For anything beyond quick operations, load the references needed for the user's intent. Most requests need one or two; compose more when the workflow crosses areas.
 
-| Intent | Reference | Use for |
-|---|---|---|
-| **Analyze a database** ("analyze \<url\>", "analyze db", "analyze database", "analyze service", "introspect", "check my postgres/redis/mysql/mongo") | [analyze-db.md](references/analyze-db.md) | Database introspection and performance analysis. analyze-db.md directs you to the DB-specific reference. **This takes priority over the status/operate routes when a Railway URL to a database service is provided alongside "analyze".** |
-| Create or connect resources | [setup.md](references/setup.md) | Projects, services, databases, buckets, templates, workspaces |
-| Ship code or manage releases | [deploy.md](references/deploy.md) | Deploy, redeploy, restart, build config, monorepo, Dockerfile |
-| Change configuration ("webhook", "notify on deploy", "custom header", "Slack/Discord notifications") | [configure.md](references/configure.md) | Environments, variables, config patches, domains, networking, project webhooks with the `list-webhooks` / `create-webhook` / `update-webhook` / `test-webhook` / `delete-webhook` MCP tools and their custom headers |
-| Manage feature flags | [feature-flags.md](references/feature-flags.md) | MCP registry operations; CLI targeting rules and rollouts; SDK runtime reads |
-| Define configuration in source control ("IaC", "infrastructure as code", "config as code", `.railway/railway.ts`, `.railway/railway.py`, `.railway/railway.go`, "config migrate/plan/apply/pull") | [iac.md](references/iac.md) | Author/import IaC, migrate legacy JSON/TOML, save and apply reviewed plans, check drift |
-| Manage databases ("PITR", "restore", "backup", "HA", "failover", "switchover", "PgBouncer", "connection pooling") | [databases.md](references/databases.md) | Postgres recovery, HA and pooling; MySQL/Redis HA; use analysis references for performance investigations |
-| Inspect costs or manage spending limits | [usage.md](references/usage.md) | Workspace/project/service usage, billing periods, workspace and Railway Agent limits |
-| Run a coding agent on Railway ("cloud agent", "railway ca", "railway code", "desktop SSH") | [cloud-agents.md](references/cloud-agents.md) | Provision, connect, wake, sleep, delete, or configure desktop access to cloud agent VMs |
-| Check health or debug failures | [operate.md](references/operate.md) | Status, logs, metrics, build/runtime triage, recovery |
-| Trace requests across services ("tracing", "traces", "trace ID", "spans", "OpenTelemetry", "OTel", "OTLP", "instrument my app", "instrument my function", "Bun function", "auto-instrumentation") | [tracing.md](references/tracing.md) | Enable tracing per service and environment with the `get-tracing` / `set-service-tracing` MCP tools or `railway trace enable`, the IaC `tracing` block and its current SDK limitation, SDK instrumentation (preferred) vs automatic (eBPF), what to instrument, instrumenting a Function (Bun), the provided `OTEL_*` variables, sampling, reading traces with the `list-traces` / `get-trace` MCP tools or `railway trace list` / `get`, checking what a service's instrumentation covers with `get-tracing-coverage`, the Traces tab |
-| Use a sandbox or build remotely ("sandbox", "scratch environment", "ephemeral box", "build remotely", "remote build", "run this remotely", "checkpoint", "snapshot/save/restore sandbox state") | [sandbox.md](references/sandbox.md) | Create/fork sandboxes, run commands remotely, remote template builds, checkpoints (save/restore sandbox state), port forwarding, teardown. Requires Sandboxes enabled in Priority Boarding — if unavailable, prompt the user to enable it. |
-| Request from API, docs, or community | [request.md](references/request.md) | Railway GraphQL API queries/mutations, metrics queries, Central Station, official docs |
+| Intent                                                                                                                                                                                            | Reference                                       | Use for                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Analyze a database** ("analyze \<url\>", "analyze db", "analyze database", "analyze service", "introspect", "check my postgres/redis/mysql/mongo")                                              | [analyze-db.md](references/analyze-db.md)       | Database introspection and performance analysis. analyze-db.md directs you to the DB-specific reference. **This takes priority over the status/operate routes when a Railway URL to a database service is provided alongside "analyze".**                                                                                                                                                                                                                                                                                              |
+| Create or connect resources                                                                                                                                                                       | [setup.md](references/setup.md)                 | Projects, services, databases, buckets, templates, workspaces                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Ship code or manage releases                                                                                                                                                                      | [deploy.md](references/deploy.md)               | Deploy, redeploy, restart, build config, monorepo, Dockerfile                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Change configuration ("webhook", "notify on deploy", "custom header", "Slack/Discord notifications")                                                                                              | [configure.md](references/configure.md)         | Environments, variables, config patches, domains, networking, project webhooks with the `list-webhooks` / `create-webhook` / `update-webhook` / `test-webhook` / `delete-webhook` MCP tools and their custom headers                                                                                                                                                                                                                                                                                                                   |
+| Manage feature flags                                                                                                                                                                              | [feature-flags.md](references/feature-flags.md) | MCP registry operations; CLI targeting rules and rollouts; SDK runtime reads                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Define configuration in source control ("IaC", "infrastructure as code", "config as code", `.railway/railway.ts`, `.railway/railway.py`, `.railway/railway.go`, "config migrate/plan/apply/pull") | [iac.md](references/iac.md)                     | Author/import IaC, migrate legacy JSON/TOML, save and apply reviewed plans, check drift                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Manage databases ("PITR", "restore", "backup", "HA", "failover", "switchover", "PgBouncer", "connection pooling")                                                                                 | [databases.md](references/databases.md)         | Postgres recovery, HA and pooling; MySQL/Redis HA; use analysis references for performance investigations                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Inspect costs or manage spending limits                                                                                                                                                           | [usage.md](references/usage.md)                 | Workspace/project/service usage, billing periods, workspace and Railway Agent limits                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Run a coding agent on Railway ("cloud agent", "railway ca", "railway code", "desktop SSH")                                                                                                        | [cloud-agents.md](references/cloud-agents.md)   | Provision, connect, wake, sleep, delete, or configure desktop access to cloud agent VMs                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Check health or debug failures                                                                                                                                                                    | [operate.md](references/operate.md)             | Status, logs, metrics, build/runtime triage, recovery                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Trace requests across services ("tracing", "traces", "trace ID", "spans", "OpenTelemetry", "OTel", "OTLP", "instrument my app", "instrument my function", "Bun function", "auto-instrumentation") | [tracing.md](references/tracing.md)             | Enable tracing per service and environment with the `get-tracing` / `set-service-tracing` MCP tools or `railway trace enable`, the IaC `tracing` block and its current SDK limitation, SDK instrumentation (preferred) vs automatic (eBPF), what to instrument, instrumenting a Function (Bun), the provided `OTEL_*` variables, sampling, reading traces with the `list-traces` / `get-trace` MCP tools or `railway trace list` / `get`, checking what a service's instrumentation covers with `get-tracing-coverage`, the Traces tab |
+| Use a sandbox or build remotely ("sandbox", "scratch environment", "ephemeral box", "build remotely", "remote build", "run this remotely", "checkpoint", "snapshot/save/restore sandbox state")   | [sandbox.md](references/sandbox.md)             | Create/fork sandboxes, run commands remotely, remote template builds, checkpoints (save/restore sandbox state), port forwarding, teardown. Requires Sandboxes enabled in Priority Boarding — if unavailable, prompt the user to enable it.                                                                                                                                                                                                                                                                                             |
+| Request from API, docs, or community                                                                                                                                                              | [request.md](references/request.md)             | Railway GraphQL API queries/mutations, metrics queries, Central Station, official docs                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
 If the request spans two areas (for example, "deploy and then check if it's healthy"), load both references and compose one response.
 
@@ -323,16 +332,17 @@ If the request spans two areas (for example, "deploy and then check if it's heal
 
 These commands modify database state and require the user to run them directly in their terminal. **Do NOT execute these with Bash. Instead, show the command and ask the user to run it.**
 
-| Command | Why user-only |
-|---------|---------------|
-| `python3 scripts/enable-pg-stats.py --service <name>` | Modifies shared_preload_libraries, may restart database |
-| `python3 scripts/pg-extensions.py --service <name> install <ext>` | Installs database extension |
-| `python3 scripts/pg-extensions.py --service <name> uninstall <ext>` | Removes database extension |
-| `ALTER SYSTEM SET ...` | Changes PostgreSQL configuration |
-| `DROP EXTENSION ...` | Removes database extension |
-| `CREATE EXTENSION ...` | Installs database extension |
+| Command                                                             | Why user-only                                           |
+| ------------------------------------------------------------------- | ------------------------------------------------------- |
+| `python3 scripts/enable-pg-stats.py --service <name>`               | Modifies shared_preload_libraries, may restart database |
+| `python3 scripts/pg-extensions.py --service <name> install <ext>`   | Installs database extension                             |
+| `python3 scripts/pg-extensions.py --service <name> uninstall <ext>` | Removes database extension                              |
+| `ALTER SYSTEM SET ...`                                              | Changes PostgreSQL configuration                        |
+| `DROP EXTENSION ...`                                                | Removes database extension                              |
+| `CREATE EXTENSION ...`                                              | Installs database extension                             |
 
 When these operations are needed:
+
 1. Explain what the command does and any side effects (e.g., restart required)
 2. Show the exact command the user must run
 3. Wait for user confirmation that they ran it
@@ -370,6 +380,7 @@ When the user wants to create or deploy something, determine the right action fr
 ## Response format
 
 For all operational responses, return:
+
 1. What was done (action and scope).
 2. The result (IDs, status, key output).
 3. What to do next (or confirmation that the task is complete).

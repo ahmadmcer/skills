@@ -5,15 +5,8 @@
     "prompt": "Generate a production-ready README for a Rust CLI tool named 'ripx' that rapidly searches compressed archives. Include Shields.io badges, installation via cargo and homebrew, options table, and test commands.",
     "expected_elements": {
       "title_and_hook": "# ripx followed by a punchy value proposition hook.",
-      "curated_badges": [
-        "CI Status badge",
-        "Crates.io version badge",
-        "License badge"
-      ],
-      "installation_methods": [
-        "cargo install ripx",
-        "brew install ripx"
-      ],
+      "curated_badges": ["CI Status badge", "Crates.io version badge", "License badge"],
+      "installation_methods": ["cargo install ripx", "brew install ripx"],
       "cli_flags_table": "Markdown table with columns Flag, Short, Type, Default, Description.",
       "testing_instructions": "cargo test"
     }
@@ -36,11 +29,7 @@
     "prompt": "Write a PyPI library README for 'schemaval', a type-safe schema validator for Python. Include a 5-minute quickstart with type annotations, installation via pip and poetry, API highlights, and testing with pytest.",
     "expected_elements": {
       "title_and_hook": "# schemaval with 1-sentence value proposition.",
-      "pypi_badges": [
-        "PyPI version",
-        "Python versions supported (3.10+)",
-        "License"
-      ],
+      "pypi_badges": ["PyPI version", "Python versions supported (3.10+)", "License"],
       "quickstart_code": "Python code block demonstrating imports, schema definition, and validation call.",
       "installation": "pip install schemaval or poetry add schemaval",
       "test_command": "pytest"

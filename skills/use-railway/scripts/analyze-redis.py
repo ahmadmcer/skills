@@ -21,71 +21,77 @@ Usage:
 
 import argparse
 import json
-import os
-import subprocess
-import sys
 import re
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import sys
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
-from typing import Dict, List, Optional, Any, Tuple
-from dataclasses import dataclass, field, asdict
+from typing import Any
 
 import dal
 from dal import (
-    LOG_LINES_DEFAULT, ProgressTimer, RailwayContext,
-    _init_context, progress, run_railway_command, run_ssh_query,
-    get_railway_status, get_deployment_status,
-    get_all_metrics_from_api, _analyze_window, _build_metrics_history,
+    LOG_LINES_DEFAULT,
+    RailwayContext,
+    _format_uptime,
+    _init_context,
+    _safe_float,
+    _safe_int,
+    get_all_metrics_from_api,
+    get_deployment_status,
+    get_railway_status,
     get_recent_logs,
-    _safe_int, _safe_float, _format_uptime,
+    progress,
+    run_ssh_query,
 )
-
 
 # ---------------------------------------------------------------------------
 # Data model
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class RedisAnalysisResult:
     """Container for Redis analysis results."""
+
     service: str
     db_type: str
     timestamp: str
     deployment_status: str = "UNKNOWN"
 
     # Redis INFO sections
-    overview: Optional[Dict[str, Any]] = None
-    memory: Optional[Dict[str, Any]] = None
-    throughput: Optional[Dict[str, Any]] = None
-    cache: Optional[Dict[str, Any]] = None
-    persistence: Optional[Dict[str, Any]] = None
-    keyspace: List[Dict[str, Any]] = field(default_factory=list)
+    overview: dict[str, Any] | None = None
+    memory: dict[str, Any] | None = None
+    throughput: dict[str, Any] | None = None
+    cache: dict[str, Any] | None = None
+    persistence: dict[str, Any] | None = None
+    keyspace: list[dict[str, Any]] = field(default_factory=list)
     total_keys: int = 0
-    command_stats: List[Dict[str, Any]] = field(default_factory=list)
-    slowlog_len: Optional[int] = None
-    slowlog_entries: List[Dict[str, Any]] = field(default_factory=list)
-    big_keys: List[Dict[str, Any]] = field(default_factory=list)
+    command_stats: list[dict[str, Any]] = field(default_factory=list)
+    slowlog_len: int | None = None
+    slowlog_entries: list[dict[str, Any]] = field(default_factory=list)
+    big_keys: list[dict[str, Any]] = field(default_factory=list)
 
     # Railway infrastructure
-    metrics_history: Optional[Dict[str, Any]] = None
-    recent_logs: List[str] = field(default_factory=list)
+    metrics_history: dict[str, Any] | None = None
+    recent_logs: list[str] = field(default_factory=list)
 
     # Status tracking
-    collection_status: Dict[str, Dict[str, Any]] = field(default_factory=dict)
-    errors: List[str] = field(default_factory=list)
-    recommendations: List[Dict[str, str]] = field(default_factory=list)
+    collection_status: dict[str, dict[str, Any]] = field(default_factory=dict)
+    errors: list[str] = field(default_factory=list)
+    recommendations: list[dict[str, str]] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
 # Redis data collection
 # ---------------------------------------------------------------------------
 
-def parse_redis_info(raw: str) -> Dict[str, str]:
+
+def parse_redis_info(raw: str) -> dict[str, str]:
     """Parse Redis INFO output into a flat key:value dict.
 
     Lines starting with # are section headers and are skipped.
     """
-    info: Dict[str, str] = {}
+    info: dict[str, str] = {}
     for line in raw.splitlines():
         line = line.strip()
         if not line or line.startswith("#"):
@@ -96,7 +102,7 @@ def parse_redis_info(raw: str) -> Dict[str, str]:
     return info
 
 
-def extract_overview(info: Dict[str, str]) -> Dict[str, Any]:
+def extract_overview(info: dict[str, str]) -> dict[str, Any]:
     """Extract overview metrics from INFO dict."""
     return {
         "redis_version": info.get("redis_version", "unknown"),
@@ -107,7 +113,7 @@ def extract_overview(info: Dict[str, str]) -> Dict[str, Any]:
     }
 
 
-def extract_memory(info: Dict[str, str]) -> Dict[str, Any]:
+def extract_memory(info: dict[str, str]) -> dict[str, Any]:
     """Extract memory metrics from INFO dict."""
     return {
         "used_memory_human": info.get("used_memory_human", "N/A"),
@@ -120,7 +126,7 @@ def extract_memory(info: Dict[str, str]) -> Dict[str, Any]:
     }
 
 
-def extract_throughput(info: Dict[str, str]) -> Dict[str, Any]:
+def extract_throughput(info: dict[str, str]) -> dict[str, Any]:
     """Extract throughput metrics from INFO dict."""
     return {
         "instantaneous_ops_per_sec": _safe_int(info.get("instantaneous_ops_per_sec")),
@@ -129,7 +135,7 @@ def extract_throughput(info: Dict[str, str]) -> Dict[str, Any]:
     }
 
 
-def extract_cache(info: Dict[str, str]) -> Dict[str, Any]:
+def extract_cache(info: dict[str, str]) -> dict[str, Any]:
     """Extract cache performance metrics from INFO dict."""
     hits = _safe_int(info.get("keyspace_hits"))
     misses = _safe_int(info.get("keyspace_misses"))
@@ -144,7 +150,7 @@ def extract_cache(info: Dict[str, str]) -> Dict[str, Any]:
     }
 
 
-def extract_persistence(info: Dict[str, str]) -> Dict[str, Any]:
+def extract_persistence(info: dict[str, str]) -> dict[str, Any]:
     """Extract persistence metrics from INFO dict."""
     return {
         "rdb_last_save_time": _safe_int(info.get("rdb_last_save_time")),
@@ -155,16 +161,16 @@ def extract_persistence(info: Dict[str, str]) -> Dict[str, Any]:
     }
 
 
-def extract_keyspace(info: Dict[str, str]) -> Tuple[List[Dict[str, Any]], int]:
+def extract_keyspace(info: dict[str, str]) -> tuple[list[dict[str, Any]], int]:
     """Extract keyspace metrics from INFO dict.
 
     Keyspace entries look like: db0:keys=1234,expires=567,avg_ttl=12345
     Returns (list of db dicts, total_keys).
     """
-    databases: List[Dict[str, Any]] = []
+    databases: list[dict[str, Any]] = []
     total_keys = 0
     for key, value in info.items():
-        if not re.match(r'^db\d+$', key):
+        if not re.match(r"^db\d+$", key):
             continue
         # Parse keys=X,expires=Y,avg_ttl=Z
         parts = {}
@@ -173,44 +179,48 @@ def extract_keyspace(info: Dict[str, str]) -> Tuple[List[Dict[str, Any]], int]:
             parts[k] = v
         keys = _safe_int(parts.get("keys"))
         total_keys += keys
-        databases.append({
-            "db": key,
-            "keys": keys,
-            "expires": _safe_int(parts.get("expires")),
-            "avg_ttl": _safe_int(parts.get("avg_ttl")),
-        })
+        databases.append(
+            {
+                "db": key,
+                "keys": keys,
+                "expires": _safe_int(parts.get("expires")),
+                "avg_ttl": _safe_int(parts.get("avg_ttl")),
+            }
+        )
     return databases, total_keys
 
 
-def extract_command_stats(info: Dict[str, str]) -> List[Dict[str, Any]]:
+def extract_command_stats(info: dict[str, str]) -> list[dict[str, Any]]:
     """Extract command statistics from INFO dict.
 
     Command stat entries look like: cmdstat_GET:calls=123,usec=456,usec_per_call=3.71
     Returns list sorted by calls descending.
     """
-    stats: List[Dict[str, Any]] = []
+    stats: list[dict[str, Any]] = []
     for key, value in info.items():
         if not key.startswith("cmdstat_"):
             continue
-        cmd_name = key[len("cmdstat_"):]
+        cmd_name = key[len("cmdstat_") :]
         parts = {}
         for item in value.split(","):
             k, _, v = item.partition("=")
             parts[k] = v
-        stats.append({
-            "command": cmd_name,
-            "calls": _safe_int(parts.get("calls")),
-            "usec": _safe_int(parts.get("usec")),
-            "usec_per_call": _safe_float(parts.get("usec_per_call")),
-        })
+        stats.append(
+            {
+                "command": cmd_name,
+                "calls": _safe_int(parts.get("calls")),
+                "usec": _safe_int(parts.get("usec")),
+                "usec_per_call": _safe_float(parts.get("usec_per_call")),
+            }
+        )
     stats.sort(key=lambda x: x["calls"], reverse=True)
     return stats
 
 
-_CLIENT_IP_RE = re.compile(r'^(\[.+\]|(?:\d{1,3}\.){3}\d{1,3}):\d+$')
+_CLIENT_IP_RE = re.compile(r"^(\[.+\]|(?:\d{1,3}\.){3}\d{1,3}):\d+$")
 
 
-def parse_slowlog_get(raw: str) -> List[Dict[str, Any]]:
+def parse_slowlog_get(raw: str) -> list[dict[str, Any]]:
     """Parse SLOWLOG GET output into structured entries.
 
     redis-cli --raw SLOWLOG GET format (Redis 4.0+):
@@ -227,7 +237,7 @@ def parse_slowlog_get(raw: str) -> List[Dict[str, Any]]:
     There is no num_args field in the raw output. The client IP line
     (IPv4 or IPv6 with port) marks the end of each entry's arguments.
     """
-    entries: List[Dict[str, Any]] = []
+    entries: list[dict[str, Any]] = []
     lines = [l.strip() for l in raw.strip().splitlines() if l.strip()]
     if not lines:
         return entries
@@ -269,26 +279,28 @@ def parse_slowlog_get(raw: str) -> List[Dict[str, Any]]:
                     next_i += 1  # skip client name
         else:
             # No client IP found — take command + first arg only and advance
-            cmd_parts = lines[cmd_start:cmd_start + 2]
+            cmd_parts = lines[cmd_start : cmd_start + 2]
             next_i = cmd_start + 2
 
         command = " ".join(cmd_parts) if cmd_parts else "unknown"
         if len(command) > 120:
             command = command[:117] + "..."
 
-        entries.append({
-            "id": entry_id,
-            "timestamp_unix": timestamp,
-            "duration_us": duration_us,
-            "command": command,
-        })
+        entries.append(
+            {
+                "id": entry_id,
+                "timestamp_unix": timestamp,
+                "duration_us": duration_us,
+                "command": command,
+            }
+        )
 
         i = next_i
 
     return entries
 
 
-def parse_bigkeys(raw: str) -> List[Dict[str, Any]]:
+def parse_bigkeys(raw: str) -> list[dict[str, Any]]:
     """Parse redis-cli --bigkeys output into structured entries.
 
     Looks for lines like:
@@ -299,7 +311,7 @@ def parse_bigkeys(raw: str) -> List[Dict[str, Any]]:
       Biggest zset found "leaderboard:global" has 10042 members
       Biggest stream found "events:main" has 5012 entries
     """
-    entries: List[Dict[str, Any]] = []
+    entries: list[dict[str, Any]] = []
     # Match: Biggest <type> found "<key>" has <count> <unit>
     # Redis 8+ uses double quotes; older versions used single quotes
     pattern = re.compile(
@@ -321,18 +333,21 @@ def parse_bigkeys(raw: str) -> List[Dict[str, Any]]:
             else:
                 detail = f"{size:,} {unit}"
 
-            entries.append({
-                "type": key_type,
-                "key": key_name,
-                "size_or_count": size,
-                "detail": detail,
-            })
+            entries.append(
+                {
+                    "type": key_type,
+                    "key": key_name,
+                    "size_or_count": size,
+                    "detail": detail,
+                }
+            )
     return entries
 
 
 # ---------------------------------------------------------------------------
 # Formatting helpers
 # ---------------------------------------------------------------------------
+
 
 def _format_number(n: int) -> str:
     """Format a large number with K/M/B suffixes."""
@@ -408,9 +423,10 @@ def _format_bytes_human(nbytes: int) -> str:
 # Recommendations engine
 # ---------------------------------------------------------------------------
 
-def generate_recommendations(result: RedisAnalysisResult) -> List[Dict[str, str]]:
+
+def generate_recommendations(result: RedisAnalysisResult) -> list[dict[str, str]]:
     """Generate recommendations based on collected metrics."""
-    recs: List[Dict[str, str]] = []
+    recs: list[dict[str, str]] = []
 
     # Collection failures — surface critical issues when SSH/introspection failed
     if result.collection_status:
@@ -420,70 +436,87 @@ def generate_recommendations(result: RedisAnalysisResult) -> List[Dict[str, str]
         if ssh_failed:
             sources = ", ".join(ssh_failed.keys())
             errors = "; ".join(v.get("error", "unknown") for v in ssh_failed.values())
-            recs.append({
-                "severity": "critical",
-                "category": "collection",
-                "message": f"SSH introspection failed — unable to collect {sources}. "
-                           f"Error: {errors}. "
-                           f"Analysis is incomplete: memory fragmentation, cache hit rate, "
-                           f"keyspace stats, and persistence health could not be evaluated.",
-            })
+            recs.append(
+                {
+                    "severity": "critical",
+                    "category": "collection",
+                    "message": f"SSH introspection failed — unable to collect {sources}. "
+                    f"Error: {errors}. "
+                    f"Analysis is incomplete: memory fragmentation, cache hit rate, "
+                    f"keyspace stats, and persistence health could not be evaluated.",
+                }
+            )
 
     # Memory fragmentation
     if result.memory:
         frag = result.memory.get("mem_fragmentation_ratio", 0)
         if frag > 1.5:
-            recs.append({
-                "severity": "warning",
-                "category": "memory",
-                "message": f"High memory fragmentation ({frag:.2f}). Consider restarting Redis to defragment, or enable activedefrag.",
-            })
+            recs.append(
+                {
+                    "severity": "warning",
+                    "category": "memory",
+                    "message": f"High memory fragmentation ({frag:.2f}). Consider restarting Redis to defragment, or enable activedefrag.",
+                }
+            )
 
     # Cache hit rate
     if result.cache:
         hit_rate = result.cache.get("hit_rate", 0)
-        if hit_rate < 80 and (result.cache.get("keyspace_hits", 0) + result.cache.get("keyspace_misses", 0)) > 0:
-            recs.append({
-                "severity": "warning",
-                "category": "cache",
-                "message": f"Low cache hit rate ({hit_rate:.1f}%). Review key access patterns - many keys may be expired or evicted before use.",
-            })
+        if (
+            hit_rate < 80
+            and (result.cache.get("keyspace_hits", 0) + result.cache.get("keyspace_misses", 0)) > 0
+        ):
+            recs.append(
+                {
+                    "severity": "warning",
+                    "category": "cache",
+                    "message": f"Low cache hit rate ({hit_rate:.1f}%). Review key access patterns - many keys may be expired or evicted before use.",
+                }
+            )
         elif hit_rate < 95 and hit_rate >= 80:
-            recs.append({
-                "severity": "info",
-                "category": "cache",
-                "message": f"Cache hit rate at {hit_rate:.1f}% — could be improved. Check if working set fits in memory.",
-            })
+            recs.append(
+                {
+                    "severity": "info",
+                    "category": "cache",
+                    "message": f"Cache hit rate at {hit_rate:.1f}% — could be improved. Check if working set fits in memory.",
+                }
+            )
 
     # Evicted keys
     if result.cache:
         evicted = result.cache.get("evicted_keys", 0)
         if evicted > 0:
-            recs.append({
-                "severity": "warning",
-                "category": "memory",
-                "message": f"Redis is evicting keys ({_format_number(evicted)} evicted). Increase maxmemory or reduce dataset size.",
-            })
+            recs.append(
+                {
+                    "severity": "warning",
+                    "category": "memory",
+                    "message": f"Redis is evicting keys ({_format_number(evicted)} evicted). Increase maxmemory or reduce dataset size.",
+                }
+            )
 
     # Rejected connections
     if result.overview:
         rejected = result.overview.get("rejected_connections", 0)
         if rejected > 0:
-            recs.append({
-                "severity": "warning",
-                "category": "connections",
-                "message": f"Connections being rejected ({_format_number(rejected)}). Check maxclients setting.",
-            })
+            recs.append(
+                {
+                    "severity": "warning",
+                    "category": "connections",
+                    "message": f"Connections being rejected ({_format_number(rejected)}). Check maxclients setting.",
+                }
+            )
 
     # Blocked clients
     if result.overview:
         blocked = result.overview.get("blocked_clients", 0)
         if blocked > 0:
-            recs.append({
-                "severity": "info",
-                "category": "connections",
-                "message": f"Blocked clients detected ({blocked}). Check for blocking operations (BLPOP, BRPOP, etc.).",
-            })
+            recs.append(
+                {
+                    "severity": "info",
+                    "category": "connections",
+                    "message": f"Blocked clients detected ({blocked}). Check for blocking operations (BLPOP, BRPOP, etc.).",
+                }
+            )
 
     # maxmemory not set — on Railway this is expected; autoscaling handles growth
 
@@ -491,17 +524,19 @@ def generate_recommendations(result: RedisAnalysisResult) -> List[Dict[str, str]
     if result.persistence:
         rdb_status = result.persistence.get("rdb_last_bgsave_status", "")
         if rdb_status and rdb_status != "ok":
-            recs.append({
-                "severity": "critical",
-                "category": "persistence",
-                "message": "Last RDB save failed. Check disk space and permissions.",
-            })
+            recs.append(
+                {
+                    "severity": "critical",
+                    "category": "persistence",
+                    "message": "Last RDB save failed. Check disk space and permissions.",
+                }
+            )
 
     # Slow log — data-driven when entries are available
     if result.slowlog_entries:
         # Analyze the actual slow commands
         total_entries = len(result.slowlog_entries)
-        cmd_counts: Dict[str, int] = {}
+        cmd_counts: dict[str, int] = {}
         total_duration = 0
         for entry in result.slowlog_entries:
             cmd = entry["command"].split()[0] if entry["command"] else "unknown"
@@ -511,29 +546,39 @@ def generate_recommendations(result: RedisAnalysisResult) -> List[Dict[str, str]
         top_count = cmd_counts.get(top_cmd, 0)
         avg_duration = total_duration / total_entries if total_entries > 0 else 0
 
-        msg = (f"Slow log contains {result.slowlog_len or total_entries} entries. "
-               f"Of the {total_entries} most recent: {top_count} are {top_cmd} commands "
-               f"averaging {_format_usec(avg_duration)}.")
+        msg = (
+            f"Slow log contains {result.slowlog_len or total_entries} entries. "
+            f"Of the {total_entries} most recent: {top_count} are {top_cmd} commands "
+            f"averaging {_format_usec(avg_duration)}."
+        )
         if result.big_keys:
-            big_key_types = ", ".join(f"{bk['type']} ({bk['detail']})" for bk in result.big_keys[:3])
+            big_key_types = ", ".join(
+                f"{bk['type']} ({bk['detail']})" for bk in result.big_keys[:3]
+            )
             msg += f" Largest keys: {big_key_types} — check if these correlate with slow commands."
         severity = "warning" if (result.slowlog_len or 0) > 100 else "info"
         recs.append({"severity": severity, "category": "performance", "message": msg})
     elif result.slowlog_len is not None and result.slowlog_len > 100:
-        recs.append({
-            "severity": "warning",
-            "category": "performance",
-            "message": f"High number of slow log entries ({result.slowlog_len}). Slow log details could not be collected.",
-        })
+        recs.append(
+            {
+                "severity": "warning",
+                "category": "performance",
+                "message": f"High number of slow log entries ({result.slowlog_len}). Slow log details could not be collected.",
+            }
+        )
 
     # Big keys — standalone recommendation when no slowlog correlation
     if result.big_keys and not result.slowlog_entries:
-        big_key_summary = "; ".join(f"{bk['key']} ({bk['type']}: {bk['detail']})" for bk in result.big_keys[:5])
-        recs.append({
-            "severity": "info",
-            "category": "performance",
-            "message": f"Largest keys by type: {big_key_summary}. Large keys can cause latency spikes on read/delete operations.",
-        })
+        big_key_summary = "; ".join(
+            f"{bk['key']} ({bk['type']}: {bk['detail']})" for bk in result.big_keys[:5]
+        )
+        recs.append(
+            {
+                "severity": "info",
+                "category": "performance",
+                "message": f"Largest keys by type: {big_key_summary}. Large keys can cause latency spikes on read/delete operations.",
+            }
+        )
 
     return recs
 
@@ -542,9 +587,10 @@ def generate_recommendations(result: RedisAnalysisResult) -> List[Dict[str, str]
 # Report formatting
 # ---------------------------------------------------------------------------
 
+
 def format_report(result: RedisAnalysisResult) -> str:
     """Format the analysis result as a markdown report."""
-    lines: List[str] = []
+    lines: list[str] = []
 
     lines.append(f"# Redis Analysis: {result.service}")
     lines.append(f"Timestamp: {result.timestamp}")
@@ -582,7 +628,9 @@ def format_report(result: RedisAnalysisResult) -> str:
 
         maxmem = m.get("maxmemory", 0)
         if maxmem > 0:
-            lines.append(f"| Max Memory | {m.get('maxmemory_human', _format_bytes_human(maxmem))} | |")
+            lines.append(
+                f"| Max Memory | {m.get('maxmemory_human', _format_bytes_human(maxmem))} | |"
+            )
         else:
             lines.append("| Max Memory | Unlimited | |")
 
@@ -597,7 +645,9 @@ def format_report(result: RedisAnalysisResult) -> str:
         lines.append("|--------|-------|")
         lines.append(f"| Ops/sec | {t.get('instantaneous_ops_per_sec', 0):,} |")
         lines.append(f"| Total Commands | {_format_number(t.get('total_commands_processed', 0))} |")
-        lines.append(f"| Total Connections | {_format_number(t.get('total_connections_received', 0))} |")
+        lines.append(
+            f"| Total Connections | {_format_number(t.get('total_connections_received', 0))} |"
+        )
         if result.slowlog_len is not None:
             lines.append(f"| Slow Log Entries | {result.slowlog_len:,} |")
         lines.append("")
@@ -685,11 +735,7 @@ def format_report(result: RedisAnalysisResult) -> str:
         lines.append("| Type | Key | Size/Count |")
         lines.append("|------|-----|------------|")
         for bk in result.big_keys:
-            lines.append(
-                f"| {bk['type']} "
-                f"| {bk['key']} "
-                f"| {bk['detail']} |"
-            )
+            lines.append(f"| {bk['type']} | {bk['key']} | {bk['detail']} |")
         lines.append("")
 
     # --- Keyspace ---
@@ -758,12 +804,17 @@ def format_report(result: RedisAnalysisResult) -> str:
 # Main analysis function
 # ---------------------------------------------------------------------------
 
-def analyze_redis(service: str, timeout: int = 300, quiet: bool = False,
-                  skip_logs: bool = False,
-                  metrics_hours: int = 168,
-                  project_id: Optional[str] = None,
-                  environment_id: Optional[str] = None,
-                  service_id: Optional[str] = None) -> RedisAnalysisResult:
+
+def analyze_redis(
+    service: str,
+    timeout: int = 300,
+    quiet: bool = False,
+    skip_logs: bool = False,
+    metrics_hours: int = 168,
+    project_id: str | None = None,
+    environment_id: str | None = None,
+    service_id: str | None = None,
+) -> RedisAnalysisResult:
     """Run complete Redis analysis with maximum data collection.
 
     Collects Redis INFO ALL, SLOWLOG LEN, SLOWLOG GET 20, --bigkeys,
@@ -791,9 +842,15 @@ def analyze_redis(service: str, timeout: int = 300, quiet: bool = False,
     dal._progress_timer.start()
 
     if environment_id and service_id:
-        dal._ctx = RailwayContext(project_id=project_id, environment_id=environment_id, service_id=service_id)
+        dal._ctx = RailwayContext(
+            project_id=project_id, environment_id=environment_id, service_id=service_id
+        )
         if not quiet:
-            print(f"        using explicit IDs (env={environment_id[:8]}..., svc={service_id[:8]}...)", file=sys.stderr, flush=True)
+            print(
+                f"        using explicit IDs (env={environment_id[:8]}..., svc={service_id[:8]}...)",
+                file=sys.stderr,
+                flush=True,
+            )
     else:
         railway_status = get_railway_status()
         if railway_status:
@@ -815,7 +872,9 @@ def analyze_redis(service: str, timeout: int = 300, quiet: bool = False,
     ssh_stderr = ""
     ssh_attempts = [30, 60, 90]
     for attempt, attempt_timeout in enumerate(ssh_attempts, 1):
-        ssh_code, ssh_stdout, ssh_stderr = run_ssh_query(service, "echo ok", timeout=attempt_timeout)
+        ssh_code, ssh_stdout, ssh_stderr = run_ssh_query(
+            service, "echo ok", timeout=attempt_timeout
+        )
         if ssh_code == 0 and "ok" in ssh_stdout:
             ssh_available = True
             if not quiet:
@@ -827,12 +886,22 @@ def analyze_redis(service: str, timeout: int = 300, quiet: bool = False,
         if not quiet:
             remaining = len(ssh_attempts) - attempt
             if remaining > 0:
-                print(f"        SSH attempt {attempt}/{len(ssh_attempts)} failed ({ssh_stderr or 'no response'}), retrying with {ssh_attempts[attempt]}s timeout...", file=sys.stderr, flush=True)
+                print(
+                    f"        SSH attempt {attempt}/{len(ssh_attempts)} failed ({ssh_stderr or 'no response'}), retrying with {ssh_attempts[attempt]}s timeout...",
+                    file=sys.stderr,
+                    flush=True,
+                )
             else:
-                print(f"        SSH attempt {attempt}/{len(ssh_attempts)} failed ({ssh_stderr or 'no response'}), giving up", file=sys.stderr, flush=True)
+                print(
+                    f"        SSH attempt {attempt}/{len(ssh_attempts)} failed ({ssh_stderr or 'no response'}), giving up",
+                    file=sys.stderr,
+                    flush=True,
+                )
 
     # === PARALLEL EXECUTION ===
-    progress(3, 5, "Running analysis (Redis INFO, slowlog, bigkeys, metrics, logs in parallel)...", quiet)
+    progress(
+        3, 5, "Running analysis (Redis INFO, slowlog, bigkeys, metrics, logs in parallel)...", quiet
+    )
 
     def task_redis_info():
         """Fetch Redis INFO ALL via SSH."""
@@ -884,9 +953,9 @@ def analyze_redis(service: str, timeout: int = 300, quiet: bool = False,
         """Fetch recent logs via API (~3s)."""
         if skip_logs:
             return []
-        return get_recent_logs(service, lines=LOG_LINES_DEFAULT,
-                               environment_id=environment_id,
-                               service_id=service_id)
+        return get_recent_logs(
+            service, lines=LOG_LINES_DEFAULT, environment_id=environment_id, service_id=service_id
+        )
 
     with ThreadPoolExecutor(max_workers=6) as executor:
         future_info = executor.submit(task_redis_info)
@@ -970,7 +1039,9 @@ def analyze_redis(service: str, timeout: int = 300, quiet: bool = False,
         elapsed = dal._progress_timer.step_elapsed()
         if elapsed:
             print(f"        done{elapsed}", file=sys.stderr, flush=True)
-        print(f"  Analysis complete{dal._progress_timer.total_elapsed()}", file=sys.stderr, flush=True)
+        print(
+            f"  Analysis complete{dal._progress_timer.total_elapsed()}", file=sys.stderr, flush=True
+        )
 
     return result
 
@@ -978,6 +1049,7 @@ def analyze_redis(service: str, timeout: int = 300, quiet: bool = False,
 # ---------------------------------------------------------------------------
 # Single-step debugging
 # ---------------------------------------------------------------------------
+
 
 def run_single_step(args) -> int:
     """Run a single collection step for debugging."""
@@ -1009,9 +1081,9 @@ def run_single_step(args) -> int:
 
     elif args.step == "logs":
         print(f"Fetching logs for: {service}", file=sys.stderr)
-        logs = get_recent_logs(service, lines=LOG_LINES_DEFAULT,
-                               environment_id=environment_id,
-                               service_id=service_id)
+        logs = get_recent_logs(
+            service, lines=LOG_LINES_DEFAULT, environment_id=environment_id, service_id=service_id
+        )
         print(f"Lines fetched: {len(logs)}")
         for line in logs:
             print(line)
@@ -1040,6 +1112,7 @@ def run_single_step(args) -> int:
 # CLI entry point
 # ---------------------------------------------------------------------------
 
+
 def main():
     parser = argparse.ArgumentParser(
         description="Redis analysis for Railway services.",
@@ -1047,18 +1120,25 @@ def main():
     )
 
     parser.add_argument("--service", required=True, help="Service name")
-    parser.add_argument("--json", action="store_true",
-                       help="Output as JSON")
-    parser.add_argument("--timeout", type=int, default=300,
-                       help="Timeout in seconds for analysis (default: 300)")
-    parser.add_argument("--quiet", "-q", action="store_true",
-                       help="Suppress progress messages")
-    parser.add_argument("--skip-logs", action="store_true",
-                       help="Skip log fetching for faster analysis")
-    parser.add_argument("--metrics-hours", type=int, default=168,
-                       help="Hours of metrics history to fetch (default: 168, max: 168)")
-    parser.add_argument("--step", choices=["ssh-test", "query", "logs", "metrics"],
-                       help="Run a single collection step for debugging")
+    parser.add_argument("--json", action="store_true", help="Output as JSON")
+    parser.add_argument(
+        "--timeout", type=int, default=300, help="Timeout in seconds for analysis (default: 300)"
+    )
+    parser.add_argument("--quiet", "-q", action="store_true", help="Suppress progress messages")
+    parser.add_argument(
+        "--skip-logs", action="store_true", help="Skip log fetching for faster analysis"
+    )
+    parser.add_argument(
+        "--metrics-hours",
+        type=int,
+        default=168,
+        help="Hours of metrics history to fetch (default: 168, max: 168)",
+    )
+    parser.add_argument(
+        "--step",
+        choices=["ssh-test", "query", "logs", "metrics"],
+        help="Run a single collection step for debugging",
+    )
     parser.add_argument("--project-id", help="Project ID (bypasses railway link)")
     parser.add_argument("--environment-id", help="Environment ID (bypasses railway link)")
     parser.add_argument("--service-id", help="Service ID (bypasses railway link)")
@@ -1070,12 +1150,16 @@ def main():
         return run_single_step(args)
 
     # Run analysis
-    result = analyze_redis(args.service, timeout=args.timeout, quiet=args.quiet,
-                           skip_logs=args.skip_logs,
-                           metrics_hours=min(args.metrics_hours, 168),
-                           project_id=args.project_id,
-                           environment_id=args.environment_id,
-                           service_id=args.service_id)
+    result = analyze_redis(
+        args.service,
+        timeout=args.timeout,
+        quiet=args.quiet,
+        skip_logs=args.skip_logs,
+        metrics_hours=min(args.metrics_hours, 168),
+        project_id=args.project_id,
+        environment_id=args.environment_id,
+        service_id=args.service_id,
+    )
 
     # Output
     if args.json:

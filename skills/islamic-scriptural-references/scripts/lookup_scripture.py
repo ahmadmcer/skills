@@ -12,7 +12,6 @@ import re
 import sys
 import urllib.error
 import urllib.request
-from pathlib import Path
 
 getattr(sys.stdout, "reconfigure", lambda **_: None)(encoding="utf-8", errors="replace")
 getattr(sys.stderr, "reconfigure", lambda **_: None)(encoding="utf-8", errors="replace")
@@ -85,7 +84,9 @@ def fetch_quran_verse(reference: str) -> dict:
     # Parse surah and ayah
     match = re.match(r"^(\d+):(\d+)(?:-(\d+))?$", clean_ref)
     if not match:
-        raise ValueError(f"Invalid Quran reference format '{reference}'. Expected 'surah:ayah' (e.g. '2:255').")
+        raise ValueError(
+            f"Invalid Quran reference format '{reference}'. Expected 'surah:ayah' (e.g. '2:255')."
+        )
 
     surah_num = int(match.group(1))
     start_ayah = int(match.group(2))
@@ -128,7 +129,9 @@ def fetch_quran_verse(reference: str) -> dict:
 
 def fetch_hadith(collection_key: str, hadith_number: int) -> dict:
     """Fetch Hadith from open repository with offline fallback."""
-    col_norm = collection_key.lower().replace(" ", "").replace("-", "").replace("`", "").replace("'", "")
+    col_norm = (
+        collection_key.lower().replace(" ", "").replace("-", "").replace("`", "").replace("'", "")
+    )
     for k in COLLECTION_MAP:
         if k in col_norm:
             col_norm = k
@@ -147,20 +150,28 @@ def fetch_hadith(collection_key: str, hadith_number: int) -> dict:
 
     try:
         url_eng = f"https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/{eng_col}/{hadith_number}.json"
-        req_eng = urllib.request.Request(url_eng, headers={"User-Agent": "IslamicScriptureSkill/1.0"})
+        req_eng = urllib.request.Request(
+            url_eng, headers={"User-Agent": "IslamicScriptureSkill/1.0"}
+        )
         with urllib.request.urlopen(req_eng, timeout=6) as resp:
             eng_data = json.loads(resp.read().decode("utf-8"))
 
         h_info = eng_data.get("hadiths", [{}])[0]
         translation = h_info.get("text", "").strip()
         grades = h_info.get("grades", [])
-        grade_str = grades[0].get("grade", "Sahih") if grades else ("Sahih" if "sahih" in col_norm else "Recorded")
+        grade_str = (
+            grades[0].get("grade", "Sahih")
+            if grades
+            else ("Sahih" if "sahih" in col_norm else "Recorded")
+        )
 
         # Fetch Arabic text if available
         arabic_text = ""
         try:
             url_ara = f"https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/{ara_col}/{hadith_number}.json"
-            req_ara = urllib.request.Request(url_ara, headers={"User-Agent": "IslamicScriptureSkill/1.0"})
+            req_ara = urllib.request.Request(
+                url_ara, headers={"User-Agent": "IslamicScriptureSkill/1.0"}
+            )
             with urllib.request.urlopen(req_ara, timeout=4) as resp_ar:
                 ara_data = json.loads(resp_ar.read().decode("utf-8"))
                 arabic_text = ara_data.get("hadiths", [{}])[0].get("text", "").strip()
@@ -183,9 +194,18 @@ def fetch_hadith(collection_key: str, hadith_number: int) -> dict:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Query verified Quran verses and Hadith narrations")
-    parser.add_argument("--quran", help="Quran reference in 'surah:ayah' format (e.g. '2:255' or '112:1-4')")
-    parser.add_argument("--hadith", nargs=2, metavar=("COLLECTION", "NUMBER"), help="Hadith collection and number (e.g. 'bukhari 1')")
+    parser = argparse.ArgumentParser(
+        description="Query verified Quran verses and Hadith narrations"
+    )
+    parser.add_argument(
+        "--quran", help="Quran reference in 'surah:ayah' format (e.g. '2:255' or '112:1-4')"
+    )
+    parser.add_argument(
+        "--hadith",
+        nargs=2,
+        metavar=("COLLECTION", "NUMBER"),
+        help="Hadith collection and number (e.g. 'bukhari 1')",
+    )
     parser.add_argument("--json", action="store_true", help="Output results in JSON format")
 
     args = parser.parse_args()
@@ -204,7 +224,7 @@ def main() -> int:
             print(f" QURAN: {res['surah_name']} [{res['surah']}:{res['ayah']}]")
             print("=" * 60)
             print(f"\nArabic (Uthmani):\n{res['arabic']}\n")
-            print(f"Translation ({res['edition']}):\n\"{res['translation']}\"\n")
+            print(f'Translation ({res["edition"]}):\n"{res["translation"]}"\n')
             print(f"Citation: [Quran {res['surah']}:{res['ayah']}]")
             print("=" * 60)
             return 0
@@ -220,7 +240,7 @@ def main() -> int:
             print("=" * 60)
             if res.get("arabic"):
                 print(f"\nArabic:\n{res['arabic']}\n")
-            print(f"English Translation:\n\"{res['translation']}\"\n")
+            print(f'English Translation:\n"{res["translation"]}"\n')
             print(f"Authenticity Grade: {res['grade']}")
             print(f"Citation: [{res['collection']} {res['hadith_number']}]")
             print("=" * 60)

@@ -31,10 +31,7 @@
     "title": "Textual Variants in Sanhedrin 4:5 on Saving a Soul",
     "prompt": "Analyze the passage on saving a single human life in Mishnah Sanhedrin 4:5 and Talmud Bavli Sanhedrin 37a. Discuss the significant textual variant regarding 'from Israel' (mi-Yisrael) between printed editions and early manuscripts.",
     "expected_elements": {
-      "sbl_citations": [
-        "m. Sanh. 4:5",
-        "b. Sanh. 37a"
-      ],
+      "sbl_citations": ["m. Sanh. 4:5", "b. Sanh. 37a"],
       "vilna_reading": "כל המאבד נפש אחת מישראל... וכל המקיים נפש אחת מישראל ('Whoever destroys a single soul from Israel... whoever saves a single soul from Israel')",
       "critical_manuscript_reading": "Codex Kaufmann A 50, Parma de Rossi 138, Cambridge Add. 470.1, and Talmud Yerushalmi omit 'מישראל' (mi-Yisrael), rendering the dictum universal: 'Whoever saves a single soul...'",
       "theological_argument": "The Mishnaic rationale is based on Adam being created as a single solitary individual to show that all human beings descend from the same parentage, establishing equal human worth and universal fraternity."

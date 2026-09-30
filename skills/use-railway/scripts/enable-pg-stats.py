@@ -17,14 +17,13 @@ It cannot be run with piped input - the user must confirm directly.
 """
 
 import argparse
-import sys
 import re
-from typing import List
+import sys
 
-from dal import run_psql_query, info, error, confirm_with_user
+from dal import confirm_with_user, error, info, run_psql_query
 
 
-def parse_preload_libraries(value: str) -> List[str]:
+def parse_preload_libraries(value: str) -> list[str]:
     """Parse shared_preload_libraries value into clean library names."""
     if not value or not value.strip():
         return []
@@ -32,9 +31,9 @@ def parse_preload_libraries(value: str) -> List[str]:
     # Split by comma and clean up quotes
     libs = []
     for lib in value.split(","):
-        clean = lib.strip().replace('"', '').replace("'", '')
+        clean = lib.strip().replace('"', "").replace("'", "")
         # Validate as PostgreSQL identifier
-        if clean and re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', clean):
+        if clean and re.match(r"^[a-zA-Z_][a-zA-Z0-9_]*$", clean):
             libs.append(clean)
     return libs
 
@@ -53,7 +52,7 @@ Note: If restart is needed, the database will have brief downtime.
 
 IMPORTANT: This script requires interactive terminal confirmation and cannot
 be automated. The user must confirm the action directly.
-        """
+        """,
     )
 
     parser.add_argument("--service", required=True, help="Service name (requires linked project)")
@@ -83,7 +82,9 @@ be automated. The user must confirm the action directly.
 
     # Step 2: Check if extension is already installed
     info("Checking if pg_stat_statements extension is installed...")
-    code, output = run_psql_query(service, "SELECT 1 FROM pg_extension WHERE extname = 'pg_stat_statements'")
+    code, output = run_psql_query(
+        service, "SELECT 1 FROM pg_extension WHERE extname = 'pg_stat_statements'"
+    )
 
     extension_exists = code == 0 and output.strip() == "1"
 

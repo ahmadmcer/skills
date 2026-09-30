@@ -21,127 +21,131 @@ Usage:
 
 import argparse
 import json
-import os
-import subprocess
 import sys
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
-from typing import Dict, List, Optional, Any, Tuple
-from dataclasses import dataclass, field, asdict
+from typing import Any
 
 import dal
 from dal import (
-    LOG_LINES_DEFAULT, ProgressTimer, RailwayContext,
-    _init_context, progress, run_railway_command, run_ssh_query,
-    get_railway_status, get_deployment_status,
-    get_all_metrics_from_api, _analyze_window, _build_metrics_history,
-    get_recent_logs,
+    LOG_LINES_DEFAULT,
+    RailwayContext,
+    _init_context,
     _trend_indicator,
+    get_all_metrics_from_api,
+    get_deployment_status,
+    get_railway_status,
+    get_recent_logs,
+    progress,
+    run_ssh_query,
 )
-
 
 # ---------------------------------------------------------------------------
 # Result container
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class MongoAnalysisResult:
     """Container for MongoDB analysis results."""
+
     service: str
     db_type: str
     timestamp: str
     deployment_status: str = "UNKNOWN"
 
     # Server overview
-    version: Optional[str] = None
-    storage_engine: Optional[str] = None
-    uptime_seconds: Optional[int] = None
+    version: str | None = None
+    storage_engine: str | None = None
+    uptime_seconds: int | None = None
 
     # Connections
-    connections: Optional[Dict[str, Any]] = None
+    connections: dict[str, Any] | None = None
 
     # Operations
-    opcounters: Optional[Dict[str, Any]] = None
-    opcounters_repl: Optional[Dict[str, Any]] = None
+    opcounters: dict[str, Any] | None = None
+    opcounters_repl: dict[str, Any] | None = None
 
     # Latency
-    op_latencies: Optional[Dict[str, Any]] = None
+    op_latencies: dict[str, Any] | None = None
 
     # Memory
-    memory: Optional[Dict[str, Any]] = None
-    page_faults: Optional[int] = None
+    memory: dict[str, Any] | None = None
+    page_faults: int | None = None
 
     # Network
-    network: Optional[Dict[str, Any]] = None
+    network: dict[str, Any] | None = None
 
     # WiredTiger
-    wiredtiger_cache: Optional[Dict[str, Any]] = None
-    wiredtiger_checkpoint: Optional[Dict[str, Any]] = None
-    wiredtiger_tickets: Optional[Dict[str, Any]] = None
+    wiredtiger_cache: dict[str, Any] | None = None
+    wiredtiger_checkpoint: dict[str, Any] | None = None
+    wiredtiger_tickets: dict[str, Any] | None = None
 
     # Global lock
-    global_lock: Optional[Dict[str, Any]] = None
+    global_lock: dict[str, Any] | None = None
 
     # Document metrics
-    document_metrics: Optional[Dict[str, Any]] = None
+    document_metrics: dict[str, Any] | None = None
 
     # Query efficiency
-    query_executor: Optional[Dict[str, Any]] = None
+    query_executor: dict[str, Any] | None = None
 
     # Plan cache (7.0+)
-    plan_cache: Optional[Dict[str, Any]] = None
+    plan_cache: dict[str, Any] | None = None
 
     # Sort (7.0+)
-    sort_metrics: Optional[Dict[str, Any]] = None
+    sort_metrics: dict[str, Any] | None = None
 
     # Cursors
-    cursors: Optional[Dict[str, Any]] = None
+    cursors: dict[str, Any] | None = None
 
     # TTL
-    ttl_metrics: Optional[Dict[str, Any]] = None
+    ttl_metrics: dict[str, Any] | None = None
 
     # Asserts
-    asserts: Optional[Dict[str, Any]] = None
+    asserts: dict[str, Any] | None = None
 
     # Replication
-    replication: Optional[Dict[str, Any]] = None
-    oplog: Optional[Dict[str, Any]] = None
+    replication: dict[str, Any] | None = None
+    oplog: dict[str, Any] | None = None
 
     # Storage (db.stats)
-    storage: Optional[Dict[str, Any]] = None
+    storage: dict[str, Any] | None = None
 
     # Collection stats
-    collection_stats: List[Dict[str, Any]] = field(default_factory=list)
+    collection_stats: list[dict[str, Any]] = field(default_factory=list)
 
     # Top collections
-    top_collections: Optional[List[Dict[str, Any]]] = None
+    top_collections: list[dict[str, Any]] | None = None
 
     # Slow queries
-    slow_queries: List[Dict[str, Any]] = field(default_factory=list)
+    slow_queries: list[dict[str, Any]] = field(default_factory=list)
 
     # Active operations
-    active_ops: List[Dict[str, Any]] = field(default_factory=list)
+    active_ops: list[dict[str, Any]] = field(default_factory=list)
 
     # Logs
-    recent_logs: List[str] = field(default_factory=list)
-    recent_errors: List[str] = field(default_factory=list)
+    recent_logs: list[str] = field(default_factory=list)
+    recent_errors: list[str] = field(default_factory=list)
 
     # Railway metrics (CPU, memory, disk, network trends)
-    cpu_memory: Optional[Dict[str, Any]] = None
-    disk_usage: Optional[Dict[str, Any]] = None
-    metrics_history: Optional[Dict[str, Any]] = None
+    cpu_memory: dict[str, Any] | None = None
+    disk_usage: dict[str, Any] | None = None
+    metrics_history: dict[str, Any] | None = None
 
     # Status tracking
-    collection_status: Dict[str, Dict[str, Any]] = field(default_factory=dict)
-    errors: List[str] = field(default_factory=list)
-    recommendations: List[Dict[str, str]] = field(default_factory=list)
+    collection_status: dict[str, dict[str, Any]] = field(default_factory=dict)
+    errors: list[str] = field(default_factory=list)
+    recommendations: list[dict[str, str]] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
 # MongoDB-specific helpers
 # ---------------------------------------------------------------------------
 
-def run_mongosh_query(service: str, js_expr: str, timeout: int = 30) -> Tuple[int, str, str]:
+
+def run_mongosh_query(service: str, js_expr: str, timeout: int = 30) -> tuple[int, str, str]:
     """Run a mongosh query via SSH and return (returncode, stdout, stderr).
 
     The query is wrapped in EJSON.stringify and executed through mongosh
@@ -150,11 +154,10 @@ def run_mongosh_query(service: str, js_expr: str, timeout: int = 30) -> Tuple[in
     # Escape single quotes in the JS expression for the shell
     escaped = js_expr.replace("'", "'\\''")
     command = (
-        f'''bash +H -c 'mongosh "mongodb://$MONGOUSER:$MONGOPASSWORD@localhost:27017" '''
-        f'''--quiet --norc --eval "EJSON.stringify({escaped})"' '''
+        f"""bash +H -c 'mongosh "mongodb://$MONGOUSER:$MONGOPASSWORD@localhost:27017" """
+        f"""--quiet --norc --eval "EJSON.stringify({escaped})"' """
     )
     return run_ssh_query(service, command, timeout)
-
 
 
 # ---------------------------------------------------------------------------
@@ -180,6 +183,7 @@ QUERY_TOP = """(function(){ try { var t = db.adminCommand({top:1}); var totals =
 # Parsing helpers
 # ---------------------------------------------------------------------------
 
+
 def _safe_json(raw: str) -> Any:
     """Parse JSON from mongosh EJSON output, returning None on failure."""
     raw = raw.strip()
@@ -187,7 +191,7 @@ def _safe_json(raw: str) -> Any:
         return None
     # mongosh may emit warnings before the JSON; find the first { or [
     for i, ch in enumerate(raw):
-        if ch in ('{', '['):
+        if ch in ("{", "["):
             raw = raw[i:]
             break
     try:
@@ -196,7 +200,7 @@ def _safe_json(raw: str) -> Any:
         return None
 
 
-def _parse_server_status(data: Dict[str, Any], result: MongoAnalysisResult) -> None:
+def _parse_server_status(data: dict[str, Any], result: MongoAnalysisResult) -> None:
     """Extract metrics from serverStatus into result."""
     # Overview
     result.version = data.get("version")
@@ -279,7 +283,9 @@ def _parse_server_status(data: Dict[str, Any], result: MongoAnalysisResult) -> N
         txn = wt.get("transaction", {})
         if txn:
             result.wiredtiger_checkpoint = {
-                "most_recent_time_ms": txn.get("transaction checkpoint most recent time (msecs)", 0),
+                "most_recent_time_ms": txn.get(
+                    "transaction checkpoint most recent time (msecs)", 0
+                ),
             }
 
         ct = wt.get("concurrentTransactions", {})
@@ -358,7 +364,7 @@ def _parse_server_status(data: Dict[str, Any], result: MongoAnalysisResult) -> N
     result.asserts = data.get("asserts")
 
 
-def _parse_db_stats(data: Dict[str, Any], result: MongoAnalysisResult) -> None:
+def _parse_db_stats(data: dict[str, Any], result: MongoAnalysisResult) -> None:
     """Extract metrics from db.stats()."""
     result.storage = {
         "dataSize": data.get("dataSize", 0),
@@ -376,13 +382,15 @@ def _parse_current_op(data: Any, result: MongoAnalysisResult) -> None:
     inprog = data.get("inprog", []) if isinstance(data, dict) else []
     ops = []
     for op in inprog:
-        ops.append({
-            "opid": op.get("opid"),
-            "type": op.get("type", op.get("op", "")),
-            "ns": op.get("ns", ""),
-            "microsecs_running": op.get("microsecs_running", 0),
-            "desc": op.get("desc", ""),
-        })
+        ops.append(
+            {
+                "opid": op.get("opid"),
+                "type": op.get("type", op.get("op", "")),
+                "ns": op.get("ns", ""),
+                "microsecs_running": op.get("microsecs_running", 0),
+                "desc": op.get("desc", ""),
+            }
+        )
     result.active_ops = ops
 
 
@@ -421,6 +429,7 @@ def _parse_top(data: Any, result: MongoAnalysisResult) -> None:
 # ---------------------------------------------------------------------------
 # Formatting helpers
 # ---------------------------------------------------------------------------
+
 
 def _fmt_bytes(b: int) -> str:
     """Format bytes as human-readable."""
@@ -468,11 +477,17 @@ def _fmt_us(microseconds: float) -> str:
 # Main analysis
 # ---------------------------------------------------------------------------
 
-def analyze_mongo(service: str, timeout: int = 300, quiet: bool = False,
-                  skip_logs: bool = False, metrics_hours: int = 168,
-                  project_id: Optional[str] = None,
-                  environment_id: Optional[str] = None,
-                  service_id: Optional[str] = None) -> MongoAnalysisResult:
+
+def analyze_mongo(
+    service: str,
+    timeout: int = 300,
+    quiet: bool = False,
+    skip_logs: bool = False,
+    metrics_hours: int = 168,
+    project_id: str | None = None,
+    environment_id: str | None = None,
+    service_id: str | None = None,
+) -> MongoAnalysisResult:
     """Run complete MongoDB analysis."""
     if not quiet:
         print(f"Analyzing MongoDB database: {service}", file=sys.stderr)
@@ -489,9 +504,15 @@ def analyze_mongo(service: str, timeout: int = 300, quiet: bool = False,
     dal._progress_timer.start()
 
     if environment_id and service_id:
-        dal._ctx = RailwayContext(project_id=project_id, environment_id=environment_id, service_id=service_id)
+        dal._ctx = RailwayContext(
+            project_id=project_id, environment_id=environment_id, service_id=service_id
+        )
         if not quiet:
-            print(f"        using explicit IDs (env={environment_id[:8]}..., svc={service_id[:8]}...)", file=sys.stderr, flush=True)
+            print(
+                f"        using explicit IDs (env={environment_id[:8]}..., svc={service_id[:8]}...)",
+                file=sys.stderr,
+                flush=True,
+            )
     else:
         railway_status = get_railway_status()
         if railway_status:
@@ -513,7 +534,9 @@ def analyze_mongo(service: str, timeout: int = 300, quiet: bool = False,
     ssh_stderr = ""
     ssh_attempts = [30, 60, 90]
     for attempt, attempt_timeout in enumerate(ssh_attempts, 1):
-        ssh_code, ssh_stdout, ssh_stderr = run_ssh_query(service, "echo ok", timeout=attempt_timeout)
+        ssh_code, ssh_stdout, ssh_stderr = run_ssh_query(
+            service, "echo ok", timeout=attempt_timeout
+        )
         if ssh_code == 0 and "ok" in ssh_stdout:
             ssh_available = True
             if not quiet:
@@ -525,9 +548,17 @@ def analyze_mongo(service: str, timeout: int = 300, quiet: bool = False,
         if not quiet:
             remaining = len(ssh_attempts) - attempt
             if remaining > 0:
-                print(f"        SSH attempt {attempt}/{len(ssh_attempts)} failed ({ssh_stderr or 'no response'}), retrying with {ssh_attempts[attempt]}s timeout...", file=sys.stderr, flush=True)
+                print(
+                    f"        SSH attempt {attempt}/{len(ssh_attempts)} failed ({ssh_stderr or 'no response'}), retrying with {ssh_attempts[attempt]}s timeout...",
+                    file=sys.stderr,
+                    flush=True,
+                )
             else:
-                print(f"        SSH attempt {attempt}/{len(ssh_attempts)} failed ({ssh_stderr or 'no response'}), giving up", file=sys.stderr, flush=True)
+                print(
+                    f"        SSH attempt {attempt}/{len(ssh_attempts)} failed ({ssh_stderr or 'no response'}), giving up",
+                    file=sys.stderr,
+                    flush=True,
+                )
 
     # === PARALLEL DATA COLLECTION ===
     progress(3, 5, "Running analysis (metrics, mongo queries, logs in parallel)...", quiet)
@@ -596,9 +627,9 @@ def analyze_mongo(service: str, timeout: int = 300, quiet: bool = False,
     def task_logs():
         if skip_logs:
             return []
-        return get_recent_logs(service, lines=LOG_LINES_DEFAULT,
-                               environment_id=environment_id,
-                               service_id=service_id)
+        return get_recent_logs(
+            service, lines=LOG_LINES_DEFAULT, environment_id=environment_id, service_id=service_id
+        )
 
     with ThreadPoolExecutor(max_workers=4) as executor:
         future_metrics = executor.submit(task_metrics)
@@ -620,7 +651,7 @@ def analyze_mongo(service: str, timeout: int = 300, quiet: bool = False,
     else:
         result.collection_status["metrics_api"] = {
             "status": "error",
-            "error": "Metrics API returned no data"
+            "error": "Metrics API returned no data",
         }
 
     # === PROCESS BATCH 1 (serverStatus, dbStats, collStats) ===
@@ -705,12 +736,16 @@ def analyze_mongo(service: str, timeout: int = 300, quiet: bool = False,
         result.recent_logs = logs_result
         result.collection_status["logs_api"] = {"status": "success", "lines": len(logs_result)}
         result.recent_errors = [
-            line for line in result.recent_logs
-            if 'ERROR' in line.upper() or 'FATAL' in line.upper() or 'PANIC' in line.upper()
+            line
+            for line in result.recent_logs
+            if "ERROR" in line.upper() or "FATAL" in line.upper() or "PANIC" in line.upper()
         ][:100]
     else:
         result.recent_logs = []
-        result.collection_status["logs_api"] = {"status": "error", "error": "Logs API returned no data"}
+        result.collection_status["logs_api"] = {
+            "status": "error",
+            "error": "Logs API returned no data",
+        }
 
     # === RECOMMENDATIONS ===
     progress(5, 5, "Generating recommendations...", quiet)
@@ -727,28 +762,41 @@ def analyze_mongo(service: str, timeout: int = 300, quiet: bool = False,
 # Recommendations engine
 # ---------------------------------------------------------------------------
 
-def generate_recommendations(result: MongoAnalysisResult) -> List[Dict[str, str]]:
+
+def generate_recommendations(result: MongoAnalysisResult) -> list[dict[str, str]]:
     """Generate recommendations based on analysis results."""
-    recs: List[Dict[str, str]] = []
+    recs: list[dict[str, str]] = []
 
     # Collection failures — surface critical issues when SSH/introspection failed
     if result.collection_status:
-        failed = {k: v for k, v in result.collection_status.items()
-                  if v.get("status") in ("failed", "error")}
-        ssh_sources = {"server_status", "db_stats", "collection_stats",
-                       "slow_queries", "current_op", "repl_info", "top"}
+        failed = {
+            k: v
+            for k, v in result.collection_status.items()
+            if v.get("status") in ("failed", "error")
+        }
+        ssh_sources = {
+            "server_status",
+            "db_stats",
+            "collection_stats",
+            "slow_queries",
+            "current_op",
+            "repl_info",
+            "top",
+        }
         ssh_failed = {k: v for k, v in failed.items() if k in ssh_sources}
         if ssh_failed:
             sources = ", ".join(ssh_failed.keys())
             errors = "; ".join(v.get("error", "unknown") for v in ssh_failed.values())
-            recs.append({
-                "severity": "critical",
-                "category": "collection",
-                "message": f"SSH introspection failed — unable to collect {sources}. "
-                           f"Error: {errors}. "
-                           f"Analysis is incomplete: WiredTiger cache, connections, "
-                           f"collection stats, and replication health could not be evaluated.",
-            })
+            recs.append(
+                {
+                    "severity": "critical",
+                    "category": "collection",
+                    "message": f"SSH introspection failed — unable to collect {sources}. "
+                    f"Error: {errors}. "
+                    f"Analysis is incomplete: WiredTiger cache, connections, "
+                    f"collection stats, and replication health could not be evaluated.",
+                }
+            )
 
     # --- WiredTiger cache usage ---
     wt = result.wiredtiger_cache
@@ -761,33 +809,39 @@ def generate_recommendations(result: MongoAnalysisResult) -> List[Dict[str, str]
         if max_bytes > 0:
             usage_pct = round(100.0 * used_bytes / max_bytes, 1)
             if usage_pct > 80:
-                recs.append({
-                    "priority": "immediate",
-                    "issue": f"WiredTiger cache is {usage_pct}% full ({_fmt_bytes(used_bytes)} of {_fmt_bytes(max_bytes)})",
-                    "action": "Consider increasing service RAM. WiredTiger cache defaults to 50% of RAM minus 1 GB.",
-                    "explanation": "When the WiredTiger cache is nearly full, MongoDB must evict pages more aggressively, "
-                                   "increasing latency for reads and writes. Increasing RAM gives WiredTiger more room to cache data.",
-                })
+                recs.append(
+                    {
+                        "priority": "immediate",
+                        "issue": f"WiredTiger cache is {usage_pct}% full ({_fmt_bytes(used_bytes)} of {_fmt_bytes(max_bytes)})",
+                        "action": "Consider increasing service RAM. WiredTiger cache defaults to 50% of RAM minus 1 GB.",
+                        "explanation": "When the WiredTiger cache is nearly full, MongoDB must evict pages more aggressively, "
+                        "increasing latency for reads and writes. Increasing RAM gives WiredTiger more room to cache data.",
+                    }
+                )
 
             if used_bytes > 0:
                 dirty_pct = round(100.0 * dirty_bytes / max_bytes, 1)
                 if dirty_pct > 20:
-                    recs.append({
-                        "priority": "short-term",
-                        "issue": f"High dirty cache ({dirty_pct}% of total cache). Checkpoint may be falling behind.",
-                        "action": "Monitor checkpoint duration and consider increasing RAM or reducing write throughput.",
-                        "explanation": "Dirty pages must be written to disk during checkpoints. A high dirty ratio means "
-                                       "checkpoints have more work, potentially causing latency spikes.",
-                    })
+                    recs.append(
+                        {
+                            "priority": "short-term",
+                            "issue": f"High dirty cache ({dirty_pct}% of total cache). Checkpoint may be falling behind.",
+                            "action": "Monitor checkpoint duration and consider increasing RAM or reducing write throughput.",
+                            "explanation": "Dirty pages must be written to disk during checkpoints. A high dirty ratio means "
+                            "checkpoints have more work, potentially causing latency spikes.",
+                        }
+                    )
 
         if app_evictions and app_evictions > 0:
-            recs.append({
-                "priority": "immediate",
-                "issue": f"Application threads performing evictions ({app_evictions:,} pages). WiredTiger cache under pressure.",
-                "action": "Increase RAM to give WiredTiger more cache space.",
-                "explanation": "Normally the WiredTiger eviction threads handle cache pressure. When application threads "
-                               "must evict pages themselves, queries stall waiting for cache space. This directly increases latency.",
-            })
+            recs.append(
+                {
+                    "priority": "immediate",
+                    "issue": f"Application threads performing evictions ({app_evictions:,} pages). WiredTiger cache under pressure.",
+                    "action": "Increase RAM to give WiredTiger more cache space.",
+                    "explanation": "Normally the WiredTiger eviction threads handle cache pressure. When application threads "
+                    "must evict pages themselves, queries stall waiting for cache space. This directly increases latency.",
+                }
+            )
 
     # --- Connection usage ---
     conn = result.connections
@@ -798,23 +852,27 @@ def generate_recommendations(result: MongoAnalysisResult) -> List[Dict[str, str]
         if total > 0:
             pct = round(100.0 * current / total, 1)
             if pct > 80:
-                recs.append({
-                    "priority": "immediate" if pct > 90 else "short-term",
-                    "issue": f"Connection usage at {pct}% ({current} of {total}). Approaching connection limit.",
-                    "action": "Review application connection pooling. Consider using a connection pooler or increasing maxIncomingConnections.",
-                    "explanation": "Running out of connections will cause new client connections to be refused. "
-                                   "Most applications should use connection pooling to limit concurrent connections.",
-                })
+                recs.append(
+                    {
+                        "priority": "immediate" if pct > 90 else "short-term",
+                        "issue": f"Connection usage at {pct}% ({current} of {total}). Approaching connection limit.",
+                        "action": "Review application connection pooling. Consider using a connection pooler or increasing maxIncomingConnections.",
+                        "explanation": "Running out of connections will cause new client connections to be refused. "
+                        "Most applications should use connection pooling to limit concurrent connections.",
+                    }
+                )
 
     # --- Page faults ---
     if result.page_faults and result.page_faults > 10000:
-        recs.append({
-            "priority": "short-term",
-            "issue": f"Significant page faults ({result.page_faults:,}). Working set may exceed available RAM.",
-            "action": "Increase service RAM or optimize queries to reduce working set size.",
-            "explanation": "Page faults occur when MongoDB accesses data not in memory, requiring disk reads. "
-                           "High page faults indicate the working set is larger than available RAM.",
-        })
+        recs.append(
+            {
+                "priority": "short-term",
+                "issue": f"Significant page faults ({result.page_faults:,}). Working set may exceed available RAM.",
+                "action": "Increase service RAM or optimize queries to reduce working set size.",
+                "explanation": "Page faults occur when MongoDB accesses data not in memory, requiring disk reads. "
+                "High page faults indicate the working set is larger than available RAM.",
+            }
+        )
 
     # --- Queued operations ---
     gl = result.global_lock
@@ -822,13 +880,15 @@ def generate_recommendations(result: MongoAnalysisResult) -> List[Dict[str, str]
         qr = gl.get("queue_readers", 0)
         qw = gl.get("queue_writers", 0)
         if qr > 0 or qw > 0:
-            recs.append({
-                "priority": "immediate" if (qr + qw) > 10 else "short-term",
-                "issue": f"Operations queuing detected (readers: {qr}, writers: {qw}). Database may be under resource pressure.",
-                "action": "Investigate slow operations and consider increasing RAM or CPU.",
-                "explanation": "Queued operations mean requests are waiting for a lock. This can be caused by slow queries, "
-                               "write-heavy workloads, or insufficient resources.",
-            })
+            recs.append(
+                {
+                    "priority": "immediate" if (qr + qw) > 10 else "short-term",
+                    "issue": f"Operations queuing detected (readers: {qr}, writers: {qw}). Database may be under resource pressure.",
+                    "action": "Investigate slow operations and consider increasing RAM or CPU.",
+                    "explanation": "Queued operations mean requests are waiting for a lock. This can be caused by slow queries, "
+                    "write-heavy workloads, or insufficient resources.",
+                }
+            )
 
     # --- Query efficiency ---
     qe = result.query_executor
@@ -838,13 +898,15 @@ def generate_recommendations(result: MongoAnalysisResult) -> List[Dict[str, str]
         returned = dm.get("returned", 0)
         if returned > 0 and scanned > returned * 10:
             ratio = round(scanned / returned, 1)
-            recs.append({
-                "priority": "immediate" if ratio > 100 else "short-term",
-                "issue": f"Query efficiency concern: {_fmt_count(scanned)} objects scanned vs {_fmt_count(returned)} returned (ratio: {ratio}x).",
-                "action": "Create indexes for frequently queried fields. Review slow query log for full collection scans.",
-                "explanation": "A high scan-to-return ratio means MongoDB is examining many documents to satisfy queries. "
-                               "Adding appropriate indexes dramatically reduces the number of documents examined.",
-            })
+            recs.append(
+                {
+                    "priority": "immediate" if ratio > 100 else "short-term",
+                    "issue": f"Query efficiency concern: {_fmt_count(scanned)} objects scanned vs {_fmt_count(returned)} returned (ratio: {ratio}x).",
+                    "action": "Create indexes for frequently queried fields. Review slow query log for full collection scans.",
+                    "explanation": "A high scan-to-return ratio means MongoDB is examining many documents to satisfy queries. "
+                    "Adding appropriate indexes dramatically reduces the number of documents examined.",
+                }
+            )
 
     # --- Plan cache ---
     pc = result.plan_cache
@@ -853,39 +915,45 @@ def generate_recommendations(result: MongoAnalysisResult) -> List[Dict[str, str]
         misses = pc.get("misses", 0)
         total = hits + misses
         if total > 100 and misses > hits:
-            recs.append({
-                "priority": "short-term",
-                "issue": f"High plan cache miss ratio ({misses:,} misses vs {hits:,} hits). Queries may not be using optimal plans.",
-                "action": "Consider creating indexes for frequent query patterns to stabilize query plans.",
-                "explanation": "Plan cache misses mean MongoDB must re-evaluate query plans. Stable indexes help the planner "
-                               "pick consistent, efficient plans.",
-            })
+            recs.append(
+                {
+                    "priority": "short-term",
+                    "issue": f"High plan cache miss ratio ({misses:,} misses vs {hits:,} hits). Queries may not be using optimal plans.",
+                    "action": "Consider creating indexes for frequent query patterns to stabilize query plans.",
+                    "explanation": "Plan cache misses mean MongoDB must re-evaluate query plans. Stable indexes help the planner "
+                    "pick consistent, efficient plans.",
+                }
+            )
 
     # --- Sort spill to disk ---
     sm = result.sort_metrics
     if sm:
         spill = sm.get("spillToDisk", 0)
         if spill > 0:
-            recs.append({
-                "priority": "short-term",
-                "issue": f"Sorts spilling to disk ({spill:,} times). Queries performing in-memory sorts exceeding limit.",
-                "action": "Add indexes to support sort operations, or increase RAM.",
-                "explanation": "When a sort operation exceeds the memory limit (100 MB by default), MongoDB spills to disk. "
-                               "Creating an index that matches the sort key avoids the in-memory sort entirely.",
-            })
+            recs.append(
+                {
+                    "priority": "short-term",
+                    "issue": f"Sorts spilling to disk ({spill:,} times). Queries performing in-memory sorts exceeding limit.",
+                    "action": "Add indexes to support sort operations, or increase RAM.",
+                    "explanation": "When a sort operation exceeds the memory limit (100 MB by default), MongoDB spills to disk. "
+                    "Creating an index that matches the sort key avoids the in-memory sort entirely.",
+                }
+            )
 
     # --- Cursor timeouts ---
     cur = result.cursors
     if cur:
         timed_out = cur.get("timed_out", 0)
         if timed_out > 0:
-            recs.append({
-                "priority": "short-term",
-                "issue": f"Cursor timeouts detected ({timed_out:,}). Long-running queries may need optimization.",
-                "action": "Review application code for unbounded queries or missing pagination.",
-                "explanation": "Cursors time out after 10 minutes of inactivity by default. Frequent timeouts suggest "
-                               "clients are not consuming results quickly enough or queries are returning too much data.",
-            })
+            recs.append(
+                {
+                    "priority": "short-term",
+                    "issue": f"Cursor timeouts detected ({timed_out:,}). Long-running queries may need optimization.",
+                    "action": "Review application code for unbounded queries or missing pagination.",
+                    "explanation": "Cursors time out after 10 minutes of inactivity by default. Frequent timeouts suggest "
+                    "clients are not consuming results quickly enough or queries are returning too much data.",
+                }
+            )
 
     # --- Asserts ---
     asserts = result.asserts
@@ -895,13 +963,15 @@ def generate_recommendations(result: MongoAnalysisResult) -> List[Dict[str, str]
         user = asserts.get("user", 0)
         msg = asserts.get("msg", 0)
         if regular > 0 or warning > 0 or user > 0:
-            recs.append({
-                "priority": "short-term",
-                "issue": f"Database asserts detected (regular: {regular}, warning: {warning}, user: {user}, msg: {msg}). Investigate error conditions.",
-                "action": "Check MongoDB logs for assert details. User asserts often indicate client errors; regular/warning asserts may signal server issues.",
-                "explanation": "Asserts are internal consistency checks. Regular and warning asserts may indicate bugs or data issues. "
-                               "User asserts are typically client-side errors (e.g., duplicate key violations).",
-            })
+            recs.append(
+                {
+                    "priority": "short-term",
+                    "issue": f"Database asserts detected (regular: {regular}, warning: {warning}, user: {user}, msg: {msg}). Investigate error conditions.",
+                    "action": "Check MongoDB logs for assert details. User asserts often indicate client errors; regular/warning asserts may signal server issues.",
+                    "explanation": "Asserts are internal consistency checks. Regular and warning asserts may indicate bugs or data issues. "
+                    "User asserts are typically client-side errors (e.g., duplicate key violations).",
+                }
+            )
 
     # --- Oplog usage ---
     oplog = result.oplog
@@ -911,13 +981,15 @@ def generate_recommendations(result: MongoAnalysisResult) -> List[Dict[str, str]
         if log_size > 0:
             oplog_pct = round(100.0 * used / log_size, 1)
             if oplog_pct > 80:
-                recs.append({
-                    "priority": "short-term",
-                    "issue": f"Oplog is {oplog_pct}% full ({used:.0f} MB of {log_size:.0f} MB). May impact replication if oplog window is too small.",
-                    "action": "Consider increasing the oplog size to maintain a larger replication window.",
-                    "explanation": "The oplog stores recent write operations for replication. If it fills up and wraps around too quickly, "
-                                   "replica set members that fall behind may need a full resync instead of incremental replication.",
-                })
+                recs.append(
+                    {
+                        "priority": "short-term",
+                        "issue": f"Oplog is {oplog_pct}% full ({used:.0f} MB of {log_size:.0f} MB). May impact replication if oplog window is too small.",
+                        "action": "Consider increasing the oplog size to maintain a larger replication window.",
+                        "explanation": "The oplog stores recent write operations for replication. If it fills up and wraps around too quickly, "
+                        "replica set members that fall behind may need a full resync instead of incremental replication.",
+                    }
+                )
 
     return recs
 
@@ -926,9 +998,10 @@ def generate_recommendations(result: MongoAnalysisResult) -> List[Dict[str, str]
 # Report formatting
 # ---------------------------------------------------------------------------
 
+
 def format_report(result: MongoAnalysisResult) -> str:
     """Format analysis result as human-readable markdown report."""
-    lines: List[str] = []
+    lines: list[str] = []
     lines.append("=" * 60)
     lines.append(f"# MongoDB Analysis: {result.service}")
     lines.append("=" * 60)
@@ -953,9 +1026,17 @@ def format_report(result: MongoAnalysisResult) -> str:
             "metrics_api": "Metrics API",
             "logs_api": "Logs API",
         }
-        for source in ["server_status", "db_stats", "collection_stats",
-                        "slow_queries", "current_op", "repl_info", "top",
-                        "metrics_api", "logs_api"]:
+        for source in [
+            "server_status",
+            "db_stats",
+            "collection_stats",
+            "slow_queries",
+            "current_op",
+            "repl_info",
+            "top",
+            "metrics_api",
+            "logs_api",
+        ]:
             if source in result.collection_status:
                 info = result.collection_status[source]
                 status = info["status"].upper()
@@ -1017,7 +1098,9 @@ def format_report(result: MongoAnalysisResult) -> str:
 
     # --- Replication opcounters ---
     if result.opcounters_repl:
-        any_repl = any(v > 0 for v in result.opcounters_repl.values() if isinstance(v, (int, float)))
+        any_repl = any(
+            v > 0 for v in result.opcounters_repl.values() if isinstance(v, (int, float))
+        )
         if any_repl:
             lines.append("## Replication Operations")
             lines.append("")
@@ -1245,9 +1328,11 @@ def format_report(result: MongoAnalysisResult) -> str:
         lines.append("| Namespace | Reads | Read Time | Writes | Write Time |")
         lines.append("|-----------|-------|-----------|--------|------------|")
         # Sort by total activity
-        sorted_top = sorted(result.top_collections,
-                            key=lambda t: t.get("reads", 0) + t.get("writes", 0),
-                            reverse=True)
+        sorted_top = sorted(
+            result.top_collections,
+            key=lambda t: t.get("reads", 0) + t.get("writes", 0),
+            reverse=True,
+        )
         for t in sorted_top[:20]:
             ns = t.get("ns", "?")
             reads = _fmt_count(t.get("reads", 0))
@@ -1310,7 +1395,9 @@ def format_report(result: MongoAnalysisResult) -> str:
         lines.append("")
         lines.append("| OpID | Type | Namespace | Duration |")
         lines.append("|------|------|-----------|----------|")
-        sorted_ops = sorted(result.active_ops, key=lambda o: o.get("microsecs_running", 0), reverse=True)
+        sorted_ops = sorted(
+            result.active_ops, key=lambda o: o.get("microsecs_running", 0), reverse=True
+        )
         for op in sorted_ops[:20]:
             opid = op.get("opid", "?")
             op_type = op.get("type", "?")
@@ -1344,7 +1431,9 @@ def format_report(result: MongoAnalysisResult) -> str:
                     trend = m.get("trend", {})
                     direction = trend.get("direction", "?")
                     change = trend.get("change_pct", 0)
-                    arrow = {"increasing": "^", "decreasing": "v", "stable": "~"}.get(direction, "?")
+                    arrow = {"increasing": "^", "decreasing": "v", "stable": "~"}.get(
+                        direction, "?"
+                    )
                     spike_note = ""
                     if m.get("spikes"):
                         spike_note = f" ({m['spikes']['count']} spikes)"
@@ -1422,6 +1511,7 @@ def format_report(result: MongoAnalysisResult) -> str:
 # Single-step debugging
 # ---------------------------------------------------------------------------
 
+
 def run_single_step(args) -> int:
     """Run a single collection step for debugging."""
     service = args.service
@@ -1468,9 +1558,9 @@ def run_single_step(args) -> int:
 
     elif args.step == "logs":
         print(f"Fetching logs for: {service}", file=sys.stderr)
-        logs = get_recent_logs(service, lines=LOG_LINES_DEFAULT,
-                               environment_id=environment_id,
-                               service_id=service_id)
+        logs = get_recent_logs(
+            service, lines=LOG_LINES_DEFAULT, environment_id=environment_id, service_id=service_id
+        )
         print(f"Lines fetched: {len(logs)}")
         for line in logs:
             print(line)
@@ -1497,6 +1587,7 @@ def run_single_step(args) -> int:
 # CLI entry point
 # ---------------------------------------------------------------------------
 
+
 def main():
     parser = argparse.ArgumentParser(
         description="MongoDB analysis for Railway services.",
@@ -1504,19 +1595,25 @@ def main():
     )
 
     parser.add_argument("--service", required=True, help="Service name")
-    parser.add_argument("--json", action="store_true",
-                        help="Output as JSON")
-    parser.add_argument("--timeout", type=int, default=300,
-                        help="Timeout in seconds (default: 300)")
-    parser.add_argument("--quiet", "-q", action="store_true",
-                        help="Suppress progress messages")
-    parser.add_argument("--skip-logs", action="store_true",
-                        help="Skip log fetching for faster analysis")
-    parser.add_argument("--metrics-hours", type=int, default=168,
-                        help="Hours of metrics history to fetch (default: 168, max: 168)")
-    parser.add_argument("--step",
-                        choices=["ssh-test", "server-status", "db-stats", "logs", "metrics"],
-                        help="Run a single collection step for debugging")
+    parser.add_argument("--json", action="store_true", help="Output as JSON")
+    parser.add_argument(
+        "--timeout", type=int, default=300, help="Timeout in seconds (default: 300)"
+    )
+    parser.add_argument("--quiet", "-q", action="store_true", help="Suppress progress messages")
+    parser.add_argument(
+        "--skip-logs", action="store_true", help="Skip log fetching for faster analysis"
+    )
+    parser.add_argument(
+        "--metrics-hours",
+        type=int,
+        default=168,
+        help="Hours of metrics history to fetch (default: 168, max: 168)",
+    )
+    parser.add_argument(
+        "--step",
+        choices=["ssh-test", "server-status", "db-stats", "logs", "metrics"],
+        help="Run a single collection step for debugging",
+    )
     parser.add_argument("--project-id", help="Project ID (bypasses railway link)")
     parser.add_argument("--environment-id", help="Environment ID (bypasses railway link)")
     parser.add_argument("--service-id", help="Service ID (bypasses railway link)")

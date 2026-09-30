@@ -79,22 +79,22 @@ BACKEND_URL=http://${{api.RAILWAY_PRIVATE_DOMAIN}}:${{api.PORT}}
 
 Each managed database creates connection variables automatically. Reference them from other services using template syntax:
 
-| Database | Variable reference |
-|---|---|
+| Database | Variable reference           |
+| -------- | ---------------------------- |
 | Postgres | `${{Postgres.DATABASE_URL}}` |
-| Redis | `${{Redis.REDIS_URL}}` |
-| MySQL | `${{MySQL.MYSQL_URL}}` |
-| MongoDB | `${{MongoDB.MONGO_URL}}` |
+| Redis    | `${{Redis.REDIS_URL}}`       |
+| MySQL    | `${{MySQL.MYSQL_URL}}`       |
+| MongoDB  | `${{MongoDB.MONGO_URL}}`     |
 
 Service names in references are case-sensitive and must match the service name exactly as it appears in the project.
 
 **Public vs private networking decision:**
 
-| Traffic path | Use |
-|---|---|
-| Browser → API | Public domain |
-| Service → Service | Private domain (`RAILWAY_PRIVATE_DOMAIN`) |
-| Service → Database | Private (automatic, uses internal DNS) |
+| Traffic path       | Use                                       |
+| ------------------ | ----------------------------------------- |
+| Browser → API      | Public domain                             |
+| Service → Service  | Private domain (`RAILWAY_PRIVATE_DOMAIN`) |
+| Service → Database | Private (automatic, uses internal DNS)    |
 
 **Frontend apps cannot use private networking.** Frontends run in the user's browser, not on Railway's network. They cannot reach `RAILWAY_PRIVATE_DOMAIN` or internal database URLs. Options:
 
@@ -107,41 +107,41 @@ These are set automatically at runtime. Availability depends on resource configu
 
 **Networking:**
 
-| Variable | Available when |
-|---|---|
-| `RAILWAY_PUBLIC_DOMAIN` | Public domain is configured |
-| `RAILWAY_PRIVATE_DOMAIN` | Always (internal DNS for service-to-service traffic) |
-| `RAILWAY_TCP_PROXY_DOMAIN` | TCP proxy is enabled |
-| `RAILWAY_TCP_PROXY_PORT` | TCP proxy is enabled |
+| Variable                   | Available when                                       |
+| -------------------------- | ---------------------------------------------------- |
+| `RAILWAY_PUBLIC_DOMAIN`    | Public domain is configured                          |
+| `RAILWAY_PRIVATE_DOMAIN`   | Always (internal DNS for service-to-service traffic) |
+| `RAILWAY_TCP_PROXY_DOMAIN` | TCP proxy is enabled                                 |
+| `RAILWAY_TCP_PROXY_PORT`   | TCP proxy is enabled                                 |
 
 **Context:**
 
-| Variable | Available when |
-|---|---|
-| `RAILWAY_PROJECT_ID` | Always |
-| `RAILWAY_ENVIRONMENT_ID` | Always |
-| `RAILWAY_ENVIRONMENT_NAME` | Always |
-| `RAILWAY_SERVICE_ID` | Always |
-| `RAILWAY_SERVICE_NAME` | Always |
-| `RAILWAY_DEPLOYMENT_ID` | Always |
-| `RAILWAY_REPLICA_ID` | Replicas configured |
-| `RAILWAY_REPLICA_REGION` | Multi-region configured |
+| Variable                   | Available when          |
+| -------------------------- | ----------------------- |
+| `RAILWAY_PROJECT_ID`       | Always                  |
+| `RAILWAY_ENVIRONMENT_ID`   | Always                  |
+| `RAILWAY_ENVIRONMENT_NAME` | Always                  |
+| `RAILWAY_SERVICE_ID`       | Always                  |
+| `RAILWAY_SERVICE_NAME`     | Always                  |
+| `RAILWAY_DEPLOYMENT_ID`    | Always                  |
+| `RAILWAY_REPLICA_ID`       | Replicas configured     |
+| `RAILWAY_REPLICA_REGION`   | Multi-region configured |
 
 **Git (present when deployed from a linked repo):**
 
-| Variable | Description |
-|---|---|
-| `RAILWAY_GIT_COMMIT_SHA` | Full commit hash of the deployed revision |
-| `RAILWAY_GIT_AUTHOR` | Commit author name |
-| `RAILWAY_GIT_COMMIT_MESSAGE` | First line of the commit message |
-| `RAILWAY_GIT_BRANCH` | Branch that triggered the deploy |
+| Variable                     | Description                               |
+| ---------------------------- | ----------------------------------------- |
+| `RAILWAY_GIT_COMMIT_SHA`     | Full commit hash of the deployed revision |
+| `RAILWAY_GIT_AUTHOR`         | Commit author name                        |
+| `RAILWAY_GIT_COMMIT_MESSAGE` | First line of the commit message          |
+| `RAILWAY_GIT_BRANCH`         | Branch that triggered the deploy          |
 
 **Storage (present when a volume is attached):**
 
-| Variable | Description |
-|---|---|
+| Variable                    | Description                                 |
+| --------------------------- | ------------------------------------------- |
 | `RAILWAY_VOLUME_MOUNT_PATH` | Filesystem path where the volume is mounted |
-| `RAILWAY_VOLUME_NAME` | Name of the attached volume |
+| `RAILWAY_VOLUME_NAME`       | Name of the attached volume                 |
 
 Sealed variables are write-only. CLI 5.47.2+ lists their names with `null` in JSON, `<sealed>` in the table, or a comment in KV output. **A null value means the sealed key already exists; do not recreate or clear it as though it were missing.** Ordinary variable output can contain plaintext secrets.
 
@@ -200,12 +200,12 @@ Include only keys you're changing. The full shape:
 { "us-west2": { "numReplicas": 2 }, "europe-west4-drams3a": { "numReplicas": 1 } }
 ```
 
-| Region identifier | Location |
-|---|---|
-| `us-west2` | US West (Oregon) |
-| `us-east4-eqdc4a` | US East (Virginia) |
-| `europe-west4-drams3a` | Europe (Netherlands) |
-| `asia-southeast1-eqsg3a` | Asia (Singapore) |
+| Region identifier        | Location             |
+| ------------------------ | -------------------- |
+| `us-west2`               | US West (Oregon)     |
+| `us-east4-eqdc4a`        | US East (Virginia)   |
+| `europe-west4-drams3a`   | Europe (Netherlands) |
+| `asia-southeast1-eqsg3a` | Asia (Singapore)     |
 
 Natural language mapping: "add replicas in Europe" → `europe-west4-drams3a`, "US East" → `us-east4-eqdc4a`. When the user doesn't specify a region, query current config first with `railway environment config --json` to see existing region assignments before modifying.
 
@@ -282,13 +282,13 @@ Domain deletion is destructive. Confirm the domain and service before running it
 
 Project webhooks POST a JSON payload to a URL whenever a chosen deployment, monitor, or volume-alert event happens anywhere in the project. They are project-scoped, not per service or environment, and are managed with five MCP tools. There is no `railway webhook` CLI command. Resolve the project ID from `railway status --json` or `list-projects` first.
 
-| Tool | Purpose |
-|---|---|
-| `list-webhooks` | Every webhook in the project: URL, `eventTypes`, `includePreviewEnvironments`, the names of its custom headers (`headerNames`), and the `id` the other tools take |
-| `create-webhook` | `url` plus optional `eventTypes` (defaults to `Deployment.failed`, `Deployment.crashed`, `Deployment.oom_killed`), `includePreviewEnvironments` (defaults to `true`), and `headers` |
-| `update-webhook` | `webhookId` plus any of `url`, `eventTypes`, `includePreviewEnvironments`, `headers`. Only the fields passed change; `eventTypes` and `headers` each replace the whole set |
-| `test-webhook` | POST a sample event and report the HTTP status. Pass `url` (and optional `headers`) to try a new endpoint, or `webhookId` to send to an existing webhook with its stored URL and headers. Nothing is stored |
-| `delete-webhook` | Remove a webhook by `webhookId`. Destructive; confirm the URL with the user first |
+| Tool             | Purpose                                                                                                                                                                                                     |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `list-webhooks`  | Every webhook in the project: URL, `eventTypes`, `includePreviewEnvironments`, the names of its custom headers (`headerNames`), and the `id` the other tools take                                           |
+| `create-webhook` | `url` plus optional `eventTypes` (defaults to `Deployment.failed`, `Deployment.crashed`, `Deployment.oom_killed`), `includePreviewEnvironments` (defaults to `true`), and `headers`                         |
+| `update-webhook` | `webhookId` plus any of `url`, `eventTypes`, `includePreviewEnvironments`, `headers`. Only the fields passed change; `eventTypes` and `headers` each replace the whole set                                  |
+| `test-webhook`   | POST a sample event and report the HTTP status. Pass `url` (and optional `headers`) to try a new endpoint, or `webhookId` to send to an existing webhook with its stored URL and headers. Nothing is stored |
+| `delete-webhook` | Remove a webhook by `webhookId`. Destructive; confirm the URL with the user first                                                                                                                           |
 
 Discord and Slack incoming-webhook URLs are detected and receive a formatted message instead of the raw JSON. Run `test-webhook` before `create-webhook`: Railway treats anything outside `2xx`/`3xx` as a failed delivery, and a dead endpoint is paused for 24 hours after repeated failures.
 

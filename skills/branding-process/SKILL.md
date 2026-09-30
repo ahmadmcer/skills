@@ -34,6 +34,7 @@ Follow this sequence to build or evolve a digital brand from premise to producti
 ```
 
 ### Phase 1: Audit & Discovery (Inspect Reality)
+
 1. **Analyze Existing Assets & Debt**:
    - Inspect the codebase styles, logo files, font declarations, and marketing copy.
    - Screen for fragmented styling, arbitrary hex codes, and brand debt.
@@ -43,19 +44,21 @@ Follow this sequence to build or evolve a digital brand from premise to producti
    - Uncover unmet pains and habit inertia in the existing market landscape.
 
 ### Phase 2: Strategy & Positioning (Define the Anchor)
+
 1. **Establish the Core DNA (Simon Sinek's Golden Circle)**:
    - Define **Purpose (Why)**, **Vision (Where)**, and **Mission (How)**.
-   - Formulate 3–4 non-negotiable behavioral values as actionable pairs (*"Depth over Velocity"*).
+   - Formulate 3–4 non-negotiable behavioral values as actionable pairs (_"Depth over Velocity"_).
 2. **Formulate Radical Differentiation (Neumeier's Onliness)**:
    - Construct the exact 6-clause Onliness Statement (see `references/brand-strategy-and-positioning.md`):
-     > *"Our brand is the **only** [Category] that [POD] for [Audience] who [Need] in an era of [Pain]."*
+     > _"Our brand is the **only** [Category] that [POD] for [Audience] who [Need] in an era of [Pain]."_
    - Separate Category **Points of Parity (POPs)** from unique **Points of Difference (PODs)**.
 3. **Select the Brand Archetype Duo (Jung / Mark & Pearson)**:
-   - Select the **Primary Archetype (70%)** (e.g., *The Sage*, *The Creator*, *The Outlaw*).
+   - Select the **Primary Archetype (70%)** (e.g., _The Sage_, _The Creator_, _The Outlaw_).
    - Balance with a **Secondary Modifier (30%)** to prevent caricature.
    - Explicitly define the **Shadow Guardrails** (behaviors the brand forbids).
 
 ### Phase 3: Verbal Identity & Narrative (Voice & Message)
+
 1. **Codify Voice vs. Tone**:
    - Establish the 4-attribute Voice Blueprint with "This, Not That" guidance.
    - Apply the dynamic Tone Modulation Matrix across 4 states: Top-of-Funnel, Product Onboarding, Everyday UI/Microcopy, and High-Stress Incidents (see `references/verbal-identity-and-voice.md`).
@@ -64,9 +67,10 @@ Follow this sequence to build or evolve a digital brand from premise to producti
    - Formulate the **One-line Value Proposition** and **30-second Elevator Pitch**.
    - Define **3 Core Value Pillars**, each backed by concrete customer benefits, technical mechanisms, and Reasons to Believe (RTBs).
 3. **Enforce the Brand Lexicon**:
-   - Document "Words We Champion" and ban generic tech clichés (*"seamless"*, *"next-gen"*, *"revolutionary"*, *"all-in-one"*).
+   - Document "Words We Champion" and ban generic tech clichés (_"seamless"_, _"next-gen"_, _"revolutionary"_, _"all-in-one"_).
 
 ### Phase 4: Visual Identity & Design Tokens (Sensory System)
+
 1. **Engineer the Responsive Logo Ecosystem**:
    - Primary Horizontal Lockup (web header default), Stacked Lockup, and Monogram/Symbol.
    - Enforce the $X$-clear space exclusion zone and minimum digital sizes (see `references/visual-identity-systems.md`).
@@ -84,6 +88,7 @@ Follow this sequence to build or evolve a digital brand from premise to producti
      ```
 
 ### Phase 5: Digital Touchpoints & Governance (Stewardship)
+
 1. **Scaffold Digital Assets**:
    - Generate production-ready SVGs using the bundled scaffolding script:
      ```bash
@@ -110,6 +115,7 @@ Follow this sequence to build or evolve a digital brand from premise to producti
 ## 3. Dedicated Slash Commands
 
 This skill powers three specialized workflows:
+
 - `/brand-audit` (`commands/brand-audit.md`): Conduct a read-only heuristic evaluation of existing brand consistency, contrast, and voice.
 - `/brand-strategy` (`commands/brand-strategy.md`): Interactively formulate Purpose, Mission, Onliness statement, Archetype, and Messaging pillars.
 - `/brand-guidelines` (`commands/brand-guidelines.md`): Synthesize the complete Brand Book and generate design tokens and SVG templates.

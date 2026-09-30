@@ -20,21 +20,13 @@ import os
 import re
 import subprocess
 import sys
-from typing import Any, Dict, List, Optional, Tuple
 
 # Ensure safe UTF-8 output on Windows consoles
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 
-CANONICAL_CATEGORIES = [
-    "Added",
-    "Changed",
-    "Deprecated",
-    "Removed",
-    "Fixed",
-    "Security"
-]
+CANONICAL_CATEGORIES = ["Added", "Changed", "Deprecated", "Removed", "Fixed", "Security"]
 
 PREAMBLE_TEMPLATE = """# Changelog
 
@@ -45,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 """
 
 
-def run_git(args: List[str], repo_path: str = ".") -> str:
+def run_git(args: list[str], repo_path: str = ".") -> str:
     """Run git command and return stripped stdout."""
     try:
         res = subprocess.run(
@@ -55,7 +47,7 @@ def run_git(args: List[str], repo_path: str = ".") -> str:
             text=True,
             encoding="utf-8",
             errors="replace",
-            check=True
+            check=True,
         )
         return res.stdout.strip()
     except subprocess.CalledProcessError:
@@ -64,7 +56,7 @@ def run_git(args: List[str], repo_path: str = ".") -> str:
         return ""
 
 
-def get_latest_tag(repo_path: str = ".") -> Optional[str]:
+def get_latest_tag(repo_path: str = ".") -> str | None:
     """Find latest semver git tag."""
     raw = run_git(["tag", "--sort=-v:refname"], repo_path)
     if not raw:
@@ -76,7 +68,7 @@ def get_latest_tag(repo_path: str = ".") -> Optional[str]:
     return None
 
 
-def get_repo_url(repo_path: str = ".") -> Optional[str]:
+def get_repo_url(repo_path: str = ".") -> str | None:
     """Extract repository URL from git remote origin."""
     url = run_git(["config", "--get", "remote.origin.url"], repo_path)
     if not url:
@@ -89,18 +81,20 @@ def get_repo_url(repo_path: str = ".") -> Optional[str]:
     return url
 
 
-def extract_commits_to_categories(repo_path: str = ".", since_tag: Optional[str] = None) -> Dict[str, List[str]]:
+def extract_commits_to_categories(
+    repo_path: str = ".", since_tag: str | None = None
+) -> dict[str, list[str]]:
     """Group git commits since tag into canonical Keep a Changelog categories."""
     log_range = f"{since_tag}..HEAD" if since_tag else "HEAD"
     raw_log = run_git(["log", log_range, "--format=%s%x1e%b%x1f%h%x1d"], repo_path)
 
-    categorized: Dict[str, List[str]] = {cat: [] for cat in CANONICAL_CATEGORIES}
+    categorized: dict[str, list[str]] = {cat: [] for cat in CANONICAL_CATEGORIES}
     if not raw_log:
         return categorized
 
     conventional_pattern = re.compile(
         r"^(?P<type>[a-z]+)(?:\((?P<scope>[^)]+)\))?(?P<breaking>!)?:\s*(?P<desc>.+)$",
-        re.IGNORECASE
+        re.IGNORECASE,
     )
 
     entries = raw_log.split("\x1d")
@@ -121,7 +115,11 @@ def extract_commits_to_categories(repo_path: str = ".", since_tag: Optional[str]
 
         c_type = m.group("type").lower()
         scope = m.group("scope")
-        breaking = bool(m.group("breaking")) or ("BREAKING CHANGE:" in body) or ("BREAKING-CHANGE:" in body)
+        breaking = (
+            bool(m.group("breaking"))
+            or ("BREAKING CHANGE:" in body)
+            or ("BREAKING-CHANGE:" in body)
+        )
         desc = m.group("desc").strip()
 
         # Format bullet item
@@ -144,7 +142,7 @@ def extract_commits_to_categories(repo_path: str = ".", since_tag: Optional[str]
     return categorized
 
 
-def build_version_section(version: str, date_str: str, categories: Dict[str, List[str]]) -> str:
+def build_version_section(version: str, date_str: str, categories: dict[str, list[str]]) -> str:
     """Construct markdown section for a specific version release."""
     lines = [f"## [{version}] - {date_str}", ""]
     has_content = False
@@ -165,17 +163,17 @@ def build_version_section(version: str, date_str: str, categories: Dict[str, Lis
     return "\n".join(lines)
 
 
-def parse_existing_changelog(content: str) -> Tuple[str, str, List[Tuple[str, str]], List[str]]:
+def parse_existing_changelog(content: str) -> tuple[str, str, list[tuple[str, str]], list[str]]:
     """Parse existing CHANGELOG.md into preamble, unreleased content, versions, and reference links."""
     lines = content.split("\n")
     preamble_lines = []
     unreleased_lines = []
-    versions: List[Tuple[str, str]] = []  # (version_header, body)
+    versions: list[tuple[str, str]] = []  # (version_header, body)
     link_lines = []
 
     state = "PREAMBLE"
     current_ver = ""
-    current_body: List[str] = []
+    current_body: list[str] = []
 
     for line in lines:
         if line.strip().startswith("[") and "]: http" in line:
@@ -189,7 +187,9 @@ def parse_existing_changelog(content: str) -> Tuple[str, str, List[Tuple[str, st
             continue
 
         unreleased_match = re.match(r"^##\s+\[Unreleased\]", line, re.IGNORECASE)
-        version_match = re.match(r"^##\s+\[(?P<ver>[^\]]+)\](?:\s*-\s*(?P<date>\d{4}-\d{2}-\d{2}))?", line)
+        version_match = re.match(
+            r"^##\s+\[(?P<ver>[^\]]+)\](?:\s*-\s*(?P<date>\d{4}-\d{2}-\d{2}))?", line
+        )
 
         if unreleased_match:
             state = "UNRELEASED"
@@ -217,15 +217,13 @@ def parse_existing_changelog(content: str) -> Tuple[str, str, List[Tuple[str, st
         "\n".join(preamble_lines).strip(),
         "\n".join(unreleased_lines).strip(),
         versions,
-        link_lines
+        link_lines,
     )
 
 
 def generate_compare_links(
-    repo_url: str,
-    versions: List[str],
-    has_unreleased: bool = True
-) -> List[str]:
+    repo_url: str, versions: list[str], has_unreleased: bool = True
+) -> list[str]:
     """Generate Markdown reference-style compare links."""
     if not repo_url:
         return []
@@ -256,24 +254,20 @@ def main():
         description="Generate or update CHANGELOG.md according to Keep a Changelog 1.1.0."
     )
     parser.add_argument(
-        "--file",
-        default="CHANGELOG.md",
-        help="Path to CHANGELOG.md file (default: ./CHANGELOG.md)"
+        "--file", default="CHANGELOG.md", help="Path to CHANGELOG.md file (default: ./CHANGELOG.md)"
     )
     parser.add_argument(
-        "--release",
-        default=None,
-        help="Promote [Unreleased] to this version number (e.g. 1.1.0)"
+        "--release", default=None, help="Promote [Unreleased] to this version number (e.g. 1.1.0)"
     )
     parser.add_argument(
         "--repo-url",
         default=None,
-        help="Base GitHub/GitLab repository URL for compare links (e.g. https://github.com/org/repo)"
+        help="Base GitHub/GitLab repository URL for compare links (e.g. https://github.com/org/repo)",
     )
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Print updated changelog content to stdout without writing to disk"
+        help="Print updated changelog content to stdout without writing to disk",
     )
 
     args = parser.parse_args()
@@ -285,7 +279,7 @@ def main():
     file_exists = os.path.exists(args.file)
     content = ""
     if file_exists:
-        with open(args.file, "r", encoding="utf-8") as f:
+        with open(args.file, encoding="utf-8") as f:
             content = f.read()
 
     if not file_exists or not content.strip():
@@ -299,9 +293,7 @@ def main():
         new_changelog = (
             f"{PREAMBLE_TEMPLATE}\n\n"
             f"## [Unreleased]\n\n"
-            f"{version_section}\n"
-            + "\n".join(compare_links)
-            + "\n"
+            f"{version_section}\n" + "\n".join(compare_links) + "\n"
         )
     else:
         # Updating existing CHANGELOG.md
@@ -320,11 +312,20 @@ def main():
             extracted_categories = extract_commits_to_categories(".", since_tag=latest_tag)
 
             # If unreleased body had items, we keep them or merge
-            new_release_section = build_version_section(new_version, today_iso, extracted_categories)
+            new_release_section = build_version_section(
+                new_version, today_iso, extracted_categories
+            )
 
             # Prepend new version
             version_numbers = [new_version] + version_numbers
-            updated_versions = [(f"## [{new_version}] - {today_iso}", new_release_section.split("\n\n", 1)[1] if "\n\n" in new_release_section else "")] + versions
+            updated_versions = [
+                (
+                    f"## [{new_version}] - {today_iso}",
+                    new_release_section.split("\n\n", 1)[1]
+                    if "\n\n" in new_release_section
+                    else "",
+                )
+            ] + versions
             unreleased_body = ""
         else:
             updated_versions = versions

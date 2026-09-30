@@ -30,6 +30,7 @@ Modern digital brands do not have a single static logo; they possess an adaptive
 ```
 
 ### Clear Space & Exclusion Zones
+
 - **The $X$-Rule**: The clear space zone around the logo must equal at least the height or width of a prominent element of the mark (typically the height of the symbol $X$, or the cap-height of the first letter).
 - No typography, borders, imagery, or UI dividers may encroach into this exclusion zone.
 
@@ -44,6 +45,7 @@ Modern digital brands do not have a single static logo; they possess an adaptive
 ```
 
 ### Minimum Size Limits
+
 - **Digital / Web**:
   - Horizontal with Wordmark: Minimum width **120px** (or 28px height).
   - Symbol / Monogram: Minimum size **16x16px** (must have high-contrast simplified vector geometry for micro-scales).
@@ -53,7 +55,9 @@ Modern digital brands do not have a single static logo; they possess an adaptive
   - Ensure coordinates snap to integer pixels or 0.5px subpixels to prevent blurry rasterization on non-retina displays.
 
 ### Logo Misuse & Anti-Patterns
+
 Never permit:
+
 1. Distorting, stretching, or squishing proportions.
 2. Rotating the mark at arbitrary angles.
 3. Adding fuzzy drop shadows, bevels, or outdated outer glows.
@@ -68,12 +72,15 @@ Never permit:
 A digital brand palette requires mathematically disciplined color relationships to maintain accessibility, brand recognition, and UI harmony.
 
 ### The 60-30-10 Brand Distribution Rule
+
 In digital user interfaces and marketing pages:
+
 - **60% Dominant Canvas / Surface**: Clean neutral background (e.g., deep charcoal `#090D16` in dark mode, crisp white `#FFFFFF` in light mode).
 - **30% Structure & Content**: Neutral text, cards, borders, dividers, and subtle surface elevations.
 - **10% Brand & Accent Focal Points**: Primary brand color reserved for high-impact calls to action, badges, and active states.
 
 ### The 4 Palette Tiers
+
 1. **Primary Brand Scale (Signature)**:
    - The emotional anchor of the brand (e.g., electric cobalt blue, emerald green, warm amber).
    - Generated in a full 10-step tonal scale: `50`, `100`, `200`, `300`, `400`, `500` (Base), `600`, `700`, `800`, `900`, `950`.
@@ -90,7 +97,9 @@ In digital user interfaces and marketing pages:
      - **Info**: Sky blue (`#0ea5e9`)
 
 ### WCAG 2.1 AA/AAA Contrast Verification
+
 Every color pairing must pass strict accessibility thresholds:
+
 - **Normal Text (< 18pt or < 14pt bold)**: Minimum **4.5:1** contrast ratio.
 - **Large Text (>= 18pt or >= 14pt bold)**: Minimum **3.0:1** contrast ratio.
 - **Interactive UI Components & Form Borders**: Minimum **3.0:1** against adjacent backgrounds.
@@ -122,25 +131,27 @@ Typography carries both semantic information and emotional weight. A resilient d
 ```
 
 ### Modular Type Scale (Major Third - 1.25 Ratio)
+
 Use an established typographic scale to ensure mathematical harmony:
 
-| Token Name | Rem Value | Pixel (@16px base) | Typical Line Height | Tracking | Recommended Use |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `text-display` | `3.815rem` | ~61px | `1.1` | `-0.03em` | Main marketing hero headline |
-| `text-h1` | `3.052rem` | ~49px | `1.15` | `-0.025em` | Page h1 headings, feature heroes |
-| `text-h2` | `2.441rem` | ~39px | `1.2` | `-0.02em` | Section headers |
-| `text-h3` | `1.953rem` | ~31px | `1.25` | `-0.015em` | Card titles, modal headers |
-| `text-h4` | `1.563rem` | ~25px | `1.3` | `-0.01em` | Subsections, dashboard widgets |
-| `text-lg` | `1.25rem` | 20px | `1.4` | `-0.005em` | Lead paragraphs, callouts |
-| `text-base` | `1.0rem` | 16px | `1.5` | `0` | Default body copy, form inputs |
-| `text-sm` | `0.875rem` | 14px | `1.45` | `+0.005em` | UI buttons, table cells, secondary copy |
-| `text-xs` | `0.75rem` | 12px | `1.4` | `+0.01em` | Badges, captions, timestamps |
+| Token Name     | Rem Value  | Pixel (@16px base) | Typical Line Height | Tracking   | Recommended Use                         |
+| :------------- | :--------- | :----------------- | :------------------ | :--------- | :-------------------------------------- |
+| `text-display` | `3.815rem` | ~61px              | `1.1`               | `-0.03em`  | Main marketing hero headline            |
+| `text-h1`      | `3.052rem` | ~49px              | `1.15`              | `-0.025em` | Page h1 headings, feature heroes        |
+| `text-h2`      | `2.441rem` | ~39px              | `1.2`               | `-0.02em`  | Section headers                         |
+| `text-h3`      | `1.953rem` | ~31px              | `1.25`              | `-0.015em` | Card titles, modal headers              |
+| `text-h4`      | `1.563rem` | ~25px              | `1.3`               | `-0.01em`  | Subsections, dashboard widgets          |
+| `text-lg`      | `1.25rem`  | 20px               | `1.4`               | `-0.005em` | Lead paragraphs, callouts               |
+| `text-base`    | `1.0rem`   | 16px               | `1.5`               | `0`        | Default body copy, form inputs          |
+| `text-sm`      | `0.875rem` | 14px               | `1.45`              | `+0.005em` | UI buttons, table cells, secondary copy |
+| `text-xs`      | `0.75rem`  | 12px               | `1.4`               | `+0.01em`  | Badges, captions, timestamps            |
 
 ---
 
 ## 4. Iconography & Visual Language Rules
 
 A brand’s iconography and graphic devices must follow consistent geometric rules:
+
 1. **Grid Standard**: All icons built on a **24x24px** master grid with a 2px interior padding boundary.
 2. **Stroke Uniformity**: Default stroke weight of **1.5px or 2px**, maintaining uniform visual weight across the library.
 3. **Corner Treatment**: Rounded corners (`rx="2"` or `stroke-linejoin="round"`) or crisp mitered corners must match the brand’s overall border-radius tokens.

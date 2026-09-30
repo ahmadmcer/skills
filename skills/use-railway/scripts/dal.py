@@ -5,15 +5,16 @@ import json
 import os
 import subprocess
 import sys
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass
+from datetime import datetime, timezone
+from typing import Any
 
 LOG_LINES_DEFAULT = 1000  # Number of log lines to fetch via API
 
 
 class ProgressTimer:
     """Track elapsed time for progress messages."""
+
     def __init__(self):
         self.start_time = None
         self.step_start_time = None
@@ -49,11 +50,12 @@ _progress_timer = ProgressTimer()
 @dataclass
 class RailwayContext:
     """Explicit Railway IDs that bypass railway link."""
-    project_id: Optional[str] = None
-    environment_id: Optional[str] = None
-    service_id: Optional[str] = None
 
-    def ssh_flags(self) -> List[str]:
+    project_id: str | None = None
+    environment_id: str | None = None
+    service_id: str | None = None
+
+    def ssh_flags(self) -> list[str]:
         """Return CLI flags for railway ssh."""
         flags = ["--native"]
         if self.project_id:
@@ -64,7 +66,7 @@ class RailwayContext:
             flags.extend(["--service", self.service_id])
         return flags
 
-    def logs_flags(self) -> List[str]:
+    def logs_flags(self) -> list[str]:
         """Return CLI flags for railway logs."""
         flags = []
         if self.environment_id:
@@ -81,7 +83,7 @@ def _init_context(args) -> None:
     global _ctx
     if args.environment_id and args.service_id:
         _ctx = RailwayContext(
-            project_id=getattr(args, 'project_id', None),
+            project_id=getattr(args, "project_id", None),
             environment_id=args.environment_id,
             service_id=args.service_id,
         )
@@ -105,15 +107,10 @@ def progress(step: int, total: int, message: str, quiet: bool = False):
         print(f"  [{step}/{total}] {message}", file=sys.stderr, flush=True)
 
 
-def run_railway_command(args: List[str], timeout: int = 30) -> Tuple[int, str, str]:
+def run_railway_command(args: list[str], timeout: int = 30) -> tuple[int, str, str]:
     """Run a railway CLI command and return (returncode, stdout, stderr)."""
     try:
-        result = subprocess.run(
-            ["railway"] + args,
-            capture_output=True,
-            text=True,
-            timeout=timeout
-        )
+        result = subprocess.run(["railway"] + args, capture_output=True, text=True, timeout=timeout)
         return result.returncode, result.stdout, result.stderr
     except subprocess.TimeoutExpired:
         return 124, "", "Command timed out"
@@ -121,7 +118,7 @@ def run_railway_command(args: List[str], timeout: int = 30) -> Tuple[int, str, s
         return 127, "", "railway CLI not found"
 
 
-def _cli_fatal_error(returncode: int, stderr: str) -> Optional[str]:
+def _cli_fatal_error(returncode: int, stderr: str) -> str | None:
     """Return a friendly error string if the CLI itself is broken, else None.
 
     These errors are unrecoverable — retrying won't help.
@@ -142,8 +139,9 @@ def _cli_fatal_error(returncode: int, stderr: str) -> Optional[str]:
     return None
 
 
-def run_ssh_query(service: str, command: str, timeout: int = 60,
-                  max_attempts: int = 3) -> Tuple[int, str, str]:
+def run_ssh_query(
+    service: str, command: str, timeout: int = 60, max_attempts: int = 3
+) -> tuple[int, str, str]:
     """Run a command via railway ssh, retrying up to max_attempts times.
 
     Passes the command as a single argument after '--'. Railway ssh
@@ -171,12 +169,13 @@ def run_ssh_query(service: str, command: str, timeout: int = 60,
             print(
                 f"        SSH attempt {attempt}/{max_attempts} failed "
                 f"({last_stderr.strip() or 'empty response'}), retrying...",
-                file=sys.stderr, flush=True,
+                file=sys.stderr,
+                flush=True,
             )
     return last_code, last_stdout, last_stderr
 
 
-def run_psql_query(service: str, query: str, timeout: int = 60) -> Tuple[int, str]:
+def run_psql_query(service: str, query: str, timeout: int = 60) -> tuple[int, str]:
     """Run a psql query via railway ssh and return (returncode, output).
 
     Normalizes query whitespace and suppresses psql warnings (e.g. collation
@@ -190,7 +189,7 @@ def run_psql_query(service: str, query: str, timeout: int = 60) -> Tuple[int, st
     return 0, stdout
 
 
-def get_railway_status() -> Optional[Dict[str, Any]]:
+def get_railway_status() -> dict[str, Any] | None:
     """Get environment and service IDs from Railway config file.
 
     Reads directly from ~/.railway/config.json instead of calling CLI (~15s saved).
@@ -200,7 +199,7 @@ def get_railway_status() -> Optional[Dict[str, Any]]:
         return None
 
     try:
-        with open(config_path, "r") as f:
+        with open(config_path) as f:
             config = json.load(f)
 
         # Get linked project for current directory
@@ -225,11 +224,11 @@ def get_railway_status() -> Optional[Dict[str, Any]]:
             "serviceId": project_config.get("service"),
             "serviceName": project_config.get("name", ""),
         }
-    except (json.JSONDecodeError, IOError):
+    except (OSError, json.JSONDecodeError):
         return None
 
 
-def get_deployment_status(service: str, service_id: Optional[str] = None) -> str:
+def get_deployment_status(service: str, service_id: str | None = None) -> str:
     """Get deployment status for service.
 
     Uses direct API call if service_id provided (~1s), falls back to CLI (~15s).
@@ -240,23 +239,28 @@ def get_deployment_status(service: str, service_id: Optional[str] = None) -> str
         api_script = os.path.join(script_dir, "railway-api.sh")
 
         if os.path.exists(api_script):
-            query = '''query svc($id: String!) {
+            query = """query svc($id: String!) {
                 service(id: $id) {
                     deployments(first: 1) {
                         edges { node { status } }
                     }
                 }
-            }'''
+            }"""
             try:
                 result = subprocess.run(
                     [api_script, query, json.dumps({"id": service_id})],
                     capture_output=True,
                     text=True,
-                    timeout=10
+                    timeout=10,
                 )
                 if result.returncode == 0:
                     data = json.loads(result.stdout)
-                    edges = data.get("data", {}).get("service", {}).get("deployments", {}).get("edges", [])
+                    edges = (
+                        data.get("data", {})
+                        .get("service", {})
+                        .get("deployments", {})
+                        .get("edges", [])
+                    )
                     if edges:
                         return edges[0].get("node", {}).get("status", "UNKNOWN")
             except (subprocess.TimeoutExpired, json.JSONDecodeError):
@@ -278,7 +282,9 @@ def get_deployment_status(service: str, service_id: Optional[str] = None) -> str
         return "UNKNOWN"
 
 
-def get_all_metrics_from_api(environment_id: str, service_id: str, hours: int = 24) -> Optional[Dict[str, Any]]:
+def get_all_metrics_from_api(
+    environment_id: str, service_id: str, hours: int = 24
+) -> dict[str, Any] | None:
     """Get disk, CPU, memory, and network usage from Railway metrics API.
 
     Fetches time-series data and computes trend analysis including
@@ -296,29 +302,32 @@ def get_all_metrics_from_api(environment_id: str, service_id: str, hours: int = 
     if not os.path.exists(api_script):
         return None
 
-    query = '''query metrics($environmentId: String!, $serviceId: String, $startDate: DateTime!, $measurements: [MetricMeasurement!]!) {
+    query = """query metrics($environmentId: String!, $serviceId: String, $startDate: DateTime!, $measurements: [MetricMeasurement!]!) {
         metrics(environmentId: $environmentId, serviceId: $serviceId, startDate: $startDate, measurements: $measurements) {
             measurement values { ts value }
         }
-    }'''
+    }"""
 
-    variables = json.dumps({
-        "environmentId": environment_id,
-        "serviceId": service_id,
-        "startDate": start_date,
-        "measurements": [
-            "DISK_USAGE_GB", "CPU_USAGE", "MEMORY_USAGE_GB",
-            "MEMORY_LIMIT_GB", "CPU_LIMIT",
-            "NETWORK_RX_GB", "NETWORK_TX_GB",
-        ]
-    })
+    variables = json.dumps(
+        {
+            "environmentId": environment_id,
+            "serviceId": service_id,
+            "startDate": start_date,
+            "measurements": [
+                "DISK_USAGE_GB",
+                "CPU_USAGE",
+                "MEMORY_USAGE_GB",
+                "MEMORY_LIMIT_GB",
+                "CPU_LIMIT",
+                "NETWORK_RX_GB",
+                "NETWORK_TX_GB",
+            ],
+        }
+    )
 
     try:
         result = subprocess.run(
-            [api_script, query, variables],
-            capture_output=True,
-            text=True,
-            timeout=30
+            [api_script, query, variables], capture_output=True, text=True, timeout=30
         )
         if result.returncode != 0:
             return None
@@ -329,7 +338,7 @@ def get_all_metrics_from_api(environment_id: str, service_id: str, hours: int = 
         combined = {"disk_usage": None, "cpu_memory": {}, "metrics_history": None}
 
         # Raw time series keyed by measurement name
-        raw_series: Dict[str, List[Dict[str, Any]]] = {}
+        raw_series: dict[str, list[dict[str, Any]]] = {}
 
         for metric in metrics:
             measurement = metric.get("measurement")
@@ -340,7 +349,7 @@ def get_all_metrics_from_api(environment_id: str, service_id: str, hours: int = 
                 if measurement == "DISK_USAGE_GB":
                     combined["disk_usage"] = {
                         "used_gb": round(latest, 2),
-                        "used": f"{round(latest, 1)} GB"
+                        "used": f"{round(latest, 1)} GB",
                     }
                 elif measurement == "CPU_USAGE":
                     combined["cpu_memory"]["cpu_percent"] = round(latest, 1)
@@ -365,8 +374,9 @@ def get_all_metrics_from_api(environment_id: str, service_id: str, hours: int = 
     return None
 
 
-def _analyze_window(values: List[Dict[str, Any]], nums: List[float], d: int,
-                    unit: str) -> Dict[str, Any]:
+def _analyze_window(
+    values: list[dict[str, Any]], nums: list[float], d: int, unit: str
+) -> dict[str, Any]:
     """Analyze a single time window of metric data.
 
     Returns summary stats, trend, spike detection, and downsampled series.
@@ -378,7 +388,7 @@ def _analyze_window(values: List[Dict[str, Any]], nums: List[float], d: int,
     min_val = min(nums)
     max_val = max(nums)
 
-    entry: Dict[str, Any] = {
+    entry: dict[str, Any] = {
         "unit": unit,
         "current": round(nums[-1], d),
         "min": round(min_val, d),
@@ -418,7 +428,7 @@ def _analyze_window(values: List[Dict[str, Any]], nums: List[float], d: int,
     # Spike detection
     if len(nums) >= 10:
         variance = sum((x - avg_val) ** 2 for x in nums) / len(nums)
-        stddev = variance ** 0.5
+        stddev = variance**0.5
         threshold = avg_val + 2 * stddev
         if stddev > 0 and threshold > 0:
             spikes = []
@@ -455,14 +465,15 @@ def _analyze_window(values: List[Dict[str, Any]], nums: List[float], d: int,
     return entry
 
 
-def _build_metrics_history(raw_series: Dict[str, List[Dict[str, Any]]], hours: int = 168) -> Dict[str, Any]:
+def _build_metrics_history(
+    raw_series: dict[str, list[dict[str, Any]]], hours: int = 168
+) -> dict[str, Any]:
     """Build multi-window time-series history with trend analysis.
 
     Always produces a full-window analysis. If the window is > 24h, also
     produces a 24h short-window analysis from the tail of the data so the
     LLM can compare long-term vs short-term trends.
     """
-    from datetime import timedelta
 
     metric_info = {
         "CPU_USAGE": {"name": "cpu", "unit": "vCPU", "decimals": 2},
@@ -480,8 +491,8 @@ def _build_metrics_history(raw_series: Dict[str, List[Dict[str, Any]]], hours: i
 
     produce_short_window = hours > 24
 
-    full_window: Dict[str, Any] = {}
-    short_window: Dict[str, Any] = {}
+    full_window: dict[str, Any] = {}
+    short_window: dict[str, Any] = {}
 
     for measurement, values in raw_series.items():
         info = metric_info.get(measurement)
@@ -506,7 +517,7 @@ def _build_metrics_history(raw_series: Dict[str, List[Dict[str, Any]]], hours: i
                 short_window[name] = _analyze_window(recent_values, recent_nums, d, info["unit"])
 
     # Build the result with named windows
-    windows: Dict[str, Any] = {}
+    windows: dict[str, Any] = {}
 
     # Label the full window
     if hours >= 168:
@@ -548,11 +559,11 @@ def confirm_with_user(prompt: str) -> bool:
     not piped input. This prevents automated scripts from bypassing confirmation.
     """
     try:
-        with open('/dev/tty', 'r') as tty:
-            print(prompt, end=' ', flush=True)
+        with open("/dev/tty") as tty:
+            print(prompt, end=" ", flush=True)
             response = tty.readline().strip().lower()
-            return response in ('y', 'yes')
-    except (OSError, IOError):
+            return response in ("y", "yes")
+    except OSError:
         print("\n[ERROR] This command requires interactive terminal confirmation.")
         print("It cannot be run with piped input or in non-interactive mode.")
         print("Please run this command directly in a terminal.")
@@ -592,7 +603,7 @@ def _format_uptime(seconds: int) -> str:
     return " ".join(parts) if parts else "< 1m"
 
 
-def _trend_indicator(metrics_history: Optional[Dict[str, Any]], metric_name: str) -> str:
+def _trend_indicator(metrics_history: dict[str, Any] | None, metric_name: str) -> str:
     """Return a compact trend string like ' (^ +15.2% 24h)' for use in summary rows."""
     if not metrics_history:
         return ""
@@ -613,9 +624,12 @@ def _trend_indicator(metrics_history: Optional[Dict[str, Any]], metric_name: str
     return f" ({arrow} {change:+.1f}% {window_label})"
 
 
-def get_recent_logs(service: str, lines: int = LOG_LINES_DEFAULT,
-                    environment_id: Optional[str] = None,
-                    service_id: Optional[str] = None) -> List[str]:
+def get_recent_logs(
+    service: str,
+    lines: int = LOG_LINES_DEFAULT,
+    environment_id: str | None = None,
+    service_id: str | None = None,
+) -> list[str]:
     """Get recent logs for LLM analysis.
 
     Uses API if environment_id and service_id provided (~3s),
@@ -643,10 +657,7 @@ def get_recent_logs(service: str, lines: int = LOG_LINES_DEFAULT,
             for attempt_timeout in [15, 30]:
                 try:
                     result = subprocess.run(
-                        [api_script, query],
-                        capture_output=True,
-                        text=True,
-                        timeout=attempt_timeout
+                        [api_script, query], capture_output=True, text=True, timeout=attempt_timeout
                     )
                     if result.returncode == 0:
                         data = json.loads(result.stdout)
@@ -658,8 +669,7 @@ def get_recent_logs(service: str, lines: int = LOG_LINES_DEFAULT,
 
     # Fallback: use CLI (slow, ~27s)
     code, stdout, stderr = run_railway_command(
-        ["logs"] + _ctx.logs_flags() + ["--service", service, "--lines", str(lines)],
-        timeout=30
+        ["logs"] + _ctx.logs_flags() + ["--service", service, "--lines", str(lines)], timeout=30
     )
     if code != 0:
         return []

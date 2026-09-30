@@ -8,11 +8,13 @@ interactive staging, or maintaining git history hygiene.
 ## 1. What is an Atomic Commit?
 
 An **atomic commit** represents a single, complete, and indivisible unit of work:
+
 - It solves exactly one problem or introduces one logical change.
 - The repository compiles, passes tests, and runs cleanly at that commit.
 - If reverted (`git revert <hash>`), it undoes that change cleanly without breaking unrelated functionality.
 
 ### Anti-Patterns to Avoid
+
 - **The Mega-Commit**: Combining a new feature, a database migration, 4 unrelated bug fixes, and reformatting the entire codebase into one commit.
 - **The Broken Midway Commit**: Committing incomplete code that breaks the build with the intention of "fixing it in the next commit".
 - **The Accidental Formatting Churn**: Committing linter or whitespace reformats alongside core domain logic changes, polluting `git blame`.
@@ -33,7 +35,9 @@ An **atomic commit** represents a single, complete, and indivisible unit of work
 When you have modified multiple files across different concerns, slice them before committing:
 
 ### Strategy 1: Staging by File or Directory
+
 Instead of running `git add .`, stage files by domain:
+
 ```bash
 # Commit 1: Database migration
 git add src/db/migrations/20260930_add_user_roles.sql
@@ -49,18 +53,24 @@ git commit -m "test(auth): add unit tests for role-based permissions"
 ```
 
 ### Strategy 2: Interactive Hunk Staging (`git add -p`)
+
 When a single file contains both a bug fix and a new feature, use patch mode:
+
 ```bash
 git add -p <filename>
 ```
+
 Git will present each hunk and ask:
+
 - `y`: Stage this hunk.
 - `n`: Do not stage this hunk.
 - `s`: Split the hunk into smaller pieces.
 - `e`: Manually edit the hunk.
 
 ### Strategy 3: Stashing Unrelated Work
+
 If you started working on feature B while feature A is still incomplete:
+
 ```bash
 # Stash everything except staged changes
 git stash --keep-index

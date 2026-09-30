@@ -28,17 +28,23 @@ Badges serve as immediate operational indicators of project health, licensing, a
 ## 2. Standard Shields.io Markdown Recipes
 
 ### 1. GitHub Actions CI Status
+
 Shows whether the main branch pipeline is currently green:
+
 ```markdown
 [![CI Status](https://img.shields.io/github/actions/workflow/status/<USER>/<REPO>/ci.yml?branch=main&label=CI&logo=github)](https://github.com/<USER>/<REPO>/actions)
 ```
 
 ### 2. Open-Source License
+
 Links directly to the repository's `LICENSE` file:
+
 ```markdown
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ```
+
 Or dynamically from GitHub:
+
 ```markdown
 [![License](https://img.shields.io/github/license/<USER>/<REPO>)](https://github.com/<USER>/<REPO>/blob/main/LICENSE)
 ```
@@ -46,33 +52,39 @@ Or dynamically from GitHub:
 ### 3. Package Registry Versions
 
 #### npm (JavaScript / TypeScript)
+
 ```markdown
 [![npm version](https://img.shields.io/npm/v/<PACKAGE_NAME>?color=cb3837&logo=npm)](https://www.npmjs.com/package/<PACKAGE_NAME>)
 [![npm downloads](https://img.shields.io/npm/dm/<PACKAGE_NAME>?color=cb3837&logo=npm)](https://www.npmjs.com/package/<PACKAGE_NAME>)
 ```
 
 #### PyPI (Python)
+
 ```markdown
 [![PyPI version](https://img.shields.io/pypi/v/<PACKAGE_NAME>?color=3775A9&logo=pypi&logoColor=white)](https://pypi.org/project/<PACKAGE_NAME>/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/<PACKAGE_NAME>?logo=python&logoColor=white)](https://pypi.org/project/<PACKAGE_NAME>/)
 ```
 
 #### Crates.io (Rust)
+
 ```markdown
 [![Crates.io](https://img.shields.io/crates/v/<CRATE_NAME>?color=dea584&logo=rust)](https://crates.io/crates/<CRATE_NAME>)
 ```
 
 #### Docker Hub
+
 ```markdown
 [![Docker Image Version](https://img.shields.io/docker/v/<USER>/<REPO>?sort=semver&logo=docker)](https://hub.docker.com/r/<USER>/<REPO>)
 ```
 
 ### 4. Code Coverage
+
 ```markdown
 [![Codecov](https://img.shields.io/codecov/c/github/<USER>/<REPO>?logo=codecov)](https://codecov.io/gh/<USER>/<REPO>)
 ```
 
 ### 5. Tech Stack & Compatibility Badges
+
 ```markdown
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
@@ -85,7 +97,9 @@ Or dynamically from GitHub:
 ## 3. Styling & Alignment Best Practices
 
 ### Badge Styles
+
 Shields.io supports multiple aesthetic styles via the `style=` query parameter:
+
 - **`flat` (Default)**: Modern, clean, rounded edges.
   - `https://img.shields.io/badge/style-flat-green`
 - **`flat-square`**: Crisp, square-cornered appearance favored by technical documentation.
@@ -94,6 +108,7 @@ Shields.io supports multiple aesthetic styles via the `style=` query parameter:
   - `https://img.shields.io/badge/style-for--the--badge-green?style=for-the-badge`
 
 ### Recommended Centered Header Layout:
+
 ```markdown
 <div align="center">
 

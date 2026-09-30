@@ -8,10 +8,10 @@ TypeScript IaC is generally available. Python and Go authoring are in beta. Pres
 
 `railway.json` and `railway.toml` are deprecated. New services cannot opt into Config as Code; existing files stop being read on **2026-12-01**. Do not create them as a fallback. For an existing legacy service, use the migration workflow below; if the user requests a temporary legacy edit, explain the cutoff and keep its current format.
 
-| Model | Scope | Applies when |
-|---|---|---|
-| `.railway/railway.ts`, `.py`, or `.go` | Project/environment: services, databases, buckets, volumes, variables, replicas, domains, and canvas groups | `railway config apply` applies the project plan |
-| Existing `railway.json` / `railway.toml` | One legacy service's build and deploy settings | Read during deployments until the cutoff; overrides dashboard values for that deployment |
+| Model                                    | Scope                                                                                                       | Applies when                                                                             |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `.railway/railway.ts`, `.py`, or `.go`   | Project/environment: services, databases, buckets, volumes, variables, replicas, domains, and canvas groups | `railway config apply` applies the project plan                                          |
+| Existing `railway.json` / `railway.toml` | One legacy service's build and deploy settings                                                              | Read during deployments until the cutoff; overrides dashboard values for that deployment |
 
 ## Infrastructure as Code
 

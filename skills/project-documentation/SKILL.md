@@ -57,12 +57,12 @@ Follow this standardized workflow when building, updating, or auditing a documen
 
 Classify all project knowledge into the four Diátaxis quadrants (see [diataxis-documentation-framework.md](references/diataxis-documentation-framework.md)):
 
-| Quadrant | Primary Orientation | User State of Mind | Content Goal | Example Title |
-| :--- | :--- | :--- | :--- | :--- |
-| **Tutorials** | Learning (Study + Action) | *"I am a beginner; teach me how this works."* | An unbroken hands-on path building basic confidence. | *"Building Your First Webhook Service"* |
-| **How-To Guides** | Problem (Work + Action) | *"I have a job to do; how do I do it?"* | Step-by-step actionable recipe to achieve a specific goal. | *"How to Configure OAuth2 with Okta"* |
-| **Reference** | Information (Work + Knowledge) | *"I need specific technical facts."* | Austere, accurate, comprehensive API/CLI description. | *"CLI Flag Reference: --concurrency"* |
-| **Explanation** | Understanding (Study + Knowledge) | *"I want to understand the big picture."* | Clarifies architecture, design rationale, and history. | *"Why We Chose Event Sourcing"* |
+| Quadrant          | Primary Orientation               | User State of Mind                            | Content Goal                                               | Example Title                           |
+| :---------------- | :-------------------------------- | :-------------------------------------------- | :--------------------------------------------------------- | :-------------------------------------- |
+| **Tutorials**     | Learning (Study + Action)         | _"I am a beginner; teach me how this works."_ | An unbroken hands-on path building basic confidence.       | _"Building Your First Webhook Service"_ |
+| **How-To Guides** | Problem (Work + Action)           | _"I have a job to do; how do I do it?"_       | Step-by-step actionable recipe to achieve a specific goal. | _"How to Configure OAuth2 with Okta"_   |
+| **Reference**     | Information (Work + Knowledge)    | _"I need specific technical facts."_          | Austere, accurate, comprehensive API/CLI description.      | _"CLI Flag Reference: --concurrency"_   |
+| **Explanation**   | Understanding (Study + Knowledge) | _"I want to understand the big picture."_     | Clarifies architecture, design rationale, and history.     | _"Why We Chose Event Sourcing"_         |
 
 ---
 
@@ -75,6 +75,7 @@ python scripts/scaffold_docs.py --generator vitepress --target-dir ./docs
 ```
 
 #### Standard Directory Hierarchy:
+
 ```
 docs/
 ├── tutorials/               # Learning-oriented lessons (01-quickstart.md)
@@ -140,6 +141,7 @@ python scripts/audit_docs.py --dir ./docs
 ```
 
 The audit tool checks:
+
 - **Diátaxis Quadrant Balance**: Verifies presence of all 4 content types.
 - **Link Rot Detection**: Identifies broken relative links (`../missing.md`) and dead anchor tags (`#broken-heading`).
 - **Orphaned File Detection**: Flags markdown files not referenced in navigation or indices.
@@ -153,11 +155,11 @@ The audit tool checks:
 
 This skill equips agents with three zero-dependency Python tools:
 
-| Script | Purpose | Common Invocation |
-| :--- | :--- | :--- |
-| `scripts/scaffold_docs.py` | Scaffolds a complete Diátaxis `docs/` workspace for VitePress, Docusaurus, Starlight, or MkDocs | `python scripts/scaffold_docs.py --generator vitepress` |
-| `scripts/audit_docs.py` | Audits documentation for broken links, orphaned files, missing frontmatter, and DocOps score | `python scripts/audit_docs.py --dir ./docs` |
-| `scripts/generate_api_doc.py` | Generates structured Markdown API reference documents from OpenAPI 3.0/3.1 specs | `python scripts/generate_api_doc.py --spec openapi.json` |
+| Script                        | Purpose                                                                                         | Common Invocation                                        |
+| :---------------------------- | :---------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
+| `scripts/scaffold_docs.py`    | Scaffolds a complete Diátaxis `docs/` workspace for VitePress, Docusaurus, Starlight, or MkDocs | `python scripts/scaffold_docs.py --generator vitepress`  |
+| `scripts/audit_docs.py`       | Audits documentation for broken links, orphaned files, missing frontmatter, and DocOps score    | `python scripts/audit_docs.py --dir ./docs`              |
+| `scripts/generate_api_doc.py` | Generates structured Markdown API reference documents from OpenAPI 3.0/3.1 specs                | `python scripts/generate_api_doc.py --spec openapi.json` |
 
 ---
 

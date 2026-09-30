@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import subprocess
 import sys
@@ -26,7 +25,12 @@ SECRET_PATTERNS = [
     ("GitHub Personal Access Token", re.compile(r"\bghp_[A-Za-z0-9_]{36}\b")),
     ("Private Key Header", re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----")),
     ("Slack API Token", re.compile(r"\bxox[baprs]-[0-9a-zA-Z-]{10,}\b")),
-    ("Generic High-Entropy Secret Assignment", re.compile(r"(?i)(api[_-]?key|secret|password|auth_token)\s*=\s*['\"][A-Za-z0-9_\-\.]{20,}['\"]")),
+    (
+        "Generic High-Entropy Secret Assignment",
+        re.compile(
+            r"(?i)(api[_-]?key|secret|password|auth_token)\s*=\s*['\"][A-Za-z0-9_\-\.]{20,}['\"]"
+        ),
+    ),
 ]
 
 
@@ -50,7 +54,11 @@ def run_git(args: list[str], cwd: Path) -> tuple[int, str]:
 def check_git_branch(root: Path) -> dict:
     code, branch = run_git(["rev-parse", "--abbrev-ref", "HEAD"], root)
     if code != 0:
-        return {"gate": "git_branch", "passed": False, "details": "Not a git repository or git error"}
+        return {
+            "gate": "git_branch",
+            "passed": False,
+            "details": "Not a git repository or git error",
+        }
 
     is_trunk = branch in ("main", "master")
     valid_prefix = branch.startswith(("feat/", "fix/", "chore/", "refactor/", "test/", "docs/"))
@@ -79,7 +87,11 @@ def check_git_branch(root: Path) -> dict:
 def check_recent_commits(root: Path, limit: int = 5) -> dict:
     code, output = run_git(["log", f"-{limit}", "--pretty=format:%s"], root)
     if code != 0 or not output:
-        return {"gate": "commit_messages", "passed": True, "details": "No commits found to validate"}
+        return {
+            "gate": "commit_messages",
+            "passed": True,
+            "details": "No commits found to validate",
+        }
 
     lines = [line.strip() for line in output.splitlines() if line.strip()]
     invalid = []
@@ -102,7 +114,19 @@ def check_recent_commits(root: Path, limit: int = 5) -> dict:
 
 def scan_for_secrets(root: Path) -> dict:
     findings = []
-    text_extensions = {".py", ".ts", ".js", ".json", ".md", ".yaml", ".yml", ".toml", ".env.example", ".sh", ".sql"}
+    text_extensions = {
+        ".py",
+        ".ts",
+        ".js",
+        ".json",
+        ".md",
+        ".yaml",
+        ".yml",
+        ".toml",
+        ".env.example",
+        ".sh",
+        ".sql",
+    }
     ignore_dirs = {".git", "node_modules", ".venv", "venv", "__pycache__", "dist", "build"}
 
     for path in root.rglob("*"):
@@ -127,7 +151,8 @@ def scan_for_secrets(root: Path) -> dict:
         return {
             "gate": "secret_scanning",
             "passed": False,
-            "details": f"Found {len(findings)} potential secret(s):\n  - " + "\n  - ".join(findings[:5]),
+            "details": f"Found {len(findings)} potential secret(s):\n  - "
+            + "\n  - ".join(findings[:5]),
         }
     return {
         "gate": "secret_scanning",
@@ -137,7 +162,15 @@ def scan_for_secrets(root: Path) -> dict:
 
 
 def check_testing_gates(root: Path) -> dict:
-    test_markers = ["tests", "test", "__tests__", "spec", "pytest.ini", "jest.config.js", "vitest.config.ts"]
+    test_markers = [
+        "tests",
+        "test",
+        "__tests__",
+        "spec",
+        "pytest.ini",
+        "jest.config.js",
+        "vitest.config.ts",
+    ]
     found = [m for m in test_markers if (root / m).exists()]
     if found:
         return {
@@ -182,7 +215,7 @@ def check_architecture_docs(root: Path) -> dict:
         return {
             "gate": "architecture_documentation",
             "passed": True,
-            "details": f"Architecture Decision Records located in docs/adr/.",
+            "details": "Architecture Decision Records located in docs/adr/.",
         }
     elif has_readme:
         return {
@@ -201,7 +234,9 @@ def check_architecture_docs(root: Path) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Verify SDLC readiness gates and project health")
     parser.add_argument("--dir", default=".", help="Root directory of the project to check")
-    parser.add_argument("--json", action="store_true", help="Output results in machine-readable JSON format")
+    parser.add_argument(
+        "--json", action="store_true", help="Output results in machine-readable JSON format"
+    )
     args = parser.parse_args()
 
     root = Path(args.dir).resolve()
