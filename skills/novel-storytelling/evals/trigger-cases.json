@@ -1,0 +1,90 @@
+[
+  {
+    "query": "Can you rewrite this scene in Level 4 Deep POV and remove all the sensory filter words?",
+    "should_trigger": true
+  },
+  {
+    "query": "How do I calibrate the psychic distance in this chapter using John Gardner's framework?",
+    "should_trigger": true
+  },
+  {
+    "query": "Review my dialogue exchange between these two rival detectives. The lines feel too on-the-nose; help me add subtext and action beats.",
+    "should_trigger": true
+  },
+  {
+    "query": "Help me describe this battlefield wound using Viktor Shklovsky's defamiliarization technique and visceral somatic sensations.",
+    "should_trigger": true
+  },
+  {
+    "query": "This conversational scene between a husband and wife feels completely flat. How can I inject Donald Maass micro-tension onto every page?",
+    "should_trigger": true
+  },
+  {
+    "query": "Audit the sentence cadence and rhythm of my opening chapter. It feels monotonous, like Gary Provost's warning about five-word sentences.",
+    "should_trigger": true
+  },
+  {
+    "query": "Run a prose lint check on my chapter draft to identify filter word density and passive voice hotspots.",
+    "should_trigger": true
+  },
+  {
+    "query": "Help me craft an opening hook for my cyberpunk novel that starts in medias res without mundane morning routine clichés.",
+    "should_trigger": true
+  },
+  {
+    "query": "I need a gripping chapter cliffhanger for my fantasy novel using a reversal or shocking revelation.",
+    "should_trigger": true
+  },
+  {
+    "query": "Expand this brief scene beat into a dramatic Deep POV scene with multi-sensory grounding.",
+    "should_trigger": true
+  },
+  {
+    "query": "Check this chapter for head-hopping and ensure single-POV integrity throughout.",
+    "should_trigger": true
+  },
+  {
+    "query": "Generate a 15-beat Save the Cat beat sheet for my 80,000-word sci-fi thriller.",
+    "should_trigger": false
+  },
+  {
+    "query": "Design a three-act, 8-sequence narrative outline for my historical novel.",
+    "should_trigger": false
+  },
+  {
+    "query": "Scaffold a complete novel project workspace with character dossiers, world bible, and beat sheets.",
+    "should_trigger": false
+  },
+  {
+    "query": "Commit my staged changes with a standardized Conventional Commit message.",
+    "should_trigger": false
+  },
+  {
+    "query": "Quote Surah Al-Kahf verses 1-10 in Arabic with English translation.",
+    "should_trigger": false
+  },
+  {
+    "query": "Cite 1 Corinthians 13 in the ESV with theological commentary.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a production-grade README.md file for this Go CLI library.",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix this CSS grid overflow bug in my React component.",
+    "should_trigger": false
+  },
+  {
+    "query": "Deploy this FastAPI backend application to Railway infrastructure.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a marketing email newsletter announcing our summer product sale.",
+    "should_trigger": false
+  },
+  {
+    "query": "Build a Brandon Sanderson hard magic system with 3 laws of magic for my novel bible.",
+    "should_trigger": false
+  }
+]

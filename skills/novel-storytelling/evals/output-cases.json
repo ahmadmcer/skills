@@ -1,0 +1,53 @@
+[
+  {
+    "id": "deep-pov-and-filter-word-elimination",
+    "prompt": "Rewrite the following passage in Level 4 Deep POV, eliminating all sensory filter words and using Free Indirect Discourse:\n\n'Marcus stood by the iron gates. He saw the fog rolling in over the bay and he heard the harbor bell tolling three times. He felt his hands begin to sweat inside his leather gloves. He realized that the smuggling ship was late, and he wondered if Captain Corvo had been arrested by the royal inquisitors. He decided to wait another ten minutes.'",
+    "expected_output": "Rewrites the passage into tight, immersive Level 4 Deep POV. Purges all filter phrases ('he saw', 'he heard', 'he felt', 'he realized', 'he wondered', 'he decided'). Embeds the sensory data directly into the world (fog rolling across the bay, harbor bell tolling three times, sweat soaking leather gloves). Replaces the cognitive deduction with Free Indirect Discourse questioning Corvo's fate without thought tags.",
+    "assertions": [
+      "Eliminates 100% of the sensory filter words ('saw', 'heard', 'felt', 'realized', 'wondered', 'decided').",
+      "Renders internal thoughts via Free Indirect Discourse (FID) without quotation marks or thought tags.",
+      "Maintains unbroken single-POV immersion in the scene."
+    ]
+  },
+  {
+    "id": "dialogue-subtext-and-action-beats",
+    "prompt": "Rewrite this wooden dialogue exchange between a blackmailed senator and an investigative journalist into a tense, subtextual duel using Robert McKee's tactical action verbs and Sol Stein's physical action beats:\n\n'Senator, I know you took a bribe from the iron cartel,' David said aggressively.\n'I did not take any bribe, and you have no proof of that,' the Senator replied angrily.\n'I have the bank receipts right here in my briefcase,' David said proudly.\n'Please do not publish that story, it will destroy my political career,' the Senator begged.",
+    "expected_output": "Transforms the on-the-nose argument into a psychological duel with deep subtext. Eliminates all dialogue tag adverbs ('aggressively', 'angrily', 'proudly', 'begged'). Replaces flat declarations with subtextual tactics (probing, intimidating, disarming, deflecting). Replaces speech tags with grounded physical action beats involving props and environment (e.g., pouring drinks, adjusting cuffs, tapping dossiers).",
+    "assertions": [
+      "Purges all adverb-propped dialogue tags ('said aggressively', 'replied angrily', etc.).",
+      "Applies Sol Stein's action beat punctuation rules (periods and independent sentences for beats).",
+      "Replaces on-the-nose admissions with subtextual leverage and deflection.",
+      "Choreographs physical interaction with the setting and props."
+    ]
+  },
+  {
+    "id": "sensory-defamiliarization-and-somatic-grounding",
+    "prompt": "Describe an injured protagonist dragging themselves through an icy mountain pass after a cavalry ambush. Apply Viktor Shklovsky's defamiliarization (ostranenie) and visceral somatic physiology across at least 4 sensory modalities.",
+    "expected_output": "Depicts the ordeal with defamiliarized imagery that makes cold and physical trauma visceral. Engages olfactory (frozen blood, horse sweat, pine pitch), tactile/haptic (crusted wool, iron frost tearing skin from fingertips), acoustic (rattling bronchial wheeze, crunch of glazed snow), and somatic/proprioceptive systems (lung alveoli burning like acid, numbness creeping past the kneecap, vertigo tilting the horizon). Avoids stock clichés like 'teeth chattering' or 'freezing cold'.",
+    "assertions": [
+      "Engages at least 4 distinct sensory registers including visceral somatic/proprioceptive sensations.",
+      "Avoids emotional labeling and stock clichés ('he was cold', 'in terrible pain').",
+      "Employs Shklovsky's defamiliarization to make familiar cold or trauma feel raw and novel."
+    ]
+  },
+  {
+    "id": "micro-tension-infusion-in-quiet-scene",
+    "prompt": "Inject Donald Maass micro-tension into a seemingly mundane dinner scene between an estranged father and his daughter. The daughter has secretly joined the resistance movement her father prosecutes as a high judge.",
+    "expected_output": "Infuses continuous micro-tension across the dinner interaction through emotional duality (the daughter's genuine childhood affection warred against nausea at his uniform), discordant sensory observations (the silver carving knife slicing roast lamb echoing recent execution reports), and subtextual conversational friction where ordinary questions about her studies carry double-edged ideological danger.",
+    "assertions": [
+      "Demonstrates Donald Maass's emotional duality (conflicting simultaneous feelings).",
+      "Creates moment-by-moment subtextual friction during a mundane meal without violence or loud arguments.",
+      "Uses discordant sensory details and prop choreography to heighten tension."
+    ]
+  },
+  {
+    "id": "prose-rhythm-and-linter-audit",
+    "prompt": "Analyze a draft scene with Gary Provost sentence rhythm variations and run the lint_prose.py diagnostic to detect filter word density and monotone sentence clusters.",
+    "expected_output": "Executes lint_prose.py, evaluates sentence length standard deviation and distribution across Short (1-7w), Medium (8-18w), and Long (19+w) classes, flags any 3+ sentence monotone runs violating Provost's cadence rule, calculates filter word density per 1,000 words, and provides a quantitative Prose Immersion Score with prioritized recommendations.",
+    "assertions": [
+      "Calculates sentence length variance and Provost rhythm distribution.",
+      "Identifies filter word density per 1,000 words against the <= 3.0 target.",
+      "Provides actionable, line-specific prescriptions for improving prose cadence."
+    ]
+  }
+]
