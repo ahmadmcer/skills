@@ -1,0 +1,58 @@
+[
+  {
+    "id": "save-the-cat-beat-sheet-generation",
+    "prompt": "Outline an 80,000-word cyberpunk conspiracy thriller titled 'Ghost in the Neon' using Blake Snyder's Save the Cat framework. Include exact word count milestones and psychological stakes for each beat.",
+    "expected_output": "Produces a mathematically calibrated 15-beat outline totaling 80,000 words. Explicitly marks Opening Image (~1,200w at 0%), Catalyst (~8,000w at 10%), Break into Two (~16,000w at 20%), Midpoint False Victory/Defeat (~40,000w at 50%), All Is Lost with Whiff of Death (~60,000w at 75%), Break into Three epiphany (~64,000w at 80%), 5-step Finale (~64,000-79,200w), and Final Image (~80,000w at 100%). Details both physical plot events and internal character arc stakes.",
+    "assertions": [
+      "Calculates word count allocations across all 15 Save the Cat beats totaling approximately 80,000 words.",
+      "Positions the Catalyst at ~10% (8,000w) and the Midpoint at 50% (40,000w).",
+      "Explicitly defines the B Story relationship character representing the thematic lesson.",
+      "Identifies the 'Whiff of Death' at the All Is Lost beat (~75% / 60,000w).",
+      "Contrasts the Opening Image and Final Image to prove irreversible protagonist transformation."
+    ]
+  },
+  {
+    "id": "character-psychodynamics-weiland-arc",
+    "prompt": "Create an in-depth character psychodynamic profile for my fantasy protagonist, Lyra, an exiled archivist. Define her Ghost/Wound, the Lie She Believes, her External Want vs Internal Need, and her Climactic Moment of Truth.",
+    "expected_output": "Builds a comprehensive psychological dossier rooted in K.M. Weiland's character arc framework. Details Lyra's foundational childhood trauma (Ghost), her protective false belief / cognitive bias (The Lie), her conscious tangible objective (The Want), the unacknowledged spiritual truth necessary for healing (The Need), and the specific climactic crucible where she must sacrifice her Want to embrace her Need (Moment of Truth).",
+    "assertions": [
+      "Articulates a specific, traumatic backstory event serving as the Ghost/Wound.",
+      "Formulates a distinct cognitive distortion as 'The Lie She Believes' (e.g., 'Safety lies only in isolation').",
+      "Sharpens the polarity between the external, conscious 'Want' and the unconscious 'Need'.",
+      "Details the climactic 'Moment of Truth' where the protagonist surrenders the Lie under intense pressure."
+    ]
+  },
+  {
+    "id": "scene-and-sequel-micro-pacing",
+    "prompt": "Write a structural scene-and-sequel pair for Chapter 14 of a space opera. The protagonist attempts to disarm a reactor bomb, suffers a catastrophic complication, and must process the emotional aftermath before deciding their next move.",
+    "expected_output": "Structures two tightly linked scenes adhering strictly to Dwight Swain and Jack Bickham's model. Scene part 1 (Action) follows Goal (specific, immediate, measurable), Conflict (active resistance from environment/antagonist), and Disaster (unexpected 'No, and furthermore...' catastrophe). Scene part 2 (Sequel) immediately follows with visceral emotional Reaction, agonizing Dilemma with multiple bad choices, and proactive Decision setting the goal for the next scene.",
+    "assertions": [
+      "Explicitly formats the Scene segment with Goal, Conflict, and Disaster (G-C-D).",
+      "Ends the Scene with an unambiguous, escalating catastrophe ('No, and furthermore...').",
+      "Explicitly formats the Sequel segment with visceral Reaction, intellectual Dilemma, and proactive Decision (R-D-D).",
+      "Demonstrates that the Sequel's Decision directly produces the Goal of the subsequent Scene."
+    ]
+  },
+  {
+    "id": "sanderson-magic-system-worldbuilding",
+    "prompt": "Design a hard magic system based on sound frequencies and acoustic resonance using Brandon Sanderson's Three Laws of Magic.",
+    "expected_output": "Architects an original, consistent magic system adhering to Sanderson's Laws. Under Law 1 (Understanding = Problem Solving), establishes clear mathematical and perceptual rules so the reader anticipates how sound magic works. Under Law 2 (Limitations > Powers), establishes severe costs, biological exhaustion, destructive harmonic feedback, and strict environmental vulnerabilities. Under Law 3 (Extrapolate Depth), explores economic, architectural, military, and religious consequences of acoustic magic across civilization.",
+    "assertions": [
+      "Directly applies Sanderson's First Law by providing transparent rules enabling satisfying reader problem-solving.",
+      "Directly applies Sanderson's Second Law by emphasizing flaws, limitations, and severe energetic/biological costs over raw power.",
+      "Directly applies Sanderson's Third Law by extrapolating society-wide ramifications (warfare, commerce, architecture, religion).",
+      "Distinguishes between hard and soft components of the supernatural framework."
+    ]
+  },
+  {
+    "id": "pacing-analysis-and-workspace-audit",
+    "prompt": "Run an automated pacing analysis on an outline where Act 1 takes up 35,000 words of an 80,000-word book and scenes are 90% non-stop combat with no reaction scenes. Diagnose risks and provide actionable solutions.",
+    "expected_output": "Analyzes the manuscript metrics, calculates Act 1 percentage at ~43.7% (drastically exceeding the 20-25% target), flags the Scene-to-Sequel ratio at 90%/10% (exceeding the 65%/35% baseline), assigns a penalized Pacing Health Score, issues warnings for Saggy/Bloated Opening and Reader Exhaustion, and prescribes concrete line-item fixes (compressing Act 1 setup, moving inciting incident to ~8,000 words, and inserting post-disaster Sequel scenes).",
+    "assertions": [
+      "Detects that Act 1 is excessively bloated (~43.7% vs 20-25% target).",
+      "Detects high risk of Reader Exhaustion due to extreme 90% Scene / 10% Sequel imbalance.",
+      "Calculates a penalized Pacing Health Score reflective of severe structural imbalance.",
+      "Provides actionable, prioritized prescriptions for cutting words and inserting reflective Sequel scenes."
+    ]
+  }
+]

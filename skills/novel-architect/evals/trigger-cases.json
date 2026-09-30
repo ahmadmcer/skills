@@ -1,0 +1,90 @@
+[
+  {
+    "query": "Can you outline my 85,000-word sci-fi thriller using Blake Snyder's Save the Cat beat sheet?",
+    "should_trigger": true
+  },
+  {
+    "query": "Help me build a three-act, 8-sequence structural outline for my historical fiction novel.",
+    "should_trigger": true
+  },
+  {
+    "query": "I want to map out my protagonist's character arc: their Ghost wound, the Lie they believe, their Want vs Need, and their Moment of Truth.",
+    "should_trigger": true
+  },
+  {
+    "query": "How do I pace this chapter using Dwight Swain's Scene and Sequel method with Goal-Conflict-Disaster and Reaction-Dilemma-Decision?",
+    "should_trigger": true
+  },
+  {
+    "query": "Help me develop a hard magic system for my fantasy novel using Brandon Sanderson's Three Laws of Magic.",
+    "should_trigger": true
+  },
+  {
+    "query": "Scaffold a complete novel project workspace with character dossiers, world bible, and beat sheets.",
+    "should_trigger": true
+  },
+  {
+    "query": "Analyze the pacing of my novel outline: check act ratios, midpoint placement, and scene-to-sequel balance.",
+    "should_trigger": true
+  },
+  {
+    "query": "Structure my novel's plot using Dan Harmon's 8-step Story Circle.",
+    "should_trigger": true
+  },
+  {
+    "query": "Apply Dan Wells' Seven-Point Story Structure to outline my urban fantasy mystery.",
+    "should_trigger": true
+  },
+  {
+    "query": "Formulate a central thematic premise for my novel using Lajos Egri's 'Premise leads to Conclusion' formula.",
+    "should_trigger": true
+  },
+  {
+    "query": "Diagnose why the middle of my 90,000-word manuscript feels saggy and lacks narrative propulsion.",
+    "should_trigger": true
+  },
+  {
+    "query": "Commit my staged changes with a standardized Conventional Commit message.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create a production-grade README.md file for this open-source TypeScript CLI library.",
+    "should_trigger": false
+  },
+  {
+    "query": "Quote Surah Al-Baqarah 2:255 in Arabic and provide English translation.",
+    "should_trigger": false
+  },
+  {
+    "query": "Cite John 3:16 in the ESV with Greek textual commentary.",
+    "should_trigger": false
+  },
+  {
+    "query": "What does the Babylonian Talmud say in Berakhot 2a regarding the evening Shema?",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix this CSS grid bug where flex children overflow the parent container.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a Python script to scrape product prices from an e-commerce website.",
+    "should_trigger": false
+  },
+  {
+    "query": "Configure a CI/CD GitHub Actions workflow to build and test our Docker container.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a business press release announcing our new Series A funding round.",
+    "should_trigger": false
+  },
+  {
+    "query": "Deploy this FastAPI backend service to Railway with PostgreSQL database provisioning.",
+    "should_trigger": false
+  },
+  {
+    "query": "Generate a non-fiction academic literature review on CRISPR-Cas9 off-target mutations.",
+    "should_trigger": false
+  }
+]
