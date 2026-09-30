@@ -1,0 +1,90 @@
+[
+  {
+    "query": "How do we reorganize our tangled project docs into the Diátaxis framework across Tutorials, How-To, Reference, and Explanation?",
+    "should_trigger": true
+  },
+  {
+    "query": "Scaffold a modern Docs-as-Code VitePress portal with Diátaxis folders, sidebar config, and an architecture diagram.",
+    "should_trigger": true
+  },
+  {
+    "query": "Initialize a Docusaurus documentation site with sidebars.ts and standard Diátaxis templates for our SDK.",
+    "should_trigger": true
+  },
+  {
+    "query": "Generate API reference markdown from our OpenAPI 3.1 spec including request schemas, responses, and RFC 9457 error details.",
+    "should_trigger": true
+  },
+  {
+    "query": "Create Simon Brown C4 Context and Container architecture diagrams in text-based Mermaid.js for our system documentation.",
+    "should_trigger": true
+  },
+  {
+    "query": "Draft a Markdown Architecture Decision Record (MADR 3.0) documenting our decision to adopt Apache Kafka over RabbitMQ.",
+    "should_trigger": true
+  },
+  {
+    "query": "Audit our ./docs directory against DocOps quality gates to find broken relative links, dead anchor slugs, and orphaned markdown files.",
+    "should_trigger": true
+  },
+  {
+    "query": "Run a DocOps quality check on our technical documentation repository to calculate our 0-100 rubric score and fix untagged code blocks.",
+    "should_trigger": true
+  },
+  {
+    "query": "Why should we avoid mixing theoretical explanations and reference tables inside hands-on tutorials according to Diátaxis?",
+    "should_trigger": true
+  },
+  {
+    "query": "Scaffold a Material for MkDocs technical documentation structure with mkdocs.yml and navigation tabs.",
+    "should_trigger": true
+  },
+  {
+    "query": "Transform our OpenAPI schema into structured Markdown tables with realistic JSON examples for our developer portal.",
+    "should_trigger": true
+  },
+  {
+    "query": "Inspect our project and generate a high-converting root README.md with badges, quickstart, and prerequisites.",
+    "should_trigger": false
+  },
+  {
+    "query": "Determine the next SemVer version bump from our latest git commits and rotate the [Unreleased] section in CHANGELOG.md.",
+    "should_trigger": false
+  },
+  {
+    "query": "Inspect my staged git diff and create an atomic Conventional Commit 1.0.0 message.",
+    "should_trigger": false
+  },
+  {
+    "query": "Outline my 85,000-word thriller novel using the 15-beat Save the Cat framework.",
+    "should_trigger": false
+  },
+  {
+    "query": "Rewrite this scene from the detective's Deep POV and eliminate filter verbs like 'she noticed' and 'he heard'.",
+    "should_trigger": false
+  },
+  {
+    "query": "Quote Romans 8:28 in ESV and provide Greek grammatical analysis of panta synergei.",
+    "should_trigger": false
+  },
+  {
+    "query": "Verify the authenticity of this Hadith in Sahih Bukhari and explain its chain of narration.",
+    "should_trigger": false
+  },
+  {
+    "query": "Explain the discussion in Talmud Bavli Berakhot 2a regarding the evening Shema with Rashi commentary.",
+    "should_trigger": false
+  },
+  {
+    "query": "Design our company's visual identity, typography scale, and W3C Design Tokens in Tailwind.",
+    "should_trigger": false
+  },
+  {
+    "query": "Perform STRIDE threat modeling and define a TDD test pyramid strategy for our payment processing service.",
+    "should_trigger": false
+  },
+  {
+    "query": "Provision a PostgreSQL database and deploy our backend service on Railway with health checks.",
+    "should_trigger": false
+  }
+]

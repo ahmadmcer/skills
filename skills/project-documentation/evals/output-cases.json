@@ -1,0 +1,59 @@
+[
+  {
+    "id": "diataxis-quadrant-classification-and-refactor",
+    "prompt": "We have a disorganized document called 'everything-about-auth.md' containing: (1) step-by-step setup for a newcomer to create their first JWT, (2) instructions on how to rotate a production JWT secret without downtime, (3) a table of all JWT claims and configuration options, and (4) an essay discussing why asymmetric RS256 was chosen over symmetric HS256. How should this be refactored into the Diátaxis framework?",
+    "expected_output": "Separates the document into four distinct Diátaxis quadrants: (1) 'tutorials/01-first-jwt.md' (learning-oriented lesson with zero choice), (2) 'how-to/rotate-jwt-secrets.md' (problem-oriented recipe for real-world maintenance), (3) 'reference/jwt-configuration.md' (information-oriented table of claims, flags, and types without tutorials), and (4) 'explanation/asymmetric-jwt-architecture.md' (understanding-oriented discussion explaining the design rationale between RS256 and HS256).",
+    "assertions": [
+      "Distributes the content across all 4 Diátaxis quadrants: Tutorials, How-To, Reference, and Explanation.",
+      "Assigns newcomer JWT creation to a Tutorial ('tutorials/').",
+      "Assigns secret rotation to a How-To Guide ('how-to/').",
+      "Assigns claims and configuration parameters to Reference ('reference/').",
+      "Assigns RS256 vs HS256 architecture rationale to Explanation ('explanation/')."
+    ]
+  },
+  {
+    "id": "docs-as-code-vitepress-scaffolding",
+    "prompt": "Scaffold a complete Docs-as-Code directory structure for 'Acme Platform' using VitePress. It must include Diátaxis quadrant folders, an architecture ADR directory, and a `.vitepress/config.mts` file with multi-sidebar navigation.",
+    "expected_output": "Invokes `scaffold_docs.py --generator vitepress --target-dir ./docs --project-name 'Acme Platform'`. Creates the directory structure: `docs/tutorials/`, `docs/how-to/`, `docs/reference/`, `docs/explanation/`, `docs/architecture/`, and `docs/.vitepress/config.mts`. The VitePress configuration defines custom sidebar groups for each quadrant, enabling smooth tab-based and sidebar navigation.",
+    "assertions": [
+      "Runs or generates scaffolding using `scaffold_docs.py` with VitePress target.",
+      "Creates the 4 Diátaxis quadrant folders plus architecture.",
+      "Generates `.vitepress/config.mts` with structured sidebar sections.",
+      "Includes initial starter markdown documents with compliant YAML frontmatter."
+    ]
+  },
+  {
+    "id": "openapi-reference-markdown-generation",
+    "prompt": "Given an OpenAPI 3.1 specification for a `POST /v1/organizations/{org_id}/api-keys` endpoint, generate a Diátaxis-compliant reference markdown page. It must include parameter tables, request body schemas, response codes (201 Created and 400 Bad Request), realistic JSON payload examples, and RFC 9457 Problem Details error schemas.",
+    "expected_output": "Invokes `generate_api_doc.py` or generates structured reference markdown containing: YAML frontmatter with title and description; HTTP method badge '`POST` `/v1/organizations/{org_id}/api-keys`'; parameter table detailing path parameter `org_id`; request body property table and realistic JSON example with concrete strings; response section with 201 Created sample; and RFC 9457 Problem Details schema (`type`, `title`, `status`, `detail`, `instance`) for 400 Bad Request.",
+    "assertions": [
+      "Formats endpoint with method badge and path header.",
+      "Renders parameters (path/query) in a structured markdown table.",
+      "Includes concrete, realistic JSON request body and response payload examples.",
+      "Includes standard RFC 9457 Problem Details fields for error responses."
+    ]
+  },
+  {
+    "id": "c4-container-diagram-and-madr-record",
+    "prompt": "Create technical architecture documentation for an e-commerce platform transitioning to event-driven order processing: (1) A Simon Brown C4 Container diagram written in Mermaid.js illustrating the Web App, API Gateway, Order Service, Kafka Event Bus, and Notification Service, and (2) A Markdown Architecture Decision Record (MADR 3.0) deciding on Apache Kafka over RabbitMQ.",
+    "expected_output": "Produces valid Mermaid.js diagram (`C4Container` or standard flowchart with container boundaries) modeling Web App, API Gateway, Order Service, Kafka broker, and Notification Service with protocols. Produces a MADR 3.0 document titled 'ADR-0002: Adopt Apache Kafka for Event-Driven Order Processing' containing: Status (Accepted), Deciders, Context and Problem Statement, Decision Drivers, Considered Options (Kafka vs RabbitMQ), Decision Outcome with Positive and Negative Consequences, and Pros/Cons comparisons.",
+    "assertions": [
+      "Generates a syntactically valid Mermaid C4 container diagram or container flowchart.",
+      "Models the specified components: Web App, API Gateway, Order Service, Kafka, and Notification Service.",
+      "Generates a MADR 3.0 Architecture Decision Record with Context, Decision Outcome, and Consequences.",
+      "Compares considered options (Apache Kafka vs RabbitMQ) with structured pros and cons."
+    ]
+  },
+  {
+    "id": "docops-quality-audit-and-link-rot-detection",
+    "prompt": "Run an automated DocOps quality audit on a documentation repository with 2 broken relative links, 1 dead anchor slug, and untagged triple-backtick code blocks. What should `audit_docs.py` report, and how does it calculate the quantitative DocOps score?",
+    "expected_output": "Runs `audit_docs.py --dir ./docs` and produces a quantitative report against the 100-point rubric: penalizes broken relative links (-10 pts for 2 broken links); penalizes dead anchor slug (-3 pts); penalizes untagged code blocks; flags the exact file and line numbers of the broken links and missing anchors; provides an actionable remediation plan; and outputs an objective DocOps Quality Score and letter grade.",
+    "assertions": [
+      "Executes `audit_docs.py` to evaluate the documentation repository.",
+      "Detects and pinpoints the exact files and lines with broken relative links.",
+      "Detects the dead anchor slug.",
+      "Penalizes untagged code blocks and computes a quantitative DocOps score.",
+      "Provides actionable numbered remediation steps to restore a 100/100 score."
+    ]
+  }
+]
