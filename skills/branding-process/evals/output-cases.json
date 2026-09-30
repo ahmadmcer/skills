@@ -1,0 +1,57 @@
+[
+  {
+    "id": "developer-platform-brand-strategy",
+    "prompt": "Define the brand strategy and positioning for 'VoltEdge', an edge compute platform for TypeScript developers that eliminates cloud cold-starts.",
+    "expected_output": "Produces a complete Strategic Brand Brief including Simon Sinek's Golden Circle (Purpose, Vision, Mission), Marty Neumeier's 6-clause Onliness Statement, Primary Archetype (The Creator) paired with Secondary (The Sage), shadow guardrails, and 3 core messaging pillars with concrete technical proof points.",
+    "assertions": [
+      "Articulates the Brand Purpose, Vision, and Mission with actionable behavioral value pairs.",
+      "Formulates Marty Neumeier's exact 6-clause Onliness Statement identifying a defensible category moat.",
+      "Identifies a primary and secondary brand archetype pair with explicit shadow guardrails.",
+      "Structures 3 value pillars pairing customer benefits with concrete technical mechanisms and verifiable Reasons to Believe (RTBs)."
+    ]
+  },
+  {
+    "id": "accessible-design-tokens-generation",
+    "prompt": "Create an accessible digital brand color system and design tokens for a fintech developer API named 'LedgerFlow' with primary color #0ea5e9.",
+    "expected_output": "Generates a 10-step tonal scale for primary, neutral, and semantic colors, verifies WCAG 2.1 AA/AAA contrast ratios against white and dark slate backgrounds, and outputs W3C tokens.json, CSS custom properties, and a Tailwind preset.",
+    "assertions": [
+      "Generates mathematically structured 10-step color scales for primary, neutral, and semantic palettes.",
+      "Validates foreground and background contrast pairings against WCAG 2.1 AA (4.5:1 / 3:1) standards across both light and dark modes.",
+      "Produces compliant W3C Design Tokens Community Group format JSON with $type and $value metadata.",
+      "Provides ready-to-import CSS custom properties and a Tailwind CSS configuration preset."
+    ]
+  },
+  {
+    "id": "brand-heuristic-audit-sea-of-sameness",
+    "prompt": "Audit our B2B SaaS analytics marketing website. We're getting feedback that our brand looks generic and users can't tell us apart from competitors.",
+    "expected_output": "Conducts a 4-dimensional heuristic brand audit, detects 'Sea of Sameness' tropes (generic purple gradients, floating 3D spheres, buzzword soup), categorizes findings using P0-P3 severity, and provides an immediate remediation plan.",
+    "assertions": [
+      "Evaluates brand across the 4 Dimensions of Brand Heuristic Inspection (Strategy, Verbal, Visual, and Accessibility/Tokens).",
+      "Identifies specific category clichés and 'Sea of Sameness' anti-patterns.",
+      "Classifies defects into objective P0 (Critical), P1 (Major), P2 (Minor), and P3 (Cosmetic) severity tiers with concrete evidence.",
+      "Delivers a prioritized, actionable remediation plan addressing positioning, copy, and visual tokens."
+    ]
+  },
+  {
+    "id": "verbal-identity-and-voice-modulation",
+    "prompt": "Establish the verbal identity and copy guidelines for an observability platform, ensuring the team knows how to communicate during product downtime versus feature launches.",
+    "expected_output": "Distinguishes invariant Brand Voice from dynamic Brand Tone, builds a 4-attribute voice blueprint with 'This, Not That' guidance, creates a tone modulation matrix spanning marketing through incident status updates, and establishes an outlawed cliché list.",
+    "assertions": [
+      "Explicitly separates constant Brand Voice from dynamically modulated Brand Tone.",
+      "Defines 3 to 4 distinct voice attributes with concrete 'This, Not That' behavioral boundaries.",
+      "Provides a tone modulation matrix explicitly contrasting top-of-funnel marketing tone with empathetic, transparent outage communication.",
+      "Establishes a brand lexicon with championed signature terms and banned industry clichés."
+    ]
+  },
+  {
+    "id": "responsive-logo-and-touchpoint-scaffolding",
+    "prompt": "Design the digital touchpoints and logo specifications for 'KubePulse', a Kubernetes monitoring tool. Provide responsive logo rules and social asset templates.",
+    "expected_output": "Specifies the responsive logo ecosystem (primary horizontal, stacked, 32x32 favicon, 512x512 app icon), clear space exclusion zones based on element height X, minimum digital rendering sizes, and 1200x630 OpenGraph card templates with safe zones.",
+    "assertions": [
+      "Defines a responsive logo hierarchy scaling from full horizontal lockup down to a 32x32px favicon and app icon.",
+      "Enforces the X-dimension clear space exclusion rule and minimum digital pixel dimensions.",
+      "Specifies OpenGraph 1200x630 social card layout with safe margins (interior 1000x530 box) for social feed crops.",
+      "Provides clean, accessible SVG templates with semantic elements and converted vector paths."
+    ]
+  }
+]

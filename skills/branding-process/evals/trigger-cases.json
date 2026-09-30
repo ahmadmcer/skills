@@ -1,0 +1,102 @@
+[
+  {
+    "query": "Help us define the brand strategy and positioning for our new developer tooling startup.",
+    "should_trigger": true
+  },
+  {
+    "query": "We need to craft Marty Neumeier's Onliness statement and radical differentiation for our AI platform.",
+    "should_trigger": true
+  },
+  {
+    "query": "Conduct a brand audit of our SaaS application to identify visual fragmentation and brand debt.",
+    "should_trigger": true
+  },
+  {
+    "query": "Design an accessible brand color palette with 10-step tonal scales and verify WCAG 2.1 AA contrast ratios.",
+    "should_trigger": true
+  },
+  {
+    "query": "Help us establish a brand voice and tone modulation matrix across our marketing website, in-app UI, and error states.",
+    "should_trigger": true
+  },
+  {
+    "query": "Generate W3C design tokens and a Tailwind CSS brand preset for our company's rebranding.",
+    "should_trigger": true
+  },
+  {
+    "query": "Create our brand's 3-tier messaging hierarchy, including a memorable tagline, one-liner, and 3 value pillars with proof points.",
+    "should_trigger": true
+  },
+  {
+    "query": "Scaffold responsive SVG logo assets including a primary horizontal lockup, stacked logo, and 32x32 favicon.",
+    "should_trigger": true
+  },
+  {
+    "query": "Compile a comprehensive Brand Book and design guidelines covering our visual language and digital touchpoints.",
+    "should_trigger": true
+  },
+  {
+    "query": "We are suffering from the 'Sea of Sameness'—our tech website looks like every other purple SaaS tool. Help us reposition.",
+    "should_trigger": true
+  },
+  {
+    "query": "Select a primary and secondary brand archetype from the 12 Jungian archetypes for our cybersecurity startup.",
+    "should_trigger": true
+  },
+  {
+    "query": "Create an OpenGraph 1200x630 social share card template and social banner guidelines for our product launch.",
+    "should_trigger": true
+  },
+  {
+    "query": "Establish a brand lexicon: words we champion and tech clichés we outlaw in our product copywriting.",
+    "should_trigger": true
+  },
+  {
+    "query": "Determine whether our company needs a lightweight brand refresh or a full revolutionary rebrand.",
+    "should_trigger": true
+  },
+  {
+    "query": "Build a modular typography hierarchy scale pairing an expressive display face with a legible UI body font.",
+    "should_trigger": true
+  },
+  {
+    "query": "Fix this CSS flexbox alignment issue where the icon inside the button is 2px off-center.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a PostgreSQL migration script to add a foreign key constraint between users and workspaces.",
+    "should_trigger": false
+  },
+  {
+    "query": "Optimize the query performance of our GraphQL server using dataloader batching.",
+    "should_trigger": false
+  },
+  {
+    "query": "Conduct a heuristic usability audit on our checkout form to eliminate drop-offs and cognitive friction.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write unit tests for the JWT authentication middleware using Jest.",
+    "should_trigger": false
+  },
+  {
+    "query": "Deploy our Next.js frontend to Railway and configure automatic preview environments.",
+    "should_trigger": false
+  },
+  {
+    "query": "Draft an Architectural Decision Record (ADR) on choosing event-driven Kafka over REST polling.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create a README.md and CONTRIBUTING.md for our open-source Python library.",
+    "should_trigger": false
+  },
+  {
+    "query": "Audit our API endpoints against OWASP Top 10 for injection and authentication bypass vulnerabilities.",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix a race condition in our Redis distributed lock implementation.",
+    "should_trigger": false
+  }
+]
