@@ -1,35 +1,233 @@
 #!/usr/bin/env python3
 """Run trigger evaluation for a skill description.
 
-Tests whether a skill's description causes Claude to trigger (read the skill)
-for a set of queries. Outputs results as JSON.
+Tests whether a skill's description causes an agent or model to trigger
+(activate the skill) for a set of queries. Outputs results as JSON.
 """
 
 import argparse
 import json
 import os
-import select
+import re
+import shlex
 import subprocess
 import sys
-import time
-import uuid
-from concurrent.futures import ProcessPoolExecutor, as_completed
+import urllib.error
+import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from scripts.utils import parse_skill_md
 
 
 def find_project_root() -> Path:
-    """Find the project root by walking up from cwd looking for .claude/.
-
-    Mimics how Claude Code discovers its project root, so the command file
-    we create ends up where claude -p will look for it.
-    """
+    """Find the project root by walking up from cwd looking for standard project markers."""
     current = Path.cwd()
+    markers = [".git", ".opencode", "pyproject.toml", "package.json", ".claude"]
     for parent in [current, *current.parents]:
-        if (parent / ".claude").is_dir():
+        if any((parent / marker).exists() for marker in markers):
             return parent
     return current
+
+
+def _parse_trigger_response(text: str, skill_name: str) -> bool:
+    """Extract a boolean trigger decision from model output or JSON."""
+    clean = text.strip()
+    if not clean:
+        return False
+
+    # Check for direct markdown code block with JSON
+    json_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", clean, re.DOTALL)
+    if json_match:
+        try:
+            data = json.loads(json_match.group(1))
+            if "trigger" in data:
+                return bool(data["trigger"])
+        except json.JSONDecodeError:
+            pass
+
+    # Try raw JSON decode
+    try:
+        data = json.loads(clean)
+        if isinstance(data, dict):
+            if "trigger" in data:
+                return bool(data["trigger"])
+            if "tool_calls" in data:
+                for tc in data.get("tool_calls", []):
+                    fn = tc.get("function", {})
+                    if fn.get("name") == skill_name:
+                        return True
+    except json.JSONDecodeError:
+        pass
+
+    # Regex search for trigger field in JSON text
+    match = re.search(r'"trigger"\s*:\s*(true|false)', clean, re.IGNORECASE)
+    if match:
+        return match.group(1).lower() == "true"
+
+    # Tool call or skill invocation text indicator
+    if (
+        f'"{skill_name}"' in clean
+        or f"'{skill_name}'" in clean
+        or f"`{skill_name}`" in clean
+    ):
+        if (
+            "invoke" in clean.lower()
+            or "trigger" in clean.lower()
+            or "activate" in clean.lower()
+        ):
+            return True
+
+    return False
+
+
+def _query_api(
+    query: str,
+    skill_name: str,
+    skill_description: str,
+    model: str,
+    api_key: str,
+    api_base: str,
+    timeout: int,
+) -> bool:
+    """Evaluate triggering using a standard chat completions endpoint."""
+    url = api_base.rstrip("/")
+    if not url.endswith("/chat/completions"):
+        url = f"{url}/chat/completions"
+
+    system_prompt = (
+        "You are an AI assistant evaluating whether to invoke a specialized skill for a user's task.\n\n"
+        f"Available Skill: {skill_name}\n"
+        f"Description: {skill_description}\n\n"
+        "Criteria:\n"
+        f'- Return {{"trigger": true}} if the user\'s intent clearly matches this skill and warrants activating it.\n'
+        f'- Return {{"trigger": false}} if the request should be handled directly without activating this skill or falls outside its scope.\n'
+        'Respond ONLY with a JSON object: {"trigger": true} or {"trigger": false}.'
+    )
+
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": query},
+        ],
+        "temperature": 0.0,
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}",
+    }
+
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers=headers,
+        method="POST",
+    )
+
+    with urllib.request.urlopen(req, timeout=timeout) as response:
+        res_data = json.loads(response.read().decode("utf-8"))
+        choices = res_data.get("choices", [])
+        if not choices:
+            return False
+        message = choices[0].get("message", {})
+        content = message.get("content", "")
+        return _parse_trigger_response(content, skill_name)
+
+
+def _query_command(
+    query: str,
+    skill_name: str,
+    skill_description: str,
+    runner_cmd: str,
+    timeout: int,
+    project_root: str,
+) -> bool:
+    """Evaluate triggering by invoking a configured CLI command."""
+    formatted_cmd = (
+        runner_cmd.format(
+            query=shlex.quote(query),
+            prompt=shlex.quote(query),
+            skill_name=shlex.quote(skill_name),
+            description=shlex.quote(skill_description),
+        )
+        if "{" in runner_cmd
+        else f"{runner_cmd} {shlex.quote(query)}"
+    )
+
+    # Avoid environment recursion conflicts
+    env = {
+        k: v
+        for k, v in os.environ.items()
+        if k not in ("CLAUDECODE", "OPENCODE_SUBPROCESS")
+    }
+    env["OPENCODE_SUBPROCESS"] = "1"
+
+    result = subprocess.run(
+        formatted_cmd,
+        shell=True,
+        capture_output=True,
+        text=True,
+        timeout=timeout,
+        cwd=project_root,
+        env=env,
+    )
+    output = result.stdout + "\n" + result.stderr
+    return _parse_trigger_response(output, skill_name)
+
+
+def _query_heuristic(query: str, skill_name: str, skill_description: str) -> bool:
+    """Heuristic evaluation for offline or local testing when no runner is active."""
+    q_lower = query.lower()
+    desc_lower = skill_description.lower()
+    name_lower = skill_name.lower().replace("-", " ")
+
+    # Direct name match
+    if name_lower in q_lower or skill_name.lower() in q_lower:
+        return True
+
+    # Check for negative trigger phrases in description
+    exclusions = []
+    excl_match = re.search(
+        r"(?:do not use|not for|skip for|avoid for)\s+([^.]+)", desc_lower
+    )
+    if excl_match:
+        exclusions = [
+            w.strip() for w in excl_match.group(1).split(",") if len(w.strip()) > 3
+        ]
+
+    for excl in exclusions:
+        if excl in q_lower:
+            return False
+
+    # Extract distinctive words from description
+    desc_words = {
+        w
+        for w in re.findall(r"\b[a-z]{4,}\b", desc_lower)
+        if w
+        not in {
+            "this",
+            "skill",
+            "when",
+            "user",
+            "with",
+            "from",
+            "that",
+            "have",
+            "make",
+            "sure",
+            "should",
+            "could",
+            "would",
+            "tasks",
+            "their",
+            "about",
+        }
+    }
+
+    matches = sum(1 for w in desc_words if w in q_lower)
+    return matches >= 2
 
 
 def run_single_query(
@@ -39,146 +237,55 @@ def run_single_query(
     timeout: int,
     project_root: str,
     model: str | None = None,
+    api_key: str | None = None,
+    api_base: str | None = None,
+    runner_cmd: str | None = None,
 ) -> bool:
-    """Run a single query and return whether the skill was triggered.
-
-    Creates a command file in .claude/commands/ so it appears in Claude's
-    available_skills list, then runs `claude -p` with the raw query.
-    Uses --include-partial-messages to detect triggering early from
-    stream events (content_block_start) rather than waiting for the
-    full assistant message, which only arrives after tool execution.
-    """
-    unique_id = uuid.uuid4().hex[:8]
-    clean_name = f"{skill_name}-skill-{unique_id}"
-    project_commands_dir = Path(project_root) / ".claude" / "commands"
-    command_file = project_commands_dir / f"{clean_name}.md"
-
-    try:
-        project_commands_dir.mkdir(parents=True, exist_ok=True)
-        # Use YAML block scalar to avoid breaking on quotes in description
-        indented_desc = "\n  ".join(skill_description.split("\n"))
-        command_content = (
-            f"---\n"
-            f"description: |\n"
-            f"  {indented_desc}\n"
-            f"---\n\n"
-            f"# {skill_name}\n\n"
-            f"This skill handles: {skill_description}\n"
-        )
-        command_file.write_text(command_content)
-
-        cmd = [
-            "claude",
-            "-p", query,
-            "--output-format", "stream-json",
-            "--verbose",
-            "--include-partial-messages",
-        ]
-        if model:
-            cmd.extend(["--model", model])
-
-        # Remove CLAUDECODE env var to allow nesting claude -p inside a
-        # Claude Code session. The guard is for interactive terminal conflicts;
-        # programmatic subprocess usage is safe.
-        env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
-
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
-            cwd=project_root,
-            env=env,
-        )
-
-        triggered = False
-        start_time = time.time()
-        buffer = ""
-        # Track state for stream event detection
-        pending_tool_name = None
-        accumulated_json = ""
-
+    """Run a single query and return whether the skill was triggered."""
+    # 1. Configured CLI command runner
+    if runner_cmd:
         try:
-            while time.time() - start_time < timeout:
-                if process.poll() is not None:
-                    remaining = process.stdout.read()
-                    if remaining:
-                        buffer += remaining.decode("utf-8", errors="replace")
-                    break
+            return _query_command(
+                query=query,
+                skill_name=skill_name,
+                skill_description=skill_description,
+                runner_cmd=runner_cmd,
+                timeout=timeout,
+                project_root=project_root,
+            )
+        except Exception as e:
+            print(f"Warning: CLI runner failed: {e}", file=sys.stderr)
+            return False
 
-                ready, _, _ = select.select([process.stdout], [], [], 1.0)
-                if not ready:
-                    continue
+    # 2. Configured or discovered API endpoint
+    effective_api_key = (
+        api_key or os.environ.get("OPENAI_API_KEY") or os.environ.get("LLM_API_KEY")
+    )
+    effective_api_base = (
+        api_base
+        or os.environ.get("OPENAI_BASE_URL")
+        or os.environ.get("LLM_API_BASE")
+        or "https://api.openai.com/v1"
+    )
 
-                chunk = os.read(process.stdout.fileno(), 8192)
-                if not chunk:
-                    break
-                buffer += chunk.decode("utf-8", errors="replace")
+    if effective_api_key and model:
+        try:
+            return _query_api(
+                query=query,
+                skill_name=skill_name,
+                skill_description=skill_description,
+                model=model,
+                api_key=effective_api_key,
+                api_base=effective_api_base,
+                timeout=timeout,
+            )
+        except Exception as e:
+            print(
+                f"Warning: API query failed ({e}); checking fallback", file=sys.stderr
+            )
 
-                while "\n" in buffer:
-                    line, buffer = buffer.split("\n", 1)
-                    line = line.strip()
-                    if not line:
-                        continue
-
-                    try:
-                        event = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
-
-                    # Early detection via stream events
-                    if event.get("type") == "stream_event":
-                        se = event.get("event", {})
-                        se_type = se.get("type", "")
-
-                        if se_type == "content_block_start":
-                            cb = se.get("content_block", {})
-                            if cb.get("type") == "tool_use":
-                                tool_name = cb.get("name", "")
-                                if tool_name in ("Skill", "Read"):
-                                    pending_tool_name = tool_name
-                                    accumulated_json = ""
-                                else:
-                                    return False
-
-                        elif se_type == "content_block_delta" and pending_tool_name:
-                            delta = se.get("delta", {})
-                            if delta.get("type") == "input_json_delta":
-                                accumulated_json += delta.get("partial_json", "")
-                                if clean_name in accumulated_json:
-                                    return True
-
-                        elif se_type in ("content_block_stop", "message_stop"):
-                            if pending_tool_name:
-                                return clean_name in accumulated_json
-                            if se_type == "message_stop":
-                                return False
-
-                    # Fallback: full assistant message
-                    elif event.get("type") == "assistant":
-                        message = event.get("message", {})
-                        for content_item in message.get("content", []):
-                            if content_item.get("type") != "tool_use":
-                                continue
-                            tool_name = content_item.get("name", "")
-                            tool_input = content_item.get("input", {})
-                            if tool_name == "Skill" and clean_name in tool_input.get("skill", ""):
-                                triggered = True
-                            elif tool_name == "Read" and clean_name in tool_input.get("file_path", ""):
-                                triggered = True
-                            return triggered
-
-                    elif event.get("type") == "result":
-                        return triggered
-        finally:
-            # Clean up process on any exit path (return, exception, timeout)
-            if process.poll() is None:
-                process.kill()
-                process.wait()
-
-        return triggered
-    finally:
-        if command_file.exists():
-            command_file.unlink()
+    # 3. Fallback to heuristic matcher
+    return _query_heuristic(query, skill_name, skill_description)
 
 
 def run_eval(
@@ -191,11 +298,14 @@ def run_eval(
     runs_per_query: int = 1,
     trigger_threshold: float = 0.5,
     model: str | None = None,
+    api_key: str | None = None,
+    api_base: str | None = None,
+    runner_cmd: str | None = None,
 ) -> dict:
     """Run the full eval set and return results."""
     results = []
 
-    with ProcessPoolExecutor(max_workers=num_workers) as executor:
+    with ThreadPoolExecutor(max_workers=num_workers) as executor:
         future_to_info = {}
         for item in eval_set:
             for run_idx in range(runs_per_query):
@@ -206,7 +316,10 @@ def run_eval(
                     description,
                     timeout,
                     str(project_root),
-                    model,
+                    model=model,
+                    api_key=api_key,
+                    api_base=api_base,
+                    runner_cmd=runner_cmd,
                 )
                 future_to_info[future] = (item, run_idx)
 
@@ -232,14 +345,16 @@ def run_eval(
             did_pass = trigger_rate >= trigger_threshold
         else:
             did_pass = trigger_rate < trigger_threshold
-        results.append({
-            "query": query,
-            "should_trigger": should_trigger,
-            "trigger_rate": trigger_rate,
-            "triggers": sum(triggers),
-            "runs": len(triggers),
-            "pass": did_pass,
-        })
+        results.append(
+            {
+                "query": query,
+                "should_trigger": should_trigger,
+                "trigger_rate": trigger_rate,
+                "triggers": sum(triggers),
+                "runs": len(triggers),
+                "pass": did_pass,
+            }
+        )
 
     passed = sum(1 for r in results if r["pass"])
     total = len(results)
@@ -257,19 +372,44 @@ def run_eval(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run trigger evaluation for a skill description")
+    parser = argparse.ArgumentParser(
+        description="Run trigger evaluation for a skill description"
+    )
     parser.add_argument("--eval-set", required=True, help="Path to eval set JSON file")
     parser.add_argument("--skill-path", required=True, help="Path to skill directory")
-    parser.add_argument("--description", default=None, help="Override description to test")
-    parser.add_argument("--num-workers", type=int, default=10, help="Number of parallel workers")
-    parser.add_argument("--timeout", type=int, default=30, help="Timeout per query in seconds")
-    parser.add_argument("--runs-per-query", type=int, default=3, help="Number of runs per query")
-    parser.add_argument("--trigger-threshold", type=float, default=0.5, help="Trigger rate threshold")
-    parser.add_argument("--model", default=None, help="Model to use for claude -p (default: user's configured model)")
-    parser.add_argument("--verbose", action="store_true", help="Print progress to stderr")
+    parser.add_argument(
+        "--description", default=None, help="Override description to test"
+    )
+    parser.add_argument(
+        "--num-workers", type=int, default=10, help="Number of parallel workers"
+    )
+    parser.add_argument(
+        "--timeout", type=int, default=30, help="Timeout per query in seconds"
+    )
+    parser.add_argument(
+        "--runs-per-query", type=int, default=3, help="Number of runs per query"
+    )
+    parser.add_argument(
+        "--trigger-threshold", type=float, default=0.5, help="Trigger rate threshold"
+    )
+    parser.add_argument(
+        "--model", default=None, help="Model identifier to use for evaluation"
+    )
+    parser.add_argument("--api-key", default=None, help="API key for model evaluation")
+    parser.add_argument(
+        "--api-base", default=None, help="Base URL for model API endpoint"
+    )
+    parser.add_argument(
+        "--runner-cmd",
+        default=None,
+        help="CLI command template to invoke for each query",
+    )
+    parser.add_argument(
+        "--verbose", action="store_true", help="Print progress to stderr"
+    )
     args = parser.parse_args()
 
-    eval_set = json.loads(Path(args.eval_set).read_text())
+    eval_set = json.loads(Path(args.eval_set).read_text(encoding="utf-8"))
     skill_path = Path(args.skill_path)
 
     if not (skill_path / "SKILL.md").exists():
@@ -293,15 +433,23 @@ def main():
         runs_per_query=args.runs_per_query,
         trigger_threshold=args.trigger_threshold,
         model=args.model,
+        api_key=args.api_key,
+        api_base=args.api_base,
+        runner_cmd=args.runner_cmd,
     )
 
     if args.verbose:
         summary = output["summary"]
-        print(f"Results: {summary['passed']}/{summary['total']} passed", file=sys.stderr)
+        print(
+            f"Results: {summary['passed']}/{summary['total']} passed", file=sys.stderr
+        )
         for r in output["results"]:
             status = "PASS" if r["pass"] else "FAIL"
             rate_str = f"{r['triggers']}/{r['runs']}"
-            print(f"  [{status}] rate={rate_str} expected={r['should_trigger']}: {r['query'][:70]}", file=sys.stderr)
+            print(
+                f"  [{status}] rate={rate_str} expected={r['should_trigger']}: {r['query'][:70]}",
+                file=sys.stderr,
+            )
 
     print(json.dumps(output, indent=2))
 

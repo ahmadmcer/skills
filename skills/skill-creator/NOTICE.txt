@@ -1,0 +1,29 @@
+skill-creator
+Copyright 2026 Anthropic, PBC.
+Copyright 2026 Ahmad Nawawi <ahmadmcer@gmail.com>
+
+This product includes software originally developed by Anthropic, PBC.
+Original License: Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
+
+Modifications by Ahmad Nawawi <ahmadmcer@gmail.com> (September 2026):
+
+1. Generalization & Ecosystem Decoupling:
+   - De-coupled instructions, schema examples, reports, and review UI from Claude/Anthropic-specific tooling to work with any AI agent environment.
+   - Generalized SKILL.md, eval-viewer/viewer.html, references/schemas.md, and scripts/generate_report.py for universal agent and headless environments.
+
+2. Multi-Backend & Cross-Platform Execution Engine:
+   - scripts/improve_description.py: Replaced hardcoded `claude -p` subprocess calls with a multi-backend LLM client supporting standard OpenAI-compatible HTTP APIs, configurable CLI runners (--runner-cmd), and multi-CLI fallbacks.
+   - scripts/run_eval.py:
+     * Replaced Unix-only `select.select()` pipe polling with portable cross-platform ThreadPoolExecutor execution (compatible with Windows, Linux, and macOS).
+     * Added generalized trigger parser supporting JSON markdown blocks, tool call definitions, boolean trigger flags, and conversational indicators.
+     * Expanded project root discovery to recognize .git, .opencode, pyproject.toml, package.json, and .claude directories.
+   - scripts/run_loop.py: Added support for passing API credentials, custom base URLs, and CLI runner commands through the automated evaluation and description optimization loop.
+
+3. Standalone Verification & Security Documentation:
+   - scripts/validate_skill.py: Added a zero-dependency CLI validator for portable skill structural checks (frontmatter syntax, allowed metadata fields, naming rules, relative link integrity, and file size constraints).
+   - references/authoring-guide.md: Added comprehensive authoring guide for skill scope boundaries, metadata formatting, and instruction design.
+   - references/evaluation-guide.md: Added guide for separating skill triggering from execution accuracy, dataset splits, and benchmarking.
+   - references/security-guide.md: Added threat modeling and security review checklist for agent skills (prompt injection, tool permissions, supply chain, and data exfiltration defense).
+
+4. Platform & Encoding Improvements:
+   - scripts/package_skill.py & scripts/utils.py: Added UTF-8 standard streams reconfiguration for reliable cross-platform and Windows console operation.
