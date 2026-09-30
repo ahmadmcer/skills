@@ -1,0 +1,90 @@
+[
+  {
+    "query": "What should my next Semantic Version be based on our latest git commits since v1.2.0?",
+    "should_trigger": true
+  },
+  {
+    "query": "Generate a new CHANGELOG.md adhering strictly to Keep a Changelog 1.1.0 standards.",
+    "should_trigger": true
+  },
+  {
+    "query": "Audit our existing CHANGELOG.md for Keep a Changelog compliance, SemVer ordering, and broken compare links.",
+    "should_trigger": true
+  },
+  {
+    "query": "How do I rotate the [Unreleased] section into release 2.0.0 with today's ISO date and update the GitHub compare links?",
+    "should_trigger": true
+  },
+  {
+    "query": "Map these Conventional Commits to Keep a Changelog categories and filter out the internal CI/chore noise.",
+    "should_trigger": true
+  },
+  {
+    "query": "Does dropping support for Node 16 require a MAJOR or MINOR SemVer bump while we are on version 0.8.2?",
+    "should_trigger": true
+  },
+  {
+    "query": "How should we structure independent versioning and Changesets in our pnpm monorepo?",
+    "should_trigger": true
+  },
+  {
+    "query": "Fix our changelog's non-standard headings like 'Bugfixes' and 'New Features' to match canonical Keep a Changelog categories.",
+    "should_trigger": true
+  },
+  {
+    "query": "Determine the SemVer impact of a commit with 'feat(api)!: change response payload schema'.",
+    "should_trigger": true
+  },
+  {
+    "query": "How do I format reference-style compare links at the bottom of our changelog for GitLab?",
+    "should_trigger": true
+  },
+  {
+    "query": "Check if our changelog has raw git commit SHAs or merge commit dumps and help me clean it up.",
+    "should_trigger": true
+  },
+  {
+    "query": "Commit my staged changes with a standardized Conventional Commit message.",
+    "should_trigger": false
+  },
+  {
+    "query": "Outline my 90,000-word novel using the Save the Cat 15-beat structure.",
+    "should_trigger": false
+  },
+  {
+    "query": "Rewrite this chapter in Level 4 Deep POV and remove all the sensory filter words.",
+    "should_trigger": false
+  },
+  {
+    "query": "Quote Surah Al-Baqarah 2:255 in Arabic and provide English translation.",
+    "should_trigger": false
+  },
+  {
+    "query": "Cite John 3:16 in the ESV with Greek exegesis.",
+    "should_trigger": false
+  },
+  {
+    "query": "What does the Talmud say in Berakhot 2a regarding the evening Shema?",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix this CSS grid overflow bug in my navigation component.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a Python script to scrape product prices from an e-commerce website.",
+    "should_trigger": false
+  },
+  {
+    "query": "Deploy this FastAPI backend service to Railway with PostgreSQL database provisioning.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a press release announcing our new Series A funding round to the media.",
+    "should_trigger": false
+  },
+  {
+    "query": "Design a Brandon Sanderson hard magic system with 3 laws of magic for my novel bible.",
+    "should_trigger": false
+  }
+]

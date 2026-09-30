@@ -1,0 +1,56 @@
+[
+  {
+    "id": "semver-bump-from-conventional-commits",
+    "prompt": "We are currently on version 1.4.2. In our recent git history we have 3 commits: 'fix(auth): resolve token refresh loop', 'feat(export): add parquet format support', and 'feat(api)!: remove v1 endpoints'. What should our next SemVer be, and what is the rationale?",
+    "expected_output": "Determines that the next version must be 2.0.0 (MAJOR bump). Analyzes the three commits: 'fix(auth)' would require PATCH, 'feat(export)' would require MINOR, but 'feat(api)!' contains a breaking change indicator ('!') signaling incompatible API removal, which forces a MAJOR increment. Details that major increments reset minor and patch to 0.",
+    "assertions": [
+      "Identifies the next version as 2.0.0.",
+      "Identifies the breaking change ('feat(api)!') as the governing factor forcing a MAJOR bump.",
+      "Explains that minor and patch versions reset to 0 upon major increments."
+    ]
+  },
+  {
+    "id": "zero-major-breaking-change-handling",
+    "prompt": "Our project is currently at version 0.4.1. We just merged a breaking change that removes an obsolete CLI flag. Does this require bumping to 1.0.0 or 0.5.0 under SemVer 2.0.0 rules?",
+    "expected_output": "Explains that under SemVer 2.0.0 Rule 4, major version zero (0.y.z) represents initial unstable development where breaking changes do NOT force a 1.0.0 release. Instead, breaking changes in 0.y.z are accommodated by incrementing the MINOR version (bumping from 0.4.1 to 0.5.0). Version 1.0.0 is reserved for when the public API is formally declared stable.",
+    "assertions": [
+      "Explicitly recommends version 0.5.0 instead of 1.0.0.",
+      "Cites SemVer 2.0.0 Rule 4 regarding initial unstable development in 0.y.z.",
+      "Clarifies that 1.0.0 should only be tagged when declaring the public API stable."
+    ]
+  },
+  {
+    "id": "keep-a-changelog-generation-from-scratch",
+    "prompt": "Generate a compliant Keep a Changelog 1.1.0 CHANGELOG.md file for a new project releasing version 1.0.0 on 2026-09-30 on GitHub (https://github.com/acme/widgets). It includes a new REST API, dark mode, bugfixes for database timeouts, and an unreleased section.",
+    "expected_output": "Produces a fully compliant CHANGELOG.md containing: the standard Keep a Changelog preamble referencing SemVer; an empty '## [Unreleased]' section; '## [1.0.0] - 2026-09-30'; canonical '### Added' with REST API and dark mode; canonical '### Fixed' with database timeout fix; and reference compare links at the bottom ('[Unreleased]: https://github.com/acme/widgets/compare/v1.0.0...HEAD' and '[1.0.0]: https://github.com/acme/widgets/releases/tag/v1.0.0').",
+    "assertions": [
+      "Includes standard preamble referencing Keep a Changelog 1.1.0 and Semantic Versioning 2.0.0.",
+      "Includes '## [Unreleased]' section at the top of version entries.",
+      "Formats version header as '## [1.0.0] - 2026-09-30' with ISO 8601 date.",
+      "Uses canonical categories '### Added' and '### Fixed'.",
+      "Defines correct Markdown reference compare links at the bottom."
+    ]
+  },
+  {
+    "id": "unreleased-rotation-and-compare-link-update",
+    "prompt": "We have an existing CHANGELOG.md with version 1.2.0 released on 2026-08-15 and an [Unreleased] section containing 2 new features. Show the exact diff to promote [Unreleased] to version 1.3.0 released on 2026-09-30, including updating the GitHub compare links for https://github.com/acme/widgets.",
+    "expected_output": "Demonstrates the exact transformation: an empty '## [Unreleased]' section is created at the top; the existing unreleased items are placed under '## [1.3.0] - 2026-09-30'; the '[Unreleased]' compare link is updated from '.../compare/v1.2.0...HEAD' to '.../compare/v1.3.0...HEAD'; and a new link '[1.3.0]: https://github.com/acme/widgets/compare/v1.2.0...v1.3.0' is inserted.",
+    "assertions": [
+      "Retains an empty '## [Unreleased]' section above the new release.",
+      "Formats the new release heading as '## [1.3.0] - 2026-09-30'.",
+      "Updates the '[Unreleased]' reference link to compare from 'v1.3.0...HEAD'.",
+      "Inserts the '[1.3.0]' compare link comparing 'v1.2.0...v1.3.0'."
+    ]
+  },
+  {
+    "id": "changelog-anti-pattern-audit",
+    "prompt": "Run an automated quality audit on a CHANGELOG.md that has raw git SHAs like 'a1b2c3d', non-standard headings like '### Bugfixes' and '### Updates', ambiguous dates like '03/04/2026', and missing compare links. What issues should be flagged?",
+    "expected_output": "Executes audit_changelog.py, evaluates the document, penalizes the score, and issues specific diagnostic warnings: detects raw git commit SHAs as log dumps; flags non-standard category headings ('Bugfixes' -> Fixed, 'Updates' -> Changed); flags the ambiguous regional date ('03/04/2026' -> YYYY-MM-DD); flags missing reference compare links; and provides actionable remediation instructions.",
+    "assertions": [
+      "Flags raw git commit SHAs as uncurated log dump anti-patterns.",
+      "Flags non-standard categories ('Bugfixes', 'Updates') and provides canonical replacements.",
+      "Flags ambiguous regional dates and prescribes ISO 8601 formatting.",
+      "Identifies missing reference-style compare links at the bottom."
+    ]
+  }
+]
