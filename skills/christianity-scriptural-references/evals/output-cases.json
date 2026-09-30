@@ -1,0 +1,56 @@
+[
+  {
+    "id": "john-3-16-comparative-translation",
+    "prompt": "Provide the scripture text for John 3:16, compare how the ESV, KJV, and NIV translate it, and format the citation according to SBL Handbook of Style.",
+    "expected_output": "Presents John 3:16 accurately across ESV, KJV, and NIV, highlights key translation nuances (e.g. 'only begotten Son' vs 'one and only Son' for monogenēs), and formats the citation following SBL parenthetical rules `(John 3:16 ESV)` without comma separation.",
+    "assertions": [
+      "Quotes verse accurately without hallucinated phrasing.",
+      "Compares translation choices across formal and dynamic equivalence editions.",
+      "Formats parenthetical citation strictly in SBL format without a comma before the version: `(John 3:16 ESV)`.",
+      "Explains the Greek term monogenēs in the context of the translation divergence."
+    ]
+  },
+  {
+    "id": "psalm-23-spurgeon-exposition",
+    "prompt": "Cite Psalm 23:1-6 and provide Charles Spurgeon's classical commentary reflection on this passage.",
+    "expected_output": "Presents all 6 verses of Psalm 23 with SBL abbreviated citation `(Ps 23:1–6 KJV)`, and synthesizes Charles Spurgeon's pastoral reflections from 'The Treasury of David' emphasizing the personal possessive pronoun 'The Lord is *my* shepherd'.",
+    "assertions": [
+      "Provides complete text of Psalm 23.",
+      "Uses SBL abbreviated book name 'Ps' and en-dash range `1–6`.",
+      "Cites Charles Spurgeon's 'The Treasury of David'.",
+      "Highlights the covenantal shepherd-sheep imagery."
+    ]
+  },
+  {
+    "id": "folk-adage-refutation-god-helps-those",
+    "prompt": "Where in the Bible does it say 'God helps those who help themselves'?",
+    "expected_output": "Clearly and unequivocally states that 'God helps those who help themselves' is NOT in the Bible. Identifies its historical origins in Aesop's fables, Algernon Sidney (1698), and Benjamin Franklin's Poor Richard's Almanack (1736), and contrasts it with authentic biblical doctrine emphasizing human insufficiency and divine grace (e.g., Proverbs 3:5–6, Jeremiah 17:5, Romans 5:6).",
+    "assertions": [
+      "Explicitly refutes that the phrase is found in biblical scripture.",
+      "Identifies non-biblical historical origins (Aesop, Sidney, or Franklin).",
+      "Contrasts with genuine scripture references emphasizing grace and trust in God (e.g. Prov 3:5–6 or Rom 5:6)."
+    ]
+  },
+  {
+    "id": "canon-divergence-deuterocanonical",
+    "prompt": "Why do Catholic Bibles have 73 books while Protestant Bibles have 66 books? Explain the Deuterocanonical books.",
+    "expected_output": "Explains the historical divergence between the Hebrew Masoretic Text (39 OT books) and the Greek Septuagint (LXX), lists key deuterocanonical books (Tobit, Judith, 1 & 2 Maccabees, Wisdom, Sirach, Baruch), notes the Protestant designation of these books as Apocrypha, and references the Council of Trent (1546) and Reformation stances.",
+    "assertions": [
+      "Explains the numerical difference (66 vs 73 books).",
+      "Identifies the Greek Septuagint (LXX) vs Hebrew Masoretic Text (MT) background.",
+      "Lists prominent deuterocanonical books (Tobit, Judith, Sirach, Maccabees).",
+      "Differentiates Catholic recognition as scripture from Protestant classification as edifying Apocrypha."
+    ]
+  },
+  {
+    "id": "textual-criticism-johannine-comma",
+    "prompt": "What is the textual variant in 1 John 5:7-8 known as the Johannine Comma, and why is it in the KJV but not in the ESV or NIV?",
+    "expected_output": "Explains the Johannine Comma Trinitarian formula ('there are three that bear record in heaven...'), explains that it entered the KJV via the Latin Vulgate and Erasmus's third edition of the Textus Receptus (1522), and explains why modern critical translations (ESV, NIV, NASB) omit it based on its absence from ancient Greek manuscripts prior to the 10th century.",
+    "assertions": [
+      "Quotes the specific wording of the Johannine Comma.",
+      "Explains the difference between the Textus Receptus base (KJV) and modern Critical Greek texts (NA28/UBS5).",
+      "Notes manuscript evidence: absent from ancient Greek papyri and major uncials (Sinaiticus, Vaticanus).",
+      "Maintains academic neutrality while explaining the scholarly consensus."
+    ]
+  }
+]

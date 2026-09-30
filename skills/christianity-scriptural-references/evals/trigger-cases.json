@@ -1,0 +1,86 @@
+[
+  {
+    "query": "Quote John 3:16 in the ESV with SBL citation formatting.",
+    "should_trigger": true
+  },
+  {
+    "query": "What does Romans 8:28 say, and how does the NIV translate it compared to the KJV?",
+    "should_trigger": true
+  },
+  {
+    "query": "Look up Psalm 23:1-6 and explain Charles Spurgeon's commentary on it.",
+    "should_trigger": true
+  },
+  {
+    "query": "What are the SBL Handbook of Style rules for citing biblical chapters and verses?",
+    "should_trigger": true
+  },
+  {
+    "query": "Explain the difference between the Protestant and Catholic biblical canons.",
+    "should_trigger": true
+  },
+  {
+    "query": "Is the saying 'God helps those who help themselves' found anywhere in the Bible?",
+    "should_trigger": true
+  },
+  {
+    "query": "Provide an exegesis of the Beatitudes in Matthew 5:3-12.",
+    "should_trigger": true
+  },
+  {
+    "query": "What is the textual variant regarding the ending of Mark 16:9-20?",
+    "should_trigger": true
+  },
+  {
+    "query": "How does formal equivalence differ from dynamic equivalence in translations like the NASB and NLT?",
+    "should_trigger": true
+  },
+  {
+    "query": "Quote 1 Corinthians 13:4-8 and provide the standard SBL parenthetical reference.",
+    "should_trigger": true
+  },
+  {
+    "query": "What is the historical-grammatical context of Galatians 2:16 on justification by faith?",
+    "should_trigger": true
+  },
+  {
+    "query": "Help me write a Christmas holiday greeting card for my office coworkers.",
+    "should_trigger": false
+  },
+  {
+    "query": "What are the architectural highlights to see at Notre Dame Cathedral in Paris?",
+    "should_trigger": false
+  },
+  {
+    "query": "How do I make traditional hot cross buns for Easter breakfast?",
+    "should_trigger": false
+  },
+  {
+    "query": "What was the political impact of the Peace of Westphalia in 1648?",
+    "should_trigger": false
+  },
+  {
+    "query": "Recommend a good fiction book set during the Roman Empire.",
+    "should_trigger": false
+  },
+  {
+    "query": "How do I care for my indoor Christmas cactus plant?",
+    "should_trigger": false
+  },
+  {
+    "query": "Explain the musical structure of Handel's Messiah oratorio.",
+    "should_trigger": false
+  },
+  {
+    "query": "What is the capital of Vatican City?",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a Python script to calculate dates for Western and Orthodox Easter.",
+    "should_trigger": false
+  },
+  {
+    "query": "Tell me about the history of stained glass art techniques in medieval Europe.",
+    "should_trigger": false
+  }
+]
