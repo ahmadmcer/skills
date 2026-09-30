@@ -1,0 +1,10 @@
+.git/
+.gemini/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+node_modules/
+.skill-lock.json

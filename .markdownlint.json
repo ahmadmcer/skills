@@ -1,0 +1,27 @@
+{
+  "default": true,
+  "MD013": false,
+  "MD024": {
+    "siblings_only": true
+  },
+  "MD025": {
+    "level": 1
+  },
+  "MD033": {
+    "allowed_elements": [
+      "details",
+      "summary",
+      "kbd",
+      "sub",
+      "sup",
+      "a",
+      "img",
+      "br",
+      "p",
+      "div",
+      "span"
+    ]
+  },
+  "MD041": false,
+  "MD060": false
+}
