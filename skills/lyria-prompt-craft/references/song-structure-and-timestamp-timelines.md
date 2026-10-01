@@ -37,14 +37,33 @@ For full-length generation with the `lyria-3.5` model, use the **`[Start:End] Se
 
 ---
 
-## 3. Production Arrangement Blueprints
+## 3. Structural Alignment & Timing Invariants
+
+### Pre-Chorus Downbeat Alignment
+
+The Pre-Chorus serves as a dynamic springboard that propels the arrangement directly onto the primary downbeat of the Chorus:
+
+- **Strict 3–4 Line Ceiling**: Never write more than **3 to 4 lines** of lyrics for a Pre-Chorus stanza (spanning 4 to 8 musical bars).
+- **Downbeat Collision Risk**: When a Pre-Chorus exceeds 4 lines or carries excessive syllable density, vocal delivery overflows past the timestamp transition boundary. This causes the vocal phrase to spill into the first bar of the Chorus, colliding with the primary vocal hook, masking lead synthesizer downbeats, or delaying the song's dynamic explosion.
+
+### EDM Instrumental Drop Isolation
+
+In electronic dance music, dubstep, and festival house, the `[Drop]` is an instrumental climax intended for lead synths, sub-bass modulation, and aggressive percussion:
+
+- **Vocal Hook Separation**: Separate any pre-drop vocal phrase from the drop itself. Place a concise, 1-line vocal chant in the final measure of the build-up (`[Pre-Drop Vocal Hook]`).
+- **Lyric-Free Drop Stanza**: Tag the drop explicitly as instrumental (`[Drop: Instrumental Bass Solo - No Lyrics]`) and omit lyrics for that section entirely.
+- **Intermodulation Hazard**: Writing full lyrical verses over an EDM drop forces the neural synthesizer to allocate frequency bandwidth to voice formants instead of synth transients, producing muddy low-end and phase smearing.
+
+---
+
+## 4. Production Arrangement Blueprints
 
 ### Blueprint A: Modern Pop / Synthwave (3:00 Duration)
 
 ```text
 [0:00 - 0:15] Intro: Filtered analog synthesizer arpeggio with subtle vinyl crackle.
 [0:15 - 0:45] Verse 1: Driving 808 bass enters with dry, close-mic male vocal and four-on-the-floor kick.
-[0:45 - 1:00] Pre-Chorus: Snare roll builds, synth pads swell, vocal rises in pitch.
+[0:45 - 1:00] Pre-Chorus: Snare roll builds, synth pads swell, vocal rises in pitch (3-line limit).
 [1:00 - 1:30] Chorus: Full band explosion, punchy gated snare, wide synth brass, soaring doubled vocals.
 [1:30 - 1:55] Verse 2: Beat continues with added 16th-note hi-hats and electric guitar accents.
 [1:55 - 2:10] Pre-Chorus: Swelling white noise riser and harmonic string sweeps.
@@ -57,11 +76,13 @@ For full-length generation with the `lyria-3.5` model, use the **`[Start:End] Se
 
 ```text
 [0:00 - 0:20] Intro: Atmospheric plucks with rising white noise and filtered kick drum.
-[0:20 - 0:50] Build-up: Snare rush accelerating from 8th notes to 32nd notes, rising pitch riser.
-[0:50 - 1:20] Drop: Massive distorted saw-wave lead, heavy sub-bass, driving four-on-the-floor kick.
+[0:20 - 0:45] Build-up: Snare rush accelerating from 8th notes to 32nd notes, rising pitch riser.
+[0:45 - 0:50] Pre-Drop Hook: Drums cut to silence, short isolated vocal chant: 'Ignite the night'.
+[0:50 - 1:20] Drop (Instrumental): Massive distorted saw-wave lead, heavy sub-bass, zero lyrics.
 [1:20 - 1:45] Breakdown: Beat drops out, emotional piano chords enter with ethereal vocal chop pads.
-[1:45 - 2:05] Second Build-up: Aggressive snare roll with siren risers and vocal loop chant.
-[2:05 - 2:25] Second Drop: Even heavier bass modulation, layered brass stabs, maximum stereo width.
+[1:45 - 2:00] Second Build-up: Aggressive snare roll with siren risers and rising filter sweep.
+[2:00 - 2:05] Pre-Drop Hook: 1-beat silence with pitch-bent vocal stutter.
+[2:05 - 2:25] Second Drop (Instrumental): Even heavier bass modulation, layered brass stabs, maximum stereo width.
 [2:25 - 2:30] Outro: Sub-bass tail and reverb decay to silence.
 ```
 

@@ -125,6 +125,51 @@ DEFAULT_NEGATIVES = {
     "default": "muddy low-end, tinny high-end, harsh sibilance, distorted clipping, clashing keys, out-of-tune vocals, sour notes, erratic tempo shifts, abrupt silence, digital aliasing, crowd noise.",
 }
 
+# Standard lean lyrics template (~24-28 lines) adhering to budgeting & phonetic romanization rules
+DEFAULT_LEAN_LYRICS = """[Verse 1]
+Midnight shadows on the pavement stones
+Walking through the city all alone
+Neon lights reflect the autumn rain
+Echoes of a song that numbs the pain
+
+[Pre-Chorus]
+The countdown starts, the sirens hum
+We know the moment has to come
+Bul-tae-wo bwa, ignite the spark
+
+[Chorus]
+Take me back to where the river flows
+Underneath the skies nobody knows
+Hold the line until the morning light
+We will make it through the darkest night
+
+[Verse 2]
+Static whispering across the wire
+Sparking embers in the open fire
+Miles behind us as the engines scream
+Living out an electric dream
+
+[Pre-Chorus]
+The tension climbs, the shadows fall
+Our names are written on the wall
+Gye-sok dalli-ja, run through the dark
+
+[Chorus]
+Take me back to where the river flows
+Underneath the skies nobody knows
+Hold the line until the morning light
+We will make it through the darkest night
+
+[Bridge]
+No looking back into the gray
+The night is washing tears away
+
+[Chorus]
+Take me back to where the river flows
+Underneath the skies nobody knows
+Hold the line until the morning light
+We will make it through the darkest night"""
+
 
 def format_timestamp(seconds: float) -> str:
     """Format total seconds into M:SS string."""
@@ -170,6 +215,9 @@ def craft_prompt(
 ) -> dict[str, Any]:
     """Assemble complete Music Brief and metadata."""
     is_instrumental = "instrumental" in vocal_style.lower()
+
+    if lyrics == "default":
+        lyrics = DEFAULT_LEAN_LYRICS
 
     # Select negative prompt
     if not negative:
@@ -255,7 +303,7 @@ def main() -> int:
     parser.add_argument("--meter", default="4/4", help="Time signature / meter (default: 4/4)")
     parser.add_argument(
         "--instruments",
-        default="Roland Juno-106 bassline, LinnDrum gated snare, warm vintage poly-synth brass, shimmering arpeggiated bells",
+        default="Roland Juno-106 bassline, LinnDrum gated snare with crisp 16th hi-hats, Fender Rhodes chords, shimmering poly-synth brass",
         help="Comma-separated list of specific instruments",
     )
     parser.add_argument(
@@ -276,6 +324,16 @@ def main() -> int:
         "--production",
         default="Wide binaural stereo image, subtle analog tape saturation, punchy drum transients, lush plate reverb",
         help="Audio engineering and spatial cues",
+    )
+    parser.add_argument(
+        "--with-lyrics",
+        action="store_true",
+        help="Include standard lean lyrics template (~24-28 lines with phonetic romanization)",
+    )
+    parser.add_argument(
+        "--lyrics",
+        default=None,
+        help="Direct lyrics text or 'default' to use standard lean romanized template",
     )
     parser.add_argument("--lyrics-file", default=None, help="Path to text file containing lyrics")
     parser.add_argument("--negative", default=None, help="Custom negative constraints string")
@@ -306,6 +364,10 @@ def main() -> int:
             lyrics_content = lp.read_text(encoding="utf-8", errors="replace")
         else:
             print(f"[WARN] Lyrics file not found: {args.lyrics_file}", file=sys.stderr)
+    elif args.with_lyrics or args.lyrics == "default":
+        lyrics_content = DEFAULT_LEAN_LYRICS
+    elif args.lyrics:
+        lyrics_content = args.lyrics
 
     # Parse instruments
     inst_list = [i.strip() for i in args.instruments.split(",") if i.strip()]

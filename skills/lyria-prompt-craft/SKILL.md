@@ -71,6 +71,9 @@ When lyrics are supplied, enforce strict separation between directional instruct
 
 - Format lyrics under a dedicated `Lyrics:` header with explicit section tags.
 - Balance syllable counts and meter to align with the chosen tempo.
+- **Mandatory Romanization**: Transcribe all non-Latin or multilingual lyrics phonetically into standard Latin script (e.g. _'Bul-tae-wo bwa'_ rather than raw Hangul _'불태워 봐'_). Never mix raw non-Latin scripts or insert parenthetical translations.
+- **Strict Lyric Line Budget**: Cap lyric lines to song duration (maximum 24–30 lines for a 3-minute / 180s track) to prevent deadline compression.
+- Keep `[Pre-Chorus]` stanzas concise (maximum 3–4 lines) so vocals do not spill over the chorus downbeat.
 - Use phonetic cues and natural rhythm to guide realistic phrasing.
 
 ```text
@@ -78,8 +81,13 @@ Lyrics:
 [Verse 1]
 Midnight shadows on the pavement stones
 Walking through the city all alone
-Headlights cutting through the autumn rain
+Neon lights reflect the autumn rain
 Echoes of a song that numbs the pain
+
+[Pre-Chorus]
+The countdown starts, the sirens hum
+We know the moment has to come
+Bul-tae-wo bwa, ignite the spark
 
 [Chorus]
 Take me back to where the river flows
@@ -109,6 +117,8 @@ _Deep dive_: [sound-design-and-negative-prompts.md](references/sound-design-and-
 4. **Harmonic & Emotional Congruence**: Ensure mood and tempo descriptors are musically compatible. Avoid contradictory prompts like _"somber funeral dirge with bubbly upbeat dance rhythm"_.
 5. **Timeline Duration Alignment**: Ensure timestamp ranges in timelines sum accurately to the requested track duration.
 6. **Deterministic CFG Guidance**: State optimal generation parameters (CFG 6.0–7.5, Temperature 0.7–0.85) when exporting Gemini API configurations.
+7. **Mandatory Romanization for Multilingual Lyrics**: Non-English lyrics must always be transcribed into standard phonetic Latin romanization (e.g. _'Bul-tae-wo bwa'_ instead of raw Hangul _'불태워 봐'_). Never mix raw non-Latin scripts or insert parenthetical translation annotations (e.g. `(meaning: ignite it)`) inside lyric lines; Lyria 3.5 skips unrenderable characters, produces phoneme distortion, or vocalizes translations verbatim.
+8. **Strict Lyric Line Budgeting to Prevent Deadline Compression**: Cap lyric line counts to match song duration (maximum 24–30 lines per 3-minute / 180s song). Overloading stanzas causes deadline compression, where the model rushes tempo, mangles prosody, or truncates lines to fit the timestamp window.
 
 ---
 

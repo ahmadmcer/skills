@@ -411,16 +411,7 @@ def audit_prompt(prompt_text: str) -> dict[str, Any]:
         )
 
     # 7. Verbatim Lyric Formatting Integrity (10 pts)
-    has_lyrics_header = "lyrics:" in text_lower
-    has_inline_directions_in_lyrics = False
-
-    if has_lyrics_header:
-        lyrics_part = text_lower.split("lyrics:", 1)[1]
-        # Check for inline bracketed or parenthesized direction inside lyrics e.g. (sing loudly), (drums speed up)
-        if re.search(
-            r"\((sing|whisper|drum|shout|scream|guitar|tempo|fast|slow)[^\)]*\)", lyrics_part
-        ):
-            has_inline_directions_in_lyrics = True
+    has_lyrics_header = bool(re.search(r"\blyrics\s*:", text_lower))
 
     if is_instrumental:
         if has_lyrics_header:
@@ -447,29 +438,143 @@ def audit_prompt(prompt_text: str) -> dict[str, Any]:
                 }
             )
     elif has_lyrics_header:
-        if has_inline_directions_in_lyrics:
-            score += 4
-            checks.append(
-                {
-                    "item": "Lyric Formatting Integrity",
-                    "score": 4,
-                    "max": 10,
-                    "status": "WARN",
-                    "detail": "Inline vocal/instrumental directions detected inside Lyrics block (causes AI chanting artifacts).",
-                }
+        # Extract raw lyrics block to preserve unicode and casing
+        lyrics_match = re.search(r"\blyrics\s*:(.*)", prompt_text, re.IGNORECASE | re.DOTALL)
+        lyrics_raw = lyrics_match.group(1) if lyrics_match else ""
+
+        # Stop at subsequent major prompt sections if present
+        lyrics_end_match = re.search(
+            r"\n\s*\[(?:Negative|Arrangement|Production|Tempo|Vocal|Instrumentation|Mood|Genre)[^\]]*\]",
+            lyrics_raw,
+            re.IGNORECASE,
+        )
+        lyrics_block = lyrics_raw[: lyrics_end_match.start()] if lyrics_end_match else lyrics_raw
+
+        # 1. Non-Latin script detection (Hangeul, Hiragana/Katakana/CJK, Arabic, Cyrillic)
+        non_latin_pattern = r"[\uac00-\ud7a3\u3040-\u30ff\u4e00-\u9faf\u0600-\u06ff\u0400-\u04ff]"
+        has_non_latin = bool(re.search(non_latin_pattern, lyrics_block))
+
+        # 2. Inline directions check e.g. (sing softly), (drums speed up)
+        has_inline_directions = bool(
+            re.search(
+                r"\((sing|whisper|drum|shout|scream|guitar|tempo|fast|slow|loud|soft|fade)[^\)]*\)",
+                lyrics_block,
+                re.IGNORECASE,
             )
+        )
+
+        # 3. Parenthetical translations check e.g. (meaning: fire), (Set it on fire)
+        raw_parens = re.findall(
+            r"\((?:meaning|translation|english|trans|lit\.)?:?\s*['\"]?[a-zA-Z\s,.'!?-]{2,}['\"]?\)",
+            lyrics_block,
+            re.IGNORECASE,
+        )
+        direction_kw = r"(sing|whisper|drum|shout|scream|guitar|tempo|fast|slow|loud|soft|fade)"
+        translation_parens = [
+            p for p in raw_parens if not re.search(direction_kw, p, re.IGNORECASE)
+        ]
+        has_translation_parens = len(translation_parens) > 0
+
+        # Parse lines and sections
+        all_lines = [line.strip() for line in lyrics_block.splitlines()]
+        lyric_lines = [
+            lyric_line
+            for lyric_line in all_lines
+            if lyric_line and not (lyric_line.startswith("[") and lyric_line.endswith("]"))
+        ]
+        total_lyric_lines = len(lyric_lines)
+        has_lyric_density_exceeded = total_lyric_lines > 32
+
+        # 4. Pre-Chorus overflow check (> 4 lines)
+        current_section = None
+        pre_chorus_line_counts: list[int] = []
+        for line in all_lines:
+            if not line:
+                continue
+            if line.startswith("[") and line.endswith("]"):
+                tag = line[1:-1].strip().lower()
+                if "pre-chorus" in tag or "pre chorus" in tag:
+                    current_section = "pre-chorus"
+                    pre_chorus_line_counts.append(0)
+                else:
+                    current_section = tag
+            else:
+                if current_section == "pre-chorus" and pre_chorus_line_counts:
+                    pre_chorus_line_counts[-1] += 1
+
+        max_pre_chorus_lines = max(pre_chorus_line_counts, default=0)
+        has_pre_chorus_overflow = max_pre_chorus_lines > 4
+
+        # Scoring & Deductions
+        deductions = 0
+        issues: list[str] = []
+
+        if has_non_latin:
+            deductions += 4
+            issues.append("Non-Latin scripts detected (Mandatory Romanization required)")
             action_items.append(
-                "Move inline parenthesized directions out of the Lyrics block into the arrangement timeline."
+                "Mandatory Romanization: Transcribe non-Latin scripts (Hangeul, CJK, Arabic, Cyrillic) into phonetic Latin script (e.g. 'Bul-tae-wo bwa') to prevent phoneme skipping/garbling."
             )
-        else:
-            score += 10
+
+        if has_inline_directions:
+            deductions += 3
+            issues.append("Inline performance directions inside lyrics")
+            action_items.append(
+                "Move inline parenthesized directions (e.g. '(sing softly)') out of the Lyrics block into the arrangement timeline."
+            )
+
+        if has_translation_parens:
+            deductions += 2
+            issues.append("Parenthetical translation annotations inside lyrics")
+            action_items.append(
+                "Remove parenthetical translations from lyrics (e.g. '(meaning: fire)'). Lyria 3.5 vocalizes them verbatim."
+            )
+
+        if has_lyric_density_exceeded:
+            deductions += 2
+            issues.append(f"Lyric line budget exceeded ({total_lyric_lines} lines > 32 max)")
+            action_items.append(
+                f"Lyric density warning: {total_lyric_lines} lines exceeds 32-line budget. Reduce to 24–30 lines to prevent deadline compression and rushed tempo."
+            )
+
+        if has_pre_chorus_overflow:
+            deductions += 2
+            issues.append(f"Pre-Chorus overflow ({max_pre_chorus_lines} lines > 4 max)")
+            action_items.append(
+                f"Pre-Chorus overflow: {max_pre_chorus_lines} lines exceeds 4-line limit. Constrain Pre-Chorus stanzas to 3–4 lines to avoid clashing with the chorus downbeat."
+            )
+
+        lyric_score = max(0, 10 - deductions)
+        score += lyric_score
+
+        if deductions == 0:
             checks.append(
                 {
                     "item": "Lyric Formatting Integrity",
                     "score": 10,
                     "max": 10,
                     "status": "PASS",
-                    "detail": "Lyrics cleanly isolated under Lyrics: header with section tags.",
+                    "detail": f"Lyrics cleanly formatted ({total_lyric_lines} lines) with valid romanization and section pacing.",
+                }
+            )
+        elif lyric_score >= 6:
+            checks.append(
+                {
+                    "item": "Lyric Formatting Integrity",
+                    "score": lyric_score,
+                    "max": 10,
+                    "status": "WARN",
+                    "detail": "; ".join(issues) + ".",
+                }
+            )
+        else:
+            checks.append(
+                {
+                    "item": "Lyric Formatting Integrity",
+                    "score": lyric_score,
+                    "max": 10,
+                    "status": "FAIL",
+                    "detail": "; ".join(issues) + ".",
                 }
             )
     else:

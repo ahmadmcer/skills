@@ -20,6 +20,17 @@ Lyrics:
 
 _Why it fails_: Lyria 3.5 may attempt to sing the words _"sing softly"_ or _"drums get louder"_, or become confused between text-to-speech phonetics and musical tokens.
 
+### Parenthetical Translations Anti-Pattern
+
+```text
+Lyrics:
+[Chorus]
+Bul-tae-wo bwa (Set it on fire)
+Yeong-won-hi ham-kke (Together forever)
+```
+
+_Why it fails_: The model does not understand that text inside parentheses represents a human translation. It will vocalize the English translation words verbatim as part of the vocal line, ruining melodic cadence.
+
 ### Gold Standard (Do This)
 
 ```text
@@ -65,7 +76,55 @@ Two wear-y hearts that fi-nally meet (8 syllables)
 
 ---
 
-## 3. Vocal Timbre & Processing Palette
+## 3. Lyric Line Budgeting & Deadline Compression
+
+Generative audio engines operate on fixed temporal budgets allocated during their internal arrangement planning pass. Attempting to cram excessive lyrical text into a song forces **deadline compression**: the model accelerates vocal speed artificially near section boundaries, cuts off ending syllables, or introduces erratic tempo warping to fit the lyrics before the next timestamp cue.
+
+### Recommended Lyric Line Budget by Track Duration
+
+| Track Duration         | Recommended Lines | Hard Budget Ceiling | Recommended Section Distribution                                |
+| :--------------------- | :---------------- | :------------------ | :-------------------------------------------------------------- |
+| **60s (Clip / Short)** | 8 – 12 lines      | 12 lines            | 1 Verse (4 lines) + 1 Chorus Hook (4–8 lines)                   |
+| **120s (2 Minutes)**   | 16 – 20 lines     | 20 lines            | Verse 1 (4) + Chorus (4) + Verse 2 (4) + Chorus (4) + Outro (2) |
+| **180s (3 Minutes)**   | 22 – 28 lines     | 30 lines            | Standard Pop: 2 Verses, 2 Pre-Choruses, 3 Choruses, 1 Bridge    |
+| **240s+ (4+ Minutes)** | 32 – 38 lines     | 40 lines            | Extended Epic: 3 Verses, Choruses, Bridge, and Outro stanzas    |
+
+_Budgeting Invariant_: For any standard 3-minute (180s) composition, never exceed **24–30 lines** of verbatim lyrics. Stanza spacing and instrumental breathing bars are essential for natural phrasing.
+
+---
+
+## 4. Mandatory Romanization for Multilingual Lyrics
+
+Lyria 3.5's neural vocal decoder converts phonetic Latin characters into sung audio. Supplying raw non-Latin Unicode scripts (such as Korean Hangeul `[\uac00-\ud7a3]`, Japanese Kanji/Kana `[\u3040-\u30ff]`, Chinese Hanzi `[\u4e00-\u9faf]`, Cyrillic `[\u0400-\u04ff]`, or Arabic `[\u0600-\u06ff]`) results in severe generation defects:
+
+1. **Phoneme Skipping**: The neural phoneme reader skips unrecognized Unicode glyphs, producing awkward gaps in vocal melodies.
+2. **Garbled Phonetics**: Vowels are mangled into synthetic babble or robotic clicks.
+3. **Punctuation Hallucination**: Parenthesized translations or pinyin tone numbers are read as numbers or sung aloud.
+
+### Romanization Reference Examples
+
+| Target Language | Raw Script (FAIL)                    | Phonetic Romanization (PASS) |
+| :-------------- | :----------------------------------- | :--------------------------- |
+| **Korean**      | `불태워 봐 (Burn it up)`             | `Bul-tae-wo bwa`             |
+| **Japanese**    | `夜に駆ける (Racing into the night)` | `Yoru ni kakeru`             |
+| **Mandarin**    | `我的心里只有你`                     | `Wo de xin li zhi you ni`    |
+| **Russian**     | `Ты мой свет (You are my light)`     | `Ty moy svet`                |
+
+_Rule_: Always transcribe non-Latin lyrics into standard phonetic Latin script using hyphens to demarcate multi-syllable word boundaries if precise rhythmic meter is required.
+
+---
+
+## 5. Rap-to-Melody Transition & Bar Alignment Protection
+
+When alternating between fast, syncopated rap delivery (staccato 16th-note meter) and melodic vocal belting (sustained legato notes), Lyria 3.5 requires sufficient musical transition space:
+
+- **The 4/8-Bar Transition Rule**: Provide at least 4 to 8 full musical bars between the end of a rapid rap stanza and the start of a melodic chorus.
+- **Ban on Mini Pre-Choruses**: Never place a 1- or 2-line "mini pre-chorus" directly between a high-density rap verse and a chorus without an instrumental cue. Doing so causes the model to carry the rapid cadence into the melodic hook, destroying vocal prosody.
+- **Use Beat-Break Markers**: Insert an explicit transitional tag such as `[Instrumental Beat Break]` or `[Transition: Half-Time Swell]` between contrasting vocal styles.
+
+---
+
+## 6. Vocal Timbre & Processing Palette
 
 Specify vocal characteristics in the **`Vocal Architecture`** section of your prompt brief:
 
@@ -79,13 +138,17 @@ Specify vocal characteristics in the **`Vocal Architecture`** section of your pr
   - _Three-Part Gospel Harmonies_: Soprano, alto, and tenor harmonies widening in the chorus.
   - _Choral Wall of Sound_: 30-piece choir chanting behind lead vocals.
 - **Vocal FX & Synthesis**:
-  - _Vintage Vocoder_: Daft Punk-style robotic robotic pitch modulation.
+  - _Vintage Vocoder_: Daft Punk-style robotic pitch modulation.
   - _Tasteful Pitch Correction_: Modern commercial pop auto-tune shimmer.
   - _Slapback Echo_: 1950s rockabilly tape delay.
 
+### Formant Distortion Warning on Pitch-Shift Vocal Risers
+
+In EDM/Pop builds leading into drops, vocal risers (where vocal chops rise continuously in pitch) can experience severe unnatural formant distortion, chipmunk aliasing, or digital clipping if forced past 1 octave of transposition. Guide the model using explicit vocal processing cues: _"vocal riser with formant-preserving pitch shift"_ or _"filtered vocal echo sweep"_ rather than extreme raw pitch escalations.
+
 ---
 
-## 4. Instrumental Only Enforcement
+## 7. Instrumental Only Enforcement
 
 If you do NOT want vocals, human speech, or random vocal chops in your composition, enforce these rules:
 
