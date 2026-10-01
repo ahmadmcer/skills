@@ -1,0 +1,90 @@
+[
+  {
+    "query": "Help me craft a high-fidelity prompt for Google DeepMind Lyria 3.5 for a 3-minute synthwave track with a timestamped timeline.",
+    "should_trigger": true
+  },
+  {
+    "query": "Generate a Lyria 3.5 music brief for an instrumental cinematic orchestral suite with French horns, cellos, and timpani.",
+    "should_trigger": true
+  },
+  {
+    "query": "Create a 30-second YouTube Dream Track clip prompt using the lyria-3-clip-preview model for an energetic pop hook.",
+    "should_trigger": true
+  },
+  {
+    "query": "Format my song lyrics into a compliant Lyria 3.5 Lyrics block with verses and chorus separated from directional audio cues.",
+    "should_trigger": true
+  },
+  {
+    "query": "Audit my Lyria music prompt against quality standards to identify missing BPM, generic instruments, and lack of structure.",
+    "should_trigger": true
+  },
+  {
+    "query": "How should I structure timestamp timelines like [0:00 - 0:15] Intro in Lyria 3.5 to prevent repetitive looping?",
+    "should_trigger": true
+  },
+  {
+    "query": "What negative prompts should I include in my Lyria 3.5 generation to prevent muddy low-end and harsh vocal sibilance?",
+    "should_trigger": true
+  },
+  {
+    "query": "Write a Gemini API JSON payload targeting the lyria-3.5 model with temperature, duration, and structured music prompt.",
+    "should_trigger": true
+  },
+  {
+    "query": "Convert my vague idea 'sad acoustic song' into a 6-dimensional Lyria 3.5 Music Brief with specific instruments and tempo.",
+    "should_trigger": true
+  },
+  {
+    "query": "Create a liquid drum and bass music prompt for Lyria 3.5 at 174 BPM with Rhodes piano and rolling breakbeats.",
+    "should_trigger": true
+  },
+  {
+    "query": "How do I configure CFG scale and negative constraints for Google DeepMind Lyria to avoid audio clipping?",
+    "should_trigger": true
+  },
+  {
+    "query": "Outline my 80,000-word thriller novel using the 15-beat Save the Cat structure.",
+    "should_trigger": false
+  },
+  {
+    "query": "Rewrite this chapter in Level 4 Deep POV and remove all sensory filter words.",
+    "should_trigger": false
+  },
+  {
+    "query": "Determine the next SemVer bump and rotate the [Unreleased] section in CHANGELOG.md.",
+    "should_trigger": false
+  },
+  {
+    "query": "Scaffold a Diátaxis documentation portal using VitePress and audit for broken relative links.",
+    "should_trigger": false
+  },
+  {
+    "query": "Generate a high-converting root README.md with badges, quickstart, and prerequisites.",
+    "should_trigger": false
+  },
+  {
+    "query": "Commit my staged git diff with a Conventional Commits 1.0.0 message and secret leak check.",
+    "should_trigger": false
+  },
+  {
+    "query": "Quote John 3:16 in ESV and provide Greek grammatical analysis.",
+    "should_trigger": false
+  },
+  {
+    "query": "Verify the chain of narration for this Hadith in Sahih al-Bukhari.",
+    "should_trigger": false
+  },
+  {
+    "query": "Explain Talmud Bavli Berakhot 2a with Rashi commentary.",
+    "should_trigger": false
+  },
+  {
+    "query": "Define our company's brand identity, voice and tone pillars, and Tailwind design tokens.",
+    "should_trigger": false
+  },
+  {
+    "query": "Deploy our backend service on Railway with PostgreSQL and configure health checks.",
+    "should_trigger": false
+  }
+]

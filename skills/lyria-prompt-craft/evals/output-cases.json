@@ -1,0 +1,59 @@
+[
+  {
+    "id": "full-length-synthwave-brief",
+    "prompt": "Create a complete, high-fidelity Lyria 3.5 prompt for a 3-minute 1980s Dark Synthwave song. It must feature nocturnal and driving energy, analog synths, explicit BPM, male vocals, a precision timestamp timeline, and negative constraints.",
+    "expected_output": "Synthesizes a 6-Dimensional Music Brief featuring: '[Genre & Era]: 1980s Dark Synthwave'; '[Mood & Atmosphere]: Nocturnal, melancholic, building to an energetic triumphant peak'; '[Instrumentation]: Roland Juno-106 bassline, LinnDrum gated snare, warm vintage poly-synth brass'; '[Tempo & Groove]: 118 BPM, 4/4 time signature'; '[Vocal Architecture]: Warm male baritone with subtle chorus'; a full timestamp timeline from '[0:00 - 0:15] Intro' to '[2:50 - 3:00] Outro'; and a targeted '[Negative Constraints / Avoid]' block.",
+    "assertions": [
+      "Specifies subgenre as 1980s Dark Synthwave.",
+      "Specifies numeric tempo of 118 BPM with 4/4 meter.",
+      "Names specific instruments (Roland Juno-106, LinnDrum).",
+      "Defines a full timestamped timeline covering 0:00 to 3:00.",
+      "Includes a negative constraints block targeting audio artifacts."
+    ]
+  },
+  {
+    "id": "dream-track-30s-clip-prompt",
+    "prompt": "Create a 30-second condensed music prompt for YouTube Shorts / Dream Track using the lyria-3-clip-preview model. It should be a high-energy hyperpop hook with driving bass and pitched female vocals.",
+    "expected_output": "Produces a concise, punchy prompt tailored for `lyria-3-clip-preview` with target duration of 30 seconds. Includes: '[Genre & Era]: Modern Hyperpop'; fast tempo (140-160 BPM); bright bubblegum synths and distorted 808; high-energy pitched female vocals; a condensed 3-part timeline ('[0:00 - 0:08] Intro Hook', '[0:08 - 0:24] Main Peak', '[0:24 - 0:30] Outro Decrescendo'); and anti-clipping guardrails.",
+    "assertions": [
+      "Targets the lyria-3-clip-preview model or 30-second duration.",
+      "Includes fast tempo suitable for hyperpop (140+ BPM).",
+      "Features condensed timeline totaling 30 seconds.",
+      "Specifies vocal delivery and synth instrumentation."
+    ]
+  },
+  {
+    "id": "cinematic-orchestral-instrumental",
+    "prompt": "Write a Lyria 3.5 prompt for a 3:30 epic cinematic orchestral soundtrack for a fantasy battle scene. It must be strictly instrumental with no vocals or speech, and feature building brass, cello solos, Taiko drums, and a grand climax.",
+    "expected_output": "Produces a purely instrumental brief starting with 'Instrumental only. No vocals, no speech, no vocal chops.' Details a dynamic emotional curve from solitary tension to a thundering grand climax. Outlines specific instruments (solo cello, French horns, Taiko drums, orchestral choir pad without lyrics), a 3:30 timestamped progression, and negative constraints explicitly suppressing vocal synthesis.",
+    "assertions": [
+      "Declares 'Instrumental only' explicitly to suppress vocal synthesis.",
+      "Outlines a 3:30 duration timeline.",
+      "Names concrete orchestral instruments (solo cello, French horns, Taiko drums).",
+      "Omits the Lyrics section.",
+      "Suppresses vocals in the negative prompt."
+    ]
+  },
+  {
+    "id": "custom-lyric-prosody-integration",
+    "prompt": "We have 8 lines of custom lyrics for a mid-tempo acoustic indie song (92 BPM). Show how to integrate them into a Lyria 3.5 prompt ensuring strict separation between directions and verbatim lyrics, and explaining the syllable prosody.",
+    "expected_output": "Demonstrates the golden rule of Lyria lyric prompting: places all arrangement and vocal delivery directions (e.g. breathy female alto, intimate close-mic warmth) into the main Music Brief, and isolates the lyrics under a clean 'Lyrics:' header with '[Verse 1]' and '[Chorus]' stanzas with zero inline parenthetical directions. Notes that the 8-syllable per line meter naturally synchronizes with the 92 BPM tempo.",
+    "assertions": [
+      "Isolates lyrics under an explicit 'Lyrics:' header.",
+      "Ensures zero inline performance directions exist within lyric lines.",
+      "Specifies vocal delivery in the Music Brief header.",
+      "Explains syllable meter and prosody alignment with the 92 BPM tempo."
+    ]
+  },
+  {
+    "id": "prompt-quality-audit-and-remediation",
+    "prompt": "Run audit_lyria_prompt.py on this vague prompt: 'A nice electronic song with beats and cool synths and singing.' What score does it receive, what issues are identified, and what is the upgraded 90+ prompt?",
+    "expected_output": "Evaluates the prompt, penalizes it to a failing score (< 50, Grade F) across multiple rubric gates: missing specific subgenre, absent BPM/tempo, generic instrument terms ('beats', 'synths'), undefined vocal architecture ('singing'), zero structural arrangement or timestamp timeline, missing production cues, and zero negative constraints. Formulates actionable remediation items and generates an upgraded 100/100 Music Brief.",
+    "assertions": [
+      "Identifies failing score (< 50) and Grade F for the vague prompt.",
+      "Flags missing BPM, generic instruments, and lack of timeline structure.",
+      "Flags missing negative constraints and audio engineering cues.",
+      "Provides actionable prescriptions and an upgraded compliant Music Brief."
+    ]
+  }
+]

@@ -23,7 +23,8 @@ flowchart LR
     D -->|Storytelling| F["novel-architect / novel-storytelling"]
     D -->|Theology & Exegesis| G["christianity / islamic / jewish"]
     D -->|Brand Identity| H["branding-process"]
-    D -->|Upstream Platforms| I["android-cli / use-railway / skill-creator"]
+    D -->|Generative Audio| I["lyria-prompt-craft"]
+    D -->|Upstream Platforms| J["android-cli / use-railway / skill-creator"]
 ```
 
 ---
@@ -94,6 +95,12 @@ git clone https://github.com/ahmadmcer/skills.git .agents
 | :------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------- | :--------------------------------------------- |
 | **[`branding-process`](skills/branding-process/)** | Brand strategy, positioning, archetype mapping, verbal voice & tone, accessible color palettes, responsive logos, and W3C/Tailwind design tokens. | [SKILL.md](skills/branding-process/SKILL.md) | `generate_tokens.py`, `scaffold_svg_assets.py` |
 
+### 🎵 Generative Audio & Music Engineering
+
+| Skill                                                  | Focus                                                                                                                                                                           | Documentation                                  | Tools Included                                   |
+| :----------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------------- | :----------------------------------------------- |
+| **[`lyria-prompt-craft`](skills/lyria-prompt-craft/)** | Google DeepMind Lyria 3.5 music prompt engineering, 6-dimensional music briefs, timestamped structural timelines, lyrics/vocal direction separation, and negative sound design. | [SKILL.md](skills/lyria-prompt-craft/SKILL.md) | `craft_lyria_prompt.py`, `audit_lyria_prompt.py` |
+
 ### 🌐 Curated Upstream Integrations
 
 These skills originate from official upstream creators and are curated here for seamless integration into multi-agent workflows:
@@ -142,6 +149,10 @@ python skills/project-documentation/scripts/audit_docs.py --dir ./docs --strict
 
 # 5. Lint manuscript fiction for filter words, rhythm, and dialogue tags
 python skills/novel-storytelling/scripts/lint_prose.py chapter1.md
+
+# 6. Craft and audit a Google Lyria 3.5 generative music prompt
+python skills/lyria-prompt-craft/scripts/craft_lyria_prompt.py --genre "Synthwave" --bpm 118 --duration 180 --structure pop
+python skills/lyria-prompt-craft/scripts/audit_lyria_prompt.py --file prompt.txt
 ```
 
 ---
@@ -175,7 +186,7 @@ npx markdownlint-cli2 "**/*.md"
 .
 ├── .github/                          # Issue and Pull Request templates
 ├── commands/                         # Custom agent slash command extensions
-├── skills/                           # 15 production Agent Skills
+├── skills/                           # 16 production Agent Skills
 │   ├── android-cli/                  # Upstream: Google / Android
 │   ├── branding-process/             # Brand strategy & design tokens
 │   ├── changelog-versioning/         # SemVer 2.0.0 & Keep a Changelog 1.1.0
@@ -185,6 +196,7 @@ npx markdownlint-cli2 "**/*.md"
 │   ├── git-commit/                   # Conventional Commits 1.0.0 engine
 │   ├── islamic-scriptural-references/# Qur'an & Hadith authentication
 │   ├── jewish-scriptural-references/ # Tanakh, Talmud, and rabbinic citations
+│   ├── lyria-prompt-craft/           # Google Lyria 3.5 generative music prompts
 │   ├── novel-architect/              # Plotting, beat sheets, and character arcs
 │   ├── novel-storytelling/           # Deep POV, sensory craft, and micro-tension
 │   ├── project-documentation/        # Diátaxis framework & DocOps quality gates
@@ -216,7 +228,7 @@ python skills/skill-creator/scripts/validate_skill.py skills/<skill-name>
 
 ## Third-Party Notices & Trademarks
 
-- **Android** is a trademark of Google LLC.
+- **Android**, **Lyria**, and **SynthID** are trademarks of Google LLC.
 - **Skills.sh** is operated by Vercel Inc.
 - **Claude** and **Anthropic** are trademarks of Anthropic PBC.
 - **Railway** is a trademark of Railway Corp.

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 
 ## [Unreleased]
 
+### Added
+
+- **Generative Audio & Music Engineering**:
+  - `lyria-prompt-craft`: Google DeepMind Lyria 3.5 music prompt engineering skill implementing the 6-Dimensional Music Brief (Genre & Era Fusion, Mood & Dynamics, Concrete Instrumentation Palette, Tempo & Rhythmic Groove, Vocal Architecture, and Production / Acoustic Space), precision timestamp timelines (`[M:SS - M:SS] Section: Description`), strict separation between vocal direction and verbatim lyrics, audio engineering negative constraints, and CFG Scale tuning (6.0–7.5). Includes standalone zero-dependency CLI tools `craft_lyria_prompt.py` and `audit_lyria_prompt.py` (10-point quality rubric).
+
 ## [0.1.0] - 2026-09-30
 
 ### Added
