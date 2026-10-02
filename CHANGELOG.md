@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 
 - **Generative Audio & Music Engineering**:
   - `lyria-prompt-craft`: Google DeepMind Lyria 3.5 music prompt engineering skill implementing the 6-Dimensional Music Brief (Genre & Era Fusion, Mood & Dynamics, Concrete Instrumentation Palette, Tempo & Rhythmic Groove, Vocal Architecture, and Production / Acoustic Space), precision timestamp timelines (`[M:SS - M:SS] Section: Description`), strict separation between vocal direction and verbatim lyrics, audio engineering negative constraints, and CFG Scale tuning (6.0–7.5). Includes standalone zero-dependency CLI tools `craft_lyria_prompt.py` and `audit_lyria_prompt.py` (10-point quality rubric).
+- **Flight Simulation & Aerospace Automation**:
+  - `use-xplane`: Laminar Research X-Plane 11 and 12 automation and telemetry skill implementing a Hybrid Protocol Strategy (modern Web API REST & WebSocket v1/v2/v3 on port 8086, and high-frequency UDP binary datagrams `DREF`, `RREF`, `CMND`, `POSI`, `DATA` on ports 49000/49001). Features dynamic session-bound Dataref ID resolution, full flight initialization scenario dispatch (`POST /flight`, `PATCH /flight`), curated flight-critical Datarefs/Commands references, and 4 production-grade scenario presets. Includes standalone zero-dependency CLI tool `xplane_cli.py` and comprehensive offline mock test suite `test_xplane_cli.py`.
 
 ## [0.1.0] - 2026-09-30
 

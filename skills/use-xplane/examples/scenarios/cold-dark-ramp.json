@@ -1,0 +1,29 @@
+{
+  "$schema": "https://developer.x-plane.com/article/flight-initialization-api/",
+  "title": "Cessna 172SP Cold and Dark Ramp Start at Seattle-Tacoma (KSEA)",
+  "aircraft": {
+    "path": "Aircraft/Laminar Research/Cessna 172SP/Cessna_172SP.acf",
+    "livery": "Default",
+    "engine_status": "cold_and_dark"
+  },
+  "location": {
+    "type": "ramp_start",
+    "airport": "KSEA",
+    "ramp_name": "Cargo Ramp 1"
+  },
+  "weight_and_balance": {
+    "fuel_ratio": 0.50,
+    "payload_weight_kg": 160.0,
+    "cg_ratio": 0.25
+  },
+  "time": {
+    "zulu_time_sec": 50400,
+    "day_of_year": 180
+  },
+  "weather": {
+    "preset": "clear",
+    "barometer_sealevel_inhg": 29.92
+  },
+  "failures": [],
+  "ai_traffic": []
+}

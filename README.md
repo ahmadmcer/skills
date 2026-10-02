@@ -24,6 +24,7 @@ flowchart LR
     D -->|Theology & Exegesis| G["christianity / islamic / jewish"]
     D -->|Brand Identity| H["branding-process"]
     D -->|Generative Audio| I["lyria-prompt-craft"]
+    D -->|Flight Simulation| K["use-xplane"]
     D -->|Upstream Platforms| J["android-cli / use-railway / skill-creator"]
 ```
 
@@ -100,6 +101,12 @@ git clone https://github.com/ahmadmcer/skills.git .agents
 | Skill                                                  | Focus                                                                                                                                                                           | Documentation                                  | Tools Included                                   |
 | :----------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------------- | :----------------------------------------------- |
 | **[`lyria-prompt-craft`](skills/lyria-prompt-craft/)** | Google DeepMind Lyria 3.5 music prompt engineering, 6-dimensional music briefs, timestamped structural timelines, lyrics/vocal direction separation, and negative sound design. | [SKILL.md](skills/lyria-prompt-craft/SKILL.md) | `craft_lyria_prompt.py`, `audit_lyria_prompt.py` |
+
+### ✈️ Flight Simulation & Aerospace Automation
+
+| Skill                                    | Focus                                                                                                                                                                                           | Documentation                             | Tools Included                         |
+| :--------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------- | :------------------------------------- |
+| **[`use-xplane`](skills/use-xplane/)**   | Laminar Research X-Plane 11 & 12 Web API (REST & WebSocket v1/v2/v3), high-frequency UDP binary telemetry, flight scenario dispatch (`POST /flight`), and Dataref/Command cockpit automation. | [SKILL.md](skills/use-xplane/SKILL.md)   | `xplane_cli.py`, `test_xplane_cli.py`  |
 
 ### 🌐 Curated Upstream Integrations
 
