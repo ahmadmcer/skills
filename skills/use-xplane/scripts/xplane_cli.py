@@ -178,17 +178,19 @@ def resolve_command_id(base_url: str, name_or_id: Union[str, int]) -> int:
         return int(name_or_id)
 
     name = str(name_or_id).strip()
-    query_url = f"{base_url}/commands?filter[name]={name}&limit=10"
+    query_url = f"{base_url}/commands"
     status, result = make_http_request(query_url)
     if status != 200 or not isinstance(result, dict) or "data" not in result:
-        raise ValueError(f"Failed to search for command '{name}'. Response: {result}")
+        raise ValueError(f"Failed to fetch commands from X-Plane. Response: {result}")
 
     for item in result["data"]:
         if item.get("name") == name:
             return int(item["id"])
 
-    if result.get("data"):
-        return int(result["data"][0]["id"])
+    # Fallback to substring matching if exact match not found
+    for item in result["data"]:
+        if name in item.get("name", ""):
+            return int(item["id"])
 
     raise LookupError(f"Command '{name}' not found in X-Plane session.")
 
@@ -550,7 +552,10 @@ def handle_web_list_datarefs(args):
             total = data.get("total", len(data.get("data", [])))
             print(f"Datarefs (Total: {total}, showing {len(data.get('data', []))}):")
             for item in data.get("data", []):
-                print(f"  [{item.get('id')}] {item.get('name')} ({item.get('type')}) = {item.get('value')} (writable={item.get('writable')})")
+                val_type = item.get("value_type") or item.get("type", "unknown")
+                writable = item.get("is_writable") if "is_writable" in item else item.get("writable", "n/a")
+                val = item.get("value") if "value" in item else item.get("data", "n/a")
+                print(f"  [{item.get('id')}] {item.get('name')} ({val_type}) = {val} (writable={writable})")
         return 0
     except Exception as e:
         print(f"[ERROR] Failed to query datarefs: {e}", file=sys.stderr)
@@ -566,7 +571,10 @@ def handle_web_get_dataref(args):
         if args.json:
             print(json.dumps({"id": dref_id, "query": args.name_or_id, "response": val_data}, indent=2))
         else:
-            val = val_data.get("value") if isinstance(val_data, dict) else val_data
+            if isinstance(val_data, dict):
+                val = val_data.get("data") if "data" in val_data else val_data.get("value")
+            else:
+                val = val_data
             print(f"{args.name_or_id} (ID {dref_id}) = {val}")
         return 0
     except Exception as e:
@@ -589,7 +597,8 @@ def handle_web_set_dataref(args):
                 val = val_str
 
         patch_url = f"{base_url}/datarefs/{dref_id}/value"
-        status, resp = make_http_request(patch_url, method="PATCH", payload={"value": val}, timeout=args.timeout)
+        # Dual key payload ensures full compatibility with both X-Plane 12 (data) and mock specs (value)
+        status, resp = make_http_request(patch_url, method="PATCH", payload={"data": val, "value": val}, timeout=args.timeout)
         if status in {200, 204}:
             print(f"[SUCCESS] Set {args.name_or_id} (ID {dref_id}) to {val}")
             return 0
@@ -606,13 +615,12 @@ def handle_web_activate_command(args):
     try:
         cmd_id = resolve_command_id(base_url, args.name_or_id)
         url = f"{base_url}/command/{cmd_id}/activate"
-        payload = {}
-        if args.duration is not None and args.duration > 0:
-            payload["duration"] = float(args.duration)
+        duration = float(args.duration) if (args.duration is not None and args.duration > 0) else 0.0
+        payload = {"duration": duration}
 
         status, resp = make_http_request(url, method="POST", payload=payload, timeout=args.timeout)
         if status in {200, 204}:
-            dur_msg = f" for {args.duration}s" if args.duration else " momentarily"
+            dur_msg = f" for {duration}s" if duration > 0 else " momentarily"
             print(f"[SUCCESS] Activated command {args.name_or_id} (ID {cmd_id}){dur_msg}")
             return 0
         else:
@@ -642,10 +650,11 @@ def handle_web_subscribe(args):
     ws = SimpleWebSocketClient(args.host, args.port, path="/api/v3")
     try:
         ws.connect()
-        # Send subscription request
+        # Send subscription request using official X-Plane 12 WS protocol
         sub_req = {
-            "action": "dataref_subscribe_values",
-            "parameters": {"datarefs": list(id_map.keys())}
+            "req_id": 1,
+            "type": "dataref_subscribe_values",
+            "params": {"datarefs": [{"id": d_id} for d_id in id_map.keys()]}
         }
         ws.send_json(sub_req)
         print("[CONNECTED] Streaming live telemetry (Press Ctrl+C to stop)...")
@@ -654,9 +663,9 @@ def handle_web_subscribe(args):
         while True:
             msg = ws.recv_json(timeout=2.0)
             if msg:
-                event = msg.get("event")
-                if event == "dataref_update_values":
-                    vals = msg.get("values", {})
+                msg_type = msg.get("type") or msg.get("event")
+                if msg_type == "dataref_update_values":
+                    vals = msg.get("data") or msg.get("values", {})
                     formatted = {id_map.get(int(k), k): v for k, v in vals.items()}
                     if args.json:
                         print(json.dumps(formatted))
