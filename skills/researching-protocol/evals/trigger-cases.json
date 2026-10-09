@@ -1,0 +1,90 @@
+[
+  {
+    "query": "Can you do a deep research on the differences between Apache Iceberg and Delta Lake for our analytics lakehouse? We need to evaluate write amplification, partition evolution, and vendor lock-in risks before making our Q3 architectural decision.",
+    "should_trigger": true
+  },
+  {
+    "query": "Our team is hearing rumors that Supabase had a major auth outage last week due to a GoTrue JWT issue. Can you investigate what actually happened, find post-mortems or incident reports, and verify if it affected self-hosted instances?",
+    "should_trigger": true
+  },
+  {
+    "query": "Conduct comprehensive market research on the top 5 vector database vendors (Pinecone, Qdrant, Milvus, Weaviate, Chroma). Compare their indexing algorithms (HNSW vs IVF), memory efficiency, managed pricing tiers, and enterprise adoption.",
+    "should_trigger": true
+  },
+  {
+    "query": "I need an in-depth intelligence dossier on the regulatory landscape for autonomous drone deliveries in the European Union (EASA regulations vs national aviation authorities). Focus on SORA risk assessments and timeline for Beyond Visual Line of Sight (BVLOS).",
+    "should_trigger": true
+  },
+  {
+    "query": "Synthesize the latest research papers (2024-2026) regarding Speculative Decoding and Medusa-style multi-head drafting for LLM inference acceleration. What are the empirical speedup numbers on standard benchmarks and memory overhead trade-offs?",
+    "should_trigger": true
+  },
+  {
+    "query": "We're deciding whether to adopt Rust or Go for our high-throughput payment settlement microservice. Investigate real-world latency distributions (p99/p99.9), memory safety guarantees, concurrency models, and find post-mortems from fintechs that migrated.",
+    "should_trigger": true
+  },
+  {
+    "query": "Fact-check this claim I saw on Reddit: 'Did Redis relicensing from BSD-3 to RSALv2/SSPL lead to a mass fork by the Linux Foundation called Valkey?' Gather primary announcements, timeline, and community adoption stats.",
+    "should_trigger": true
+  },
+  {
+    "query": "Execute a competitive teardown of Linear vs Jira vs Plane for engineering project management. Compare keyboard ergonomics, sync engine architectures, offline capabilities, API rate limits, and pricing per user.",
+    "should_trigger": true
+  },
+  {
+    "query": "Research the feasibility and security vulnerabilities of using eBPF for runtime container security monitoring. What are the kernel bypass risks, verifier constraints, and performance overhead according to recent security whitepapers?",
+    "should_trigger": true
+  },
+  {
+    "query": "Investigate the environmental impact and power consumption of training frontier AI models compared to traditional data center workloads. Cross-reference independent peer-reviewed energy audits with big tech corporate sustainability reports.",
+    "should_trigger": true
+  },
+  {
+    "query": "Can you write a python script to reverse a linked list?",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix this syntax error in my main.go file: 'syntax error: unexpected newline, expecting comma or )' on line 42.",
+    "should_trigger": false
+  },
+  {
+    "query": "What's the weather forecast in Tokyo this weekend?",
+    "should_trigger": false
+  },
+  {
+    "query": "Rename the file ./data/old_records.csv to ./data/archive_2025.csv using powershell.",
+    "should_trigger": false
+  },
+  {
+    "query": "Calculate the compound interest on $15,000 at 6.5% annually over 10 years.",
+    "should_trigger": false
+  },
+  {
+    "query": "Translate this paragraph from English to Spanish: 'Our deployment pipeline failed due to a missing environment variable.'",
+    "should_trigger": false
+  },
+  {
+    "query": "Convert this Dockerfile into a docker-compose.yml file with a postgres sidecar.",
+    "should_trigger": false
+  },
+  {
+    "query": "What is the git command to discard all unstaged changes in the working directory?",
+    "should_trigger": false
+  },
+  {
+    "query": "Generate a unit test for this calculateTotal function using pytest.",
+    "should_trigger": false
+  },
+  {
+    "query": "Explain what a 404 HTTP status code means in one sentence.",
+    "should_trigger": false
+  },
+  {
+    "query": "Help me format this JSON string so it has proper 2-space indentation.",
+    "should_trigger": false
+  },
+  {
+    "query": "Add a console.log statement inside the onSubmit handler in src/components/Form.tsx.",
+    "should_trigger": false
+  }
+]

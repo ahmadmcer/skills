@@ -1,0 +1,85 @@
+[
+  {
+    "eval_id": 1,
+    "eval_name": "technical-consensus-engine-evaluation",
+    "domain": "technical",
+    "prompt": "Conduct deep research comparing Raft vs Paxos vs Viewstamped Replication (VR) consensus algorithms for a distributed key-value store. Analyze leader election mechanics, log replication throughput, Byzantine fault tolerance limitations, and evaluate why modern systems (etcd, CockroachDB, TiKV) almost universally adopted Raft over Paxos.",
+    "expected_output": "A Tier 2 Deep Dive Dossier with technical comparison matrix, inline citations, ICD 203 calibrated confidence scoring, and source provenance table.",
+    "assertions": [
+      {
+        "text": "Dossier includes a structured comparative trade-off matrix evaluating Raft, Paxos, and VR across leader election, log replication, and operational complexity.",
+        "type": "content_check"
+      },
+      {
+        "text": "Every empirical performance claim or historical design decision includes traceable inline citations [1], [2] linked to primary specifications or engineering post-mortems.",
+        "type": "citation_check"
+      },
+      {
+        "text": "Analytic findings are calibrated with explicit Analytic Confidence ratings (High/Moderate/Low) and standardized Words of Estimative Probability (WEP).",
+        "type": "icd203_check"
+      },
+      {
+        "text": "Separation rule is respected: no conflation of likelihood and confidence in the same statement.",
+        "type": "epistemic_check"
+      },
+      {
+        "text": "Source Provenance table lists verified URLs, publication dates, and source tiers (Tier 1/Tier 2).",
+        "type": "provenance_check"
+      }
+    ]
+  },
+  {
+    "eval_id": 2,
+    "eval_name": "market-competitive-vector-database-landscape",
+    "domain": "market",
+    "prompt": "Execute an in-depth competitive intelligence investigation of managed Vector Databases (Pinecone vs Qdrant vs Weaviate). Investigate their indexing architectures (HNSW vs custom quantization), pricing models, cloud vendor lock-in risks, and enterprise SOC2/HIPAA compliance posture.",
+    "expected_output": "A Tier 2 Deep Dive Dossier with competitor teardown table, commercial pricing transparency breakdown, counter-evidence on marketing claims, and verified citations.",
+    "assertions": [
+      {
+        "text": "Includes an objective evaluation matrix contrasting architectural indexing, pricing tiers, and compliance postures across all three vendors.",
+        "type": "content_check"
+      },
+      {
+        "text": "Applies lateral reading (SIFT Move 2) to identify commercial bias, vendor-sponsored benchmark claims, and independent third-party performance verifications.",
+        "type": "sift_check"
+      },
+      {
+        "text": "Contains explicit documentation of critical assumptions made and remaining knowledge gaps regarding proprietary pricing or enterprise discount structures.",
+        "type": "gap_check"
+      },
+      {
+        "text": "Features a complete bibliography with source tier classifications and live URLs.",
+        "type": "provenance_check"
+      }
+    ]
+  },
+  {
+    "eval_id": 3,
+    "eval_name": "investigative-fact-check-ach-matrix",
+    "domain": "investigative",
+    "prompt": "Investigate the conflicting claims surrounding the CrowdStrike Falcon kernel sensor crash on July 19, 2024. Formulate competing hypotheses regarding the root cause (Was it an active cyberattack, an unvalidated sensor configuration update, a Windows kernel bug, or a memory safety flaw in C++?), construct an ACH diagnostic matrix, and determine the most consistent finding based on official RCA reports.",
+    "expected_output": "A Tier 3 Exhaustive Intelligence Dossier featuring a formal ACH diagnostic matrix, inconsistency penalty calculations, and disconfirming evidence breakdown.",
+    "assertions": [
+      {
+        "text": "Constructs a formal Analysis of Competing Hypotheses (ACH) diagnostic matrix evaluating at least 3 mutually exclusive hypotheses against empirical telemetry and RCA evidence.",
+        "type": "ach_matrix_check"
+      },
+      {
+        "text": "Calculates inconsistency scores and identifies which hypotheses are eliminated by disconfirming diagnostic evidence.",
+        "type": "ach_scoring_check"
+      },
+      {
+        "text": "Traces primary claims back to the official CrowdStrike External Technical Root Cause Analysis (RCA) and Microsoft security disclosures (Tier 1 sources).",
+        "type": "sift_trace_check"
+      },
+      {
+        "text": "Defines explicit Falsification Criteria and Indicators of Change that would modify the conclusion.",
+        "type": "falsification_check"
+      },
+      {
+        "text": "Maintains an exhaustive source provenance table with complete metadata and tier classifications.",
+        "type": "provenance_check"
+      }
+    ]
+  }
+]
