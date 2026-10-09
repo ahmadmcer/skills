@@ -1,0 +1,58 @@
+[
+  {
+    "suite_name": "SaaS Analytics Dashboard Wireframe & IA",
+    "description": "Tests generation of structured ASCII wireframes, responsive viewport adaptation, and visual hierarchy using the 8pt spacing system.",
+    "input_scenario": "Design an executive analytics dashboard showing MRR, churn rate, user growth, and a recent transaction feed.",
+    "expected_deliverables": [
+      "Desktop 1280px ASCII wireframe with F/Z-pattern visual scanning path",
+      "Mobile 375px responsive adaptation with 1-column collapse and bottom navigation",
+      "8pt/4pt spacing token mapping (margins, card paddings, gutters)",
+      "Information architecture breakdown with Miller's law chunking"
+    ]
+  },
+  {
+    "suite_name": "8-State Interactive Component Specification",
+    "description": "Tests full 8-state component lifecycle matrix generation with Tailwind CSS utility classes and WCAG 2.2 accessibility attributes.",
+    "input_scenario": "Create an accessible primary CTA button and search input field for a fintech banking webapp.",
+    "expected_deliverables": [
+      "Explicit visual and behavioral definitions for all 8 states (Default, Hover, Active, Focus, Disabled, Loading, Empty, Error)",
+      "High-contrast focus-visible ring classes with 2px offset",
+      "Keyboard navigation mapping (Enter, Space, Tab, Escape)",
+      "WCAG 2.2 AA contrast verification (>= 4.5:1 text, >= 3.0:1 UI elements)"
+    ]
+  },
+  {
+    "suite_name": "E-Commerce Checkout Usability & Accessibility Audit",
+    "description": "Tests heuristic evaluation and accessibility auditing against Nielsen's 10 Usability Heuristics and WCAG 2.2 AA standards.",
+    "input_scenario": "Audit a single-page checkout flow with address form, credit card input, and place order button.",
+    "expected_deliverables": [
+      "Heuristic review identifying potential error-prevention flaws and cognitive friction",
+      "WCAG 2.2 contrast ratio verification on buttons and placeholder text",
+      "Explicit label association check (<label for='...'> matching input IDs)",
+      "Actionable remediation checklist with prioritized impact ratings"
+    ]
+  },
+  {
+    "suite_name": "Agent UX Human-in-the-Loop Reasoning Surface",
+    "description": "Tests design of modern AI agentic interfaces adhering to the 5 AUX heuristics and progressive transparency.",
+    "input_scenario": "Design an interface for an autonomous coding agent executing file modifications and shell commands.",
+    "expected_deliverables": [
+      "Summary-first status header with live state badge (Thinking, Running Tool, Waiting Approval)",
+      "Progressive transparency disclosure with collapsible thought/tool trace accordion",
+      "Confidence meter / source grounding indicators",
+      "3-tier permission controls (autonomous read vs checkpoint confirmation for destructive writes)",
+      "Pre-execution diff preview and 1-click rollback affordance"
+    ]
+  },
+  {
+    "suite_name": "Mobile Navigation & Touch Ergonomics",
+    "description": "Tests mobile-first ergonomic layout design conforming to Fitts's Law, thumb zone mapping, and minimum touch target sizes.",
+    "input_scenario": "Design a mobile bottom navigation bar and draggable action sheet for a ride-sharing or delivery application.",
+    "expected_deliverables": [
+      "Minimum 44x44px interactive tap area enforcement on all icon buttons",
+      "Thumb zone allocation placing frequent actions in the lower third of the screen",
+      "Gesture-driven sheet dismissal with accessible fallback close button",
+      "ARIA roles and live region announcements for dynamic route updates"
+    ]
+  }
+]

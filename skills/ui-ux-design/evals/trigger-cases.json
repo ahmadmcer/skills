@@ -1,0 +1,90 @@
+[
+  {
+    "query": "Can you design a responsive dashboard layout for our SaaS metrics? I need ASCII wireframes for both desktop and mobile, with an 8pt grid breakdown and clear visual hierarchy for our KPIs.",
+    "should_trigger": true
+  },
+  {
+    "query": "We're building a new primary button and text input in React with Tailwind. Could you specify all 8 component states (hover, focus-visible, loading, disabled, error, etc.) along with WCAG 2.2 AA contrast rules?",
+    "should_trigger": true
+  },
+  {
+    "query": "Please run an audit on our checkout page markup in src/components/Checkout.tsx. Check for WCAG contrast ratios, missing form labels, touch target sizes, and Nielsen usability heuristic violations.",
+    "should_trigger": true
+  },
+  {
+    "query": "How should we design the user experience for an autonomous AI agent workflow? I want to show reasoning traces, live status pills, confidence meters, and a 1-click rollback affordance without cluttering the screen.",
+    "should_trigger": true
+  },
+  {
+    "query": "Review this mobile bottom sheet component. The tap targets feel awkward on mobile and I'm not sure if the gesture swipe area meets Fitts's law and Apple HIG 44px recommendations.",
+    "should_trigger": true
+  },
+  {
+    "query": "What's the best information architecture for an enterprise settings page with over 40 options? How do we use progressive disclosure, tabs, and Miller's law chunking so users aren't overwhelmed?",
+    "should_trigger": true
+  },
+  {
+    "query": "Calculate the contrast ratio between our brand primary #2563eb and background #f9fafb. Does it pass WCAG 2.2 AA for normal 14px body text?",
+    "should_trigger": true
+  },
+  {
+    "query": "Help me build an accessible modal dialog specification. It needs keyboard focus trapping, Escape key listener, accessible aria landmarks, and an emergency exit button following Jakob Nielsen's heuristics.",
+    "should_trigger": true
+  },
+  {
+    "query": "Our users are complaining about form errors wiping their inputs. Can you review our error prevention patterns and design clear inline error states and undo toasts?",
+    "should_trigger": true
+  },
+  {
+    "query": "Scaffold an 8-state component spec for an interactive AgentTaskCard that displays streaming steps, tool execution states, and human-in-the-loop approval checkpoints.",
+    "should_trigger": true
+  },
+  {
+    "query": "We need to structure our design system spacing tokens on an 8pt grid. Can you generate the semantic token mappings and CSS variable definitions for light and dark modes?",
+    "should_trigger": true
+  },
+  {
+    "query": "Help us define our corporate brand strategy, company mission statement, and brand archetypes (The Sage vs The Outlaw).",
+    "should_trigger": false
+  },
+  {
+    "query": "Generate SVG logo variants and app icons for our new fitness startup brand.",
+    "should_trigger": false
+  },
+  {
+    "query": "Fix this TypeScript compilation error: TS2322 Type 'string' is not assignable to type 'number' in database.ts line 45.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a Python FastAPI route that connects to PostgreSQL and fetches recent orders.",
+    "should_trigger": false
+  },
+  {
+    "query": "Commit my staged changes with a Conventional Commits message.",
+    "should_trigger": false
+  },
+  {
+    "query": "Update our CHANGELOG.md for the v1.2.0 release and calculate the next SemVer bump.",
+    "should_trigger": false
+  },
+  {
+    "query": "Draft a 15-beat Save the Cat beat sheet for my science fiction novel.",
+    "should_trigger": false
+  },
+  {
+    "query": "Look up the original Koine Greek text and commentary for John 1:1.",
+    "should_trigger": false
+  },
+  {
+    "query": "Deploy our Docker container to Railway and configure environment variables.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a Lyria 3.5 music prompt for an 80s synthwave instrumental at 120 BPM.",
+    "should_trigger": false
+  },
+  {
+    "query": "Generate a Diátaxis documentation portal for VitePress with API references.",
+    "should_trigger": false
+  }
+]

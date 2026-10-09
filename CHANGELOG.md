@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning 2.0.0](https://semver.org/spec/
 
 ### Added
 
+- **UI/UX & Design Systems**:
+  - `ui-ux-design`: Full-lifecycle user interface and user experience design intelligence skill encompassing cognitive ergonomic laws (Fitts, Hick, Miller, Jakob, Gestalt, Doherty Threshold), Nielsen Norman Group's 10 Usability Heuristics, the 8-state component lifecycle (Default, Hover, Active, Focus, Disabled, Loading, Empty, Error), 8pt/4pt spatial grids, WCAG 2.2 Level AA accessibility compliance (relative luminance, contrast ratios, 44px touch targets, focus rings), and modern 2026 Agent UX (Human-AI Interaction) patterns with progressive transparency and 1-click rollback affordances. Bundles standalone zero-dependency CLI tools `audit_ui_ux.py` (100-point rubric linter and WCAG contrast calculator) and `generate_component_spec.py` (8-state component scaffolder with Tailwind tokens and ARIA attributes).
 - **Generative Audio & Music Engineering**:
   - `lyria-prompt-craft`: Google DeepMind Lyria 3.5 music prompt engineering skill implementing the 6-Dimensional Music Brief (Genre & Era Fusion, Mood & Dynamics, Concrete Instrumentation Palette, Tempo & Rhythmic Groove, Vocal Architecture, and Production / Acoustic Space), precision timestamp timelines (`[M:SS - M:SS] Section: Description`), strict separation between vocal direction and verbatim lyrics, audio engineering negative constraints, and CFG Scale tuning (6.0–7.5). Includes standalone zero-dependency CLI tools `craft_lyria_prompt.py` and `audit_lyria_prompt.py` (10-point quality rubric).
 - **Flight Simulation & Aerospace Automation**:

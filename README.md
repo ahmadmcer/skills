@@ -23,6 +23,7 @@ flowchart LR
     D -->|Storytelling| F["novel-architect / novel-storytelling"]
     D -->|Theology & Exegesis| G["christianity / islamic / jewish"]
     D -->|Brand Identity| H["branding-process"]
+    D -->|UI/UX & Design Systems| L["ui-ux-design"]
     D -->|Generative Audio| I["lyria-prompt-craft"]
     D -->|Flight Simulation| K["use-xplane"]
     D -->|Upstream Platforms| J["android-cli / use-railway / skill-creator"]
@@ -96,6 +97,12 @@ git clone https://github.com/ahmadmcer/skills.git .agents
 | :------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------- | :--------------------------------------------- |
 | **[`branding-process`](skills/branding-process/)** | Brand strategy, positioning, archetype mapping, verbal voice & tone, accessible color palettes, responsive logos, and W3C/Tailwind design tokens. | [SKILL.md](skills/branding-process/SKILL.md) | `generate_tokens.py`, `scaffold_svg_assets.py` |
 
+### 🎨 UI/UX & Design Systems
+
+| Skill                                      | Focus                                                                                                                                                                           | Documentation                            | Tools Included                                 |
+| :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------- | :--------------------------------------------- |
+| **[`ui-ux-design`](skills/ui-ux-design/)** | Full-lifecycle UI/UX engineering: cognitive UX laws, 8-state component lifecycle, 8pt spatial grid, WCAG 2.2 AA accessibility, and modern 2026 Agent UX (Human-AI Interaction). | [SKILL.md](skills/ui-ux-design/SKILL.md) | `audit_ui_ux.py`, `generate_component_spec.py` |
+
 ### 🎵 Generative Audio & Music Engineering
 
 | Skill                                                  | Focus                                                                                                                                                                           | Documentation                                  | Tools Included                                   |
@@ -104,9 +111,9 @@ git clone https://github.com/ahmadmcer/skills.git .agents
 
 ### ✈️ Flight Simulation & Aerospace Automation
 
-| Skill                                    | Focus                                                                                                                                                                                           | Documentation                             | Tools Included                         |
-| :--------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------- | :------------------------------------- |
-| **[`use-xplane`](skills/use-xplane/)**   | Laminar Research X-Plane 11 & 12 Web API (REST & WebSocket v1/v2/v3), high-frequency UDP binary telemetry, flight scenario dispatch (`POST /flight`), and Dataref/Command cockpit automation. | [SKILL.md](skills/use-xplane/SKILL.md)   | `xplane_cli.py`, `test_xplane_cli.py`  |
+| Skill                                  | Focus                                                                                                                                                                                         | Documentation                          | Tools Included                        |
+| :------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------- | :------------------------------------ |
+| **[`use-xplane`](skills/use-xplane/)** | Laminar Research X-Plane 11 & 12 Web API (REST & WebSocket v1/v2/v3), high-frequency UDP binary telemetry, flight scenario dispatch (`POST /flight`), and Dataref/Command cockpit automation. | [SKILL.md](skills/use-xplane/SKILL.md) | `xplane_cli.py`, `test_xplane_cli.py` |
 
 ### 🌐 Curated Upstream Integrations
 
@@ -160,6 +167,10 @@ python skills/novel-storytelling/scripts/lint_prose.py chapter1.md
 # 6. Craft and audit a Google Lyria 3.5 generative music prompt
 python skills/lyria-prompt-craft/scripts/craft_lyria_prompt.py --genre "Synthwave" --bpm 118 --duration 180 --structure pop
 python skills/lyria-prompt-craft/scripts/audit_lyria_prompt.py --file prompt.txt
+
+# 7. Audit UI markup for WCAG 2.2 accessibility and scaffold an 8-state component
+python skills/ui-ux-design/scripts/audit_ui_ux.py --file src/components/Dashboard.tsx
+python skills/ui-ux-design/scripts/generate_component_spec.py --name AgentTaskCard --type agent-card
 ```
 
 ---
@@ -193,7 +204,7 @@ npx markdownlint-cli2 "**/*.md"
 .
 ├── .github/                          # Issue and Pull Request templates
 ├── commands/                         # Custom agent slash command extensions
-├── skills/                           # 16 production Agent Skills
+├── skills/                           # 18 production Agent Skills
 │   ├── android-cli/                  # Upstream: Google / Android
 │   ├── branding-process/             # Brand strategy & design tokens
 │   ├── changelog-versioning/         # SemVer 2.0.0 & Keep a Changelog 1.1.0
@@ -209,7 +220,9 @@ npx markdownlint-cli2 "**/*.md"
 │   ├── project-documentation/        # Diátaxis framework & DocOps quality gates
 │   ├── sdlc-process/                 # PRDs, Spec-Driven Development, and TDD
 │   ├── skill-creator/                # Upstream: Anthropic
-│   └── use-railway/                  # Upstream: Railway
+│   ├── ui-ux-design/                 # Full-lifecycle UI/UX, 8-state components & WCAG
+│   ├── use-railway/                  # Upstream: Railway
+│   └── use-xplane/                   # Laminar Research X-Plane 11/12 Web API & UDP
 ├── pyproject.toml                    # Ruff Python linter & formatter configuration
 ├── .prettierrc.json                  # Prettier Markdown & JSON formatting rules
 ├── .markdownlint.json                # DocOps Markdown quality lint rules
