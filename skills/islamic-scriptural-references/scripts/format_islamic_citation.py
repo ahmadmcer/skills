@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Standardize, validate, and format Islamic scriptural citations.
+"""Standardize, validate, and format Islamic scriptural citations (Quran, Hadith, Tafsir, Duas, Asma ul Husna).
 
 Zero-dependency script compatible with Python 3.10+.
 """
@@ -244,33 +244,133 @@ SURAH_NAMES_MAP = {
     "an-nas": 114,
 }
 
+# Ordered longest-alias-first so specific aliases match before short substrings
 HADITH_COLLECTIONS = {
-    "bukhari": "Sahih al-Bukhari",
     "sahih al-bukhari": "Sahih al-Bukhari",
     "sahih bukhari": "Sahih al-Bukhari",
-    "muslim": "Sahih Muslim",
+    "bukhari": "Sahih al-Bukhari",
     "sahih muslim": "Sahih Muslim",
+    "muslim": "Sahih Muslim",
+    "sunan abi dawud": "Sunan Abi Dawud",
+    "sunan abu dawud": "Sunan Abi Dawud",
+    "abi dawud": "Sunan Abi Dawud",
     "abu dawud": "Sunan Abi Dawud",
     "abudawud": "Sunan Abi Dawud",
-    "sunan abi dawud": "Sunan Abi Dawud",
-    "tirmidhi": "Jami` at-Tirmidhi",
-    "at-tirmidhi": "Jami` at-Tirmidhi",
+    "jami` at-tirmidhi": "Jami` at-Tirmidhi",
     "jami at-tirmidhi": "Jami` at-Tirmidhi",
-    "nasai": "Sunan an-Nasa'i",
-    "an-nasai": "Sunan an-Nasa'i",
+    "at-tirmidhi": "Jami` at-Tirmidhi",
+    "tirmidhi": "Jami` at-Tirmidhi",
+    "sunan an-nasa'i": "Sunan an-Nasa'i",
     "sunan an-nasai": "Sunan an-Nasa'i",
+    "an-nasa'i": "Sunan an-Nasa'i",
+    "an-nasai": "Sunan an-Nasa'i",
+    "nasai": "Sunan an-Nasa'i",
+    "sunan ibn majah": "Sunan Ibn Majah",
     "ibn majah": "Sunan Ibn Majah",
     "ibnmajah": "Sunan Ibn Majah",
-    "sunan ibn majah": "Sunan Ibn Majah",
-    "malik": "Muwatta Malik",
     "muwatta malik": "Muwatta Malik",
-    "ahmad": "Musnad Ahmad",
+    "muwatta": "Muwatta Malik",
+    "malik": "Muwatta Malik",
     "musnad ahmad": "Musnad Ahmad",
+    "ahmad": "Musnad Ahmad",
+    "nawawi's 40 hadith": "Nawawi's 40 Hadith",
+    "40 hadith nawawi": "Nawawi's 40 Hadith",
+    "arba'in nawawi": "Nawawi's 40 Hadith",
+    "nawawi": "Nawawi's 40 Hadith",
+    "40 hadith qudsi": "40 Hadith Qudsi",
+    "hadith qudsi": "40 Hadith Qudsi",
+    "qudsi": "40 Hadith Qudsi",
+    "shah waliullah's 40 hadith": "Shah Waliullah's 40 Hadith",
+    "shah waliullah": "Shah Waliullah's 40 Hadith",
+    "dehlawi": "Shah Waliullah's 40 Hadith",
+}
+
+TAFSIR_SOURCES = {
+    "ibn kathir (arabic)": "Tafsir Ibn Kathir (Arabic)",
+    "ibn_kathir_ar": "Tafsir Ibn Kathir (Arabic)",
+    "ibn kathir": "Tafsir Ibn Kathir",
+    "ibn_kathir": "Tafsir Ibn Kathir",
+    "ma'arif al-qur'an": "Ma'arif al-Qur'an",
+    "maarif al-quran": "Ma'arif al-Qur'an",
+    "maarif": "Ma'arif al-Qur'an",
+    "tafsir muyassar": "Tafsir Muyassar",
+    "muyassar": "Tafsir Muyassar",
 }
 
 
 def normalize_input(text: str) -> str:
     return text.strip().lower()
+
+
+def format_tafsir_citation(text: str) -> dict | None:
+    norm = normalize_input(text)
+    if "tafsir" not in norm and not any(k in norm for k in TAFSIR_SOURCES):
+        return None
+    m_ref = re.search(r"\b(\d{1,3}):(\d{1,3})\b", norm)
+    if not m_ref:
+        return None
+    surah = int(m_ref.group(1))
+    ayah = int(m_ref.group(2))
+    for alias, official in TAFSIR_SOURCES.items():
+        if alias in norm:
+            return {
+                "type": "tafsir",
+                "edition": official,
+                "surah": surah,
+                "ayah": ayah,
+                "canonical_brief": f"[{official} {surah}:{ayah}]",
+                "canonical_formal": f"{official} on Surah {surah}:{ayah}",
+            }
+    return None
+
+
+def format_asma_or_dua_citation(text: str) -> dict | None:
+    norm = normalize_input(text)
+    m_asma = re.search(r"(?:asma\s*ul\s*husna|99\s*names|asma)\s*#?(\d{1,2})\b", norm)
+    if m_asma:
+        num = int(m_asma.group(1))
+        if 1 <= num <= 99:
+            return {
+                "type": "asma_ul_husna",
+                "number": num,
+                "canonical_brief": f"[Asma ul Husna {num}]",
+                "canonical_formal": f"Asma' Allah al-Husna, Name #{num}",
+            }
+    m_dua = re.search(r"\bdua\s*#?(\d{1,3})\b", norm)
+    if m_dua:
+        num = int(m_dua.group(1))
+        return {
+            "type": "dua",
+            "id": num,
+            "canonical_brief": f"[UmmahAPI Dua {num}]",
+            "canonical_formal": f"Authentic Supplication (Dua #{num})",
+        }
+    return None
+
+
+def format_hadith_citation(text: str) -> dict | None:
+    norm = normalize_input(text)
+
+    for alias, official_name in HADITH_COLLECTIONS.items():
+        if alias in norm:
+            # Strip trailing number inside alias (like '40') before matching hadith number
+            idx = norm.find(alias) + len(alias)
+            remainder = norm[idx:]
+            m = re.search(r"(\d+(?:\.\d+)?)", remainder)
+            if m:
+                num_str = m.group(1)
+                num_val: int | float | str = (
+                    int(num_str) if num_str.isdigit() else num_str
+                )
+                return {
+                    "type": "hadith",
+                    "collection": official_name,
+                    "hadith_number": num_val,
+                    "canonical_brief": f"[{official_name} {num_str}]",
+                    "canonical_formal": f"{official_name}, Hadith {num_str}",
+                }
+
+    return None
 
 
 def format_quran_citation(text: str) -> dict | None:
@@ -294,7 +394,8 @@ def format_quran_citation(text: str) -> dict | None:
 
     # Pattern 2: Named surah e.g. "Surat Al-Baqarah verse 255" or "baqarah 255"
     m2 = re.search(
-        r"(?:surah|surat)?\s*([a-z\'-]+)\s*(?:ayah|verse|ayat)?\s*(\d{1,3})(?:-(\d{1,3}))?", norm
+        r"(?:surah|surat)?\s*([a-z\'-]+)\s*(?:ayah|verse|ayat)?\s*(\d{1,3})(?:-(\d{1,3}))?",
+        norm,
     )
     if m2:
         name_candidate = (
@@ -323,54 +424,32 @@ def format_quran_citation(text: str) -> dict | None:
     return None
 
 
-def format_hadith_citation(text: str) -> dict | None:
-    norm = normalize_input(text)
-
-    for alias, official_name in HADITH_COLLECTIONS.items():
-        if alias in norm:
-            m = re.search(rf"{re.escape(alias)}.*?(\d+)", norm)
-            if m:
-                num = int(m.group(1))
-                return {
-                    "type": "hadith",
-                    "collection": official_name,
-                    "hadith_number": num,
-                    "canonical_brief": f"[{official_name} {num}]",
-                    "canonical_formal": f"{official_name}, Hadith {num}",
-                }
-
-    return None
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Standardize and format Islamic scriptural citations"
     )
     parser.add_argument(
         "citation",
-        help="Raw citation text (e.g. '2:255', 'Surah Al-Baqarah verse 255', 'bukhari 1')",
+        help="Raw citation text (e.g. '2:255', 'Surah Al-Baqarah verse 255', 'bukhari 1', 'nawawi 1', 'tirmidhi 2787.2', 'Tafsir Ibn Kathir 2:255')",
     )
     parser.add_argument("--json", action="store_true", help="Output results in JSON format")
 
     args = parser.parse_args()
 
-    q_res = format_quran_citation(args.citation)
-    if q_res:
-        if args.json:
-            print(json.dumps(q_res, indent=2))
-        else:
-            print(f"Canonical Brief:  {q_res['canonical_brief']}")
-            print(f"Canonical Formal: {q_res['canonical_formal']}")
-        return 0
-
-    h_res = format_hadith_citation(args.citation)
-    if h_res:
-        if args.json:
-            print(json.dumps(h_res, indent=2))
-        else:
-            print(f"Canonical Brief:  {h_res['canonical_brief']}")
-            print(f"Canonical Formal: {h_res['canonical_formal']}")
-        return 0
+    for formatter in (
+        format_tafsir_citation,
+        format_asma_or_dua_citation,
+        format_hadith_citation,
+        format_quran_citation,
+    ):
+        res = formatter(args.citation)
+        if res:
+            if args.json:
+                print(json.dumps(res, indent=2))
+            else:
+                print(f"Canonical Brief:  {res['canonical_brief']}")
+                print(f"Canonical Formal: {res['canonical_formal']}")
+            return 0
 
     err_msg = f"Unable to recognize canonical scripture in '{args.citation}'."
     if args.json:

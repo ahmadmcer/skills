@@ -1,7 +1,8 @@
 # Hadith Collections & Grading Guide
 
-Read this guide when sourcing, authenticating, and citing narrations from the Sunnah,
-evaluating chains of transmission (_isnad_), or understanding Hadith grading levels.
+Read this guide when sourcing, authenticating, and citing narrations from the Sunnah
+via UmmahAPI (`https://ummahapi.com/`), evaluating chains of transmission (_isnad_),
+or understanding Hadith grading levels.
 
 ---
 
@@ -16,25 +17,42 @@ Every Hadith consists of two inseparable components:
 
 ---
 
-## 2. The Six Canonical Compendiums (_Kutub al-Sittah_)
+## 2. The 10 Canonical Collections on UmmahAPI
 
-The six primary Sunnah compilations in Sunni Islamic scholarship:
+UmmahAPI provides over **36,100+ Hadiths** across 10 primary Sunni collections via `GET /api/hadith/{collection}/{number}` and `GET /api/hadith/search`:
 
-| Collection Name                    | Compiler (Imam)                             | Status & Canonical Distinction                                                                              | Standard Reference Scheme  |
-| :--------------------------------- | :------------------------------------------ | :---------------------------------------------------------------------------------------------------------- | :------------------------- |
-| **Sahih al-Bukhari**               | Muhammad ibn Isma'il al-Bukhari (d. 256 AH) | The most authentic book after the Qur'an. Unanimously agreed upon as authentic (_Sahih_).                   | `[Sahih al-Bukhari 1]`     |
-| **Sahih Muslim**                   | Muslim ibn al-Hajjaj (d. 261 AH)            | Equal in authority to Bukhari, noted for superior arrangement of transmission chains without repetitions.   | `[Sahih Muslim 1907]`      |
-| **Sunan Abi Dawud**                | Abu Dawud al-Sijistani (d. 275 AH)          | Focused primarily on legal rulings (_Ahadith al-Ahkam_). Contains Sahih, Hasan, and noted Da'if narrations. | `[Sunan Abi Dawud 1500]`   |
-| **Jami` at-Tirmidhi**              | Abu 'Isa Muhammad at-Tirmidhi (d. 279 AH)   | Renowned for explicit grading after every Hadith (_"Hadith Hasan Sahih"_) and noting scholarly consensus.   | `[Jami` at-Tirmidhi 2317]` |
-| **Sunan an-Nasa'i** (_Al-Mujtaba_) | Ahmad ibn Shu'ayb an-Nasa'i (d. 303 AH)     | Highest rigor of narrator scrutiny after the two Sahihs.                                                    | `[Sunan an-Nasa'i 300]`    |
-| **Sunan Ibn Majah**                | Muhammad ibn Yazid Ibn Majah (d. 273 AH)    | Excellent thematic organization; contains more weak narrations than the other five.                         | `[Sunan Ibn Majah 224]`    |
+### A. The Six Canonical Compendiums (_Kutub al-Sittah_)
 
-### Other Renowned Compendiums
+| Collection Name                    | UmmahAPI Key | Compiler (Imam)                             | Hadith Count | Status & Canonical Distinction                                                                              | Standard Reference Scheme  |
+| :--------------------------------- | :----------- | :------------------------------------------ | :----------: | :---------------------------------------------------------------------------------------------------------- | :------------------------- |
+| **Sahih al-Bukhari**               | `bukhari`    | Muhammad ibn Isma'il al-Bukhari (d. 256 AH) |    7,580     | The most authentic book after the Qur'an. Unanimously agreed upon as authentic (_Sahih_).                   | `[Sahih al-Bukhari 1]`     |
+| **Sahih Muslim**                   | `muslim`     | Muslim ibn al-Hajjaj (d. 261 AH)            |    7,360     | Equal in authority to Bukhari, noted for superior arrangement of transmission chains without repetitions.   | `[Sahih Muslim 1907]`      |
+| **Sunan Abu Dawud**                | `abudawud`   | Abu Dawud al-Sijistani (d. 275 AH)          |    5,272     | Focused primarily on legal rulings (_Ahadith al-Ahkam_). Contains Sahih, Hasan, and noted Da'if narrations. | `[Sunan Abu Dawud 1500]`   |
+| **Jami` at-Tirmidhi**              | `tirmidhi`   | Abu 'Isa Muhammad at-Tirmidhi (d. 279 AH)   |    3,926     | Renowned for explicit grading after every Hadith (_"Hadith Hasan Sahih"_) and noting scholarly consensus.   | `[Jami` at-Tirmidhi 2317]` |
+| **Sunan an-Nasa'i** (_Al-Mujtaba_) | `nasai`      | Ahmad ibn Shu'ayb an-Nasa'i (d. 303 AH)     |    5,679     | Highest rigor of narrator scrutiny after the two Sahihs.                                                    | `[Sunan an-Nasa'i 300]`    |
+| **Sunan Ibn Majah**                | `ibnmajah`   | Muhammad ibn Yazid Ibn Majah (d. 273 AH)    |    4,340     | Excellent thematic organization; contains more weak narrations than the other five.                         | `[Sunan Ibn Majah 224]`    |
 
-- **Muwatta Malik**: Imam Malik ibn Anas (d. 179 AH). Foundational early compendium of Medina practice.
+### B. Foundational & Curated Compendiums on UmmahAPI
+
+| Collection Name                    | UmmahAPI Key | Compiler / Authority                        | Hadith Count | Status & Canonical Distinction                                                                              | Standard Reference Scheme           |
+| :--------------------------------- | :----------- | :------------------------------------------ | :----------: | :---------------------------------------------------------------------------------------------------------- | :---------------------------------- |
+| **Muwatta Malik**                  | `malik`      | Imam Malik ibn Anas (d. 179 AH)             |    1,829     | Earliest foundational compendium of Medinan prophetic practice and legal precedent.                         | `[Muwatta Malik 1]`                 |
+| **Nawawi's 40 Hadith**             | `nawawi`     | Imam Yahya ibn Sharaf an-Nawawi (d. 676 AH) |      42      | Core essential narrations (_Al-Arba'in al-Nawawiyyah_) encapsulating the foundations of Islam.              | `[Nawawi's 40 Hadith 1]`            |
+| **40 Hadith Qudsi**                | `qudsi`      | Curated from Kutub al-Sittah & Malik        |      40      | Sacred narrations where the Prophet (ﷺ) relates meanings directly attributed to Allah (SWT).                | `[40 Hadith Qudsi 1]`               |
+| **Shah Waliullah's 40 Hadith**     | `dehlawi`    | Shah Waliullah Dehlawi (d. 1176 AH)         |      40      | Concise prophetic maxims compiled with unbroken chains by the renowned Muhaddith of Delhi.                  | `[Shah Waliullah's 40 Hadith 1]`    |
+
+### Other Classical Compendiums (Non-UmmahAPI)
+
 - **Musnad Ahmad**: Imam Ahmad ibn Hanbal (d. 241 AH). Massive encyclopedic collection (> 27,000 narrations) arranged by Companion.
 - **Riyadh as-Salihin**: Imam Yahya ibn Sharaf an-Nawawi (d. 676 AH). Curated moral and spiritual handbook.
-- **The 40 Hadith of an-Nawawi**: Core essential narrations encapsulating the Islamic worldview.
+
+### Decimal Hadith Numbering & Keyword Search
+
+- Some collections in UmmahAPI use decimal sub-numbering for variant chains (e.g., `tirmidhi 2787.2`). Both `lookup_scripture.py` and `format_islamic_citation.py` support decimal numbers natively.
+- When the exact Hadith number is unknown, search first via UmmahAPI before citing:
+  ```bash
+  python <skill_path>/scripts/lookup_scripture.py --search-hadith "intention" --collection bukhari --limit 5
+  ```
 
 ---
 
@@ -74,7 +92,7 @@ Classical scholars developed five strict criteria for an authentic (_Sahih_) Had
 
 A complete scholarly citation must state:
 
-1. **Primary Collector**: e.g., _Sahih al-Bukhari_, _Jami` at-Tirmidhi_.
-2. **Book Title & Hadith Number**: e.g., _Book of Faith, Hadith 45_.
-3. **Companion Narrator**: e.g., _Narrated by Abu Hurairah (RA)_.
-4. **Grading & Authenticator**: Required whenever citing outside Bukhari and Muslim (e.g., _"Graded Sahih by Al-Albani in Sahih al-Jami' 1234"_).
+1. **Primary Collector**: e.g., _Sahih al-Bukhari_, _Jami` at-Tirmidhi_, _Muwatta Malik_, _Nawawi's 40 Hadith_.
+2. **Hadith Number**: e.g., _Hadith 1_ or _Hadith 2787.2_.
+3. **Companion Narrator**: e.g., _Narrated by 'Umar ibn al-Khattab (RA)_ or _Abu Hurairah (RA)_.
+4. **Grading & Authenticator**: Required whenever citing outside Bukhari and Muslim (e.g., _"Grade: Sahih"_ or _"Graded Hasan Sahih by At-Tirmidhi"_).
