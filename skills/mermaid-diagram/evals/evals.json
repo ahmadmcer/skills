@@ -1,0 +1,77 @@
+{
+  "skill_name": "mermaid-diagram",
+  "evals": [
+    {
+      "id": 1,
+      "name": "cloud-architecture-and-c4-container",
+      "prompt": "We're documenting our new multi-AZ payment platform in both our internal VitePress portal (Mermaid v12.2) and our public GitHub README. Create a cloud topology diagram using `architecture-beta` (showing Cloudflare CDN in an edge group, an API Gateway and two App Nodes in a compute group, and a Postgres primary + Redis cluster in a data group without overlapping nodes), plus a Tier 2 GitHub-safe C4 Container diagram.",
+      "expected_output": "Two syntactically valid Mermaid diagrams: (1) an `architecture-beta` diagram using `{group}` boundary edges, explicit `:L/:R/:T/:B` ports with no spaces around `:`, and `align column` to prevent sibling stacking; and (2) a `C4Container` diagram with `System_Boundary`, `Container`, `ContainerDb`, `Rel`, `accTitle`/`accDescr`, and `UpdateLayoutConfig`.",
+      "files": [],
+      "assertions": [
+        "Includes an `architecture-beta` block with `group` and `service` declarations",
+        "Uses `{group}` modifier on cross-group service edges rather than referencing a `groupId` directly",
+        "Uses explicit `:L`, `:R`, `:T`, or `:B` port specifiers with zero spaces around `:`",
+        "Includes `align column` or `align row` to prevent sibling services from stacking at the same coordinates",
+        "Includes a `C4Container` diagram with `accTitle` and `accDescr` accessibility metadata",
+        "Passes `audit_mermaid.py` with a score >= 90/100 and zero critical issues"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "ai-agentflow-and-sequence-lifelines",
+      "prompt": "Design a Mermaid v12 `agentflow-beta` diagram for our autonomous incident triage agent that reads a PagerDuty webhook input, consults a 'Runbook Skill' reference doc, calls a 'query_metrics' MCP tool over stdio, branches on whether the root cause is identified, and either executes an auto-remediation action or escalates on failure. Pair it with a `sequenceDiagram` showing dynamic worker creation (`create participant`) and teardown (`destroy`).",
+      "expected_output": "A valid `agentflow-beta` diagram using semantic shapes (`input`, `refdoc`, `tool`, `decision`, `action`, `task`), `connector`, `global`, and semantic edges (`-->`, `-.-`, `--x`), plus a `sequenceDiagram` using `create participant` and `destroy` immediately preceding their respective messages and `rgb()`/`rgba()` in `box` definitions.",
+      "files": [],
+      "assertions": [
+        "Uses `agentflow-beta` with `flow`, `global`, and `connector` blocks",
+        "Assigns semantic `@ { shape: ... }` types (`input`, `tool`, `refdoc`, `decision`, `action`)",
+        "Uses `-.-` for reference document consultation and `--x` for failure path routing",
+        "In `sequenceDiagram`, places `create participant` and `destroy` immediately before a message involving that participant",
+        "Avoids `#hex` colors in `sequenceDiagram` `box` or `rect` blocks (uses `rgb()`/`rgba()` or CSS color names)",
+        "Passes `audit_mermaid.py` with zero critical issues"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "broken-mermaid-syntax-remediation",
+      "prompt": "Our documentation build is failing on several broken Mermaid diagrams: (1) a flowchart with `A --> end`, `dev---ops`, `B[Process (v2)]`, and `classDef dashed stroke-dasharray: 5, 5`; (2) a sequence diagram with `box #eff6ff Auth` and `Client->>Server: Failed; retry`; (3) a Gantt chart with `Task A : t1, done, 2026-10-01, 3d` and `tickInterval 2weeks`; (4) a Quadrant chart with `Feature X: [35, 80]`; and (5) a Sankey chart starting with `source,target,value`. Fix all of them and explain each syntax breaker.",
+      "expected_output": "Corrected Mermaid code blocks for all 5 diagrams where every syntax breaker is fixed (`End`/`endNode[\"end\"]`, `dev --- ops`, quoted `\"Process (v2)\"`, escaped `5\\,5` or `5 5`, `box rgb(...)`, `#59;`, Gantt tag `done` before `t1`, singular `2week`, normalized `[0.35, 0.80]`, and commented `%% source,target,value`).",
+      "files": [],
+      "assertions": [
+        "Replaces bare lowercase `end` node and adds space or quotes for `dev --- ops`",
+        "Wraps `Process (v2)` in double quotes and fixes unescaped comma in `stroke-dasharray`",
+        "Replaces `box #eff6ff` with `box rgb(239, 246, 255)` and escapes `;` as `#59;` in `sequenceDiagram`",
+        "Reorders Gantt task metadata to `:done, t1, ...` and changes `2weeks` to `2week`",
+        "Normalizes Quadrant coordinates to `[0.35, 0.80]` and comments out `%% source,target,value` in `sankey-beta`",
+        "All 5 remediated diagrams score >= 90/100 on `audit_mermaid.py --strict`"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "executive-analytics-and-strategy-suite",
+      "prompt": "Create an executive strategy & analytics section in Mermaid containing: (1) an `xychart-beta` comparing quarterly revenue bar series and margin line series, (2) a `treemap-beta` breaking down cloud infrastructure spend formatted as currency `$0,0`, and (3) a `wardley-beta` value chain map for our AI platform.",
+      "expected_output": "Three valid diagrams: `xychart-beta` with double-quoted multi-word titles/axes, `treemap-beta` with `valueFormat: '$0,0'` and quoted hierarchy nodes, and `wardley-beta` using `[visibility, evolution]` (`[Y, X]`) coordinates in `[0.0..1.0]`.",
+      "files": [],
+      "assertions": [
+        "Double-quotes all multi-word titles and axis labels in `xychart-beta`",
+        "Uses `treemap-beta` with `valueFormat: \"$0,0\"` in YAML frontmatter and quoted section/leaf labels",
+        "Uses `wardley-beta` with `[visibility, evolution]` coordinates in `[0.0, 1.0]`",
+        "Passes `audit_mermaid.py --strict` with zero critical or warning issues"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "er-subgraphs-and-concurrent-state-machine",
+      "prompt": "Model our multi-tenant SaaS database and job lifecycle using: (1) an `erDiagram` grouped into 'Identity' and 'Billing' subgraphs (Mermaid v11.17+) with `PK, FK, UK` constraints and nullable `string?` fields, and (2) a `stateDiagram-v2` showing job queuing, a `<<choice>>` validation branch, and a composite `Running` state with two concurrent (`--`) worker regions.",
+      "expected_output": "A valid `erDiagram` with `subgraph id [\"Title\"]` blocks, quoted multi-word relationship labels, `PK`/`FK`/`UK` keys, and `string?` nullable types, plus a `stateDiagram-v2` with `<<choice>>` and `--` orthogonal concurrency inside a composite state.",
+      "files": [],
+      "assertions": [
+        "Uses `erDiagram` with explicit `subgraph id [\"Title\"]` bounded contexts and quoted multi-word relationship labels",
+        "Includes `PK`, `FK`, `UK` attribute markers and v11.16+ nullable `type?` syntax",
+        "Uses `stateDiagram-v2` with `<<choice>>` and `--` concurrent regions inside a composite state",
+        "Does not draw illegal cross-composite transitions between internal states of separate composite states",
+        "Passes `audit_mermaid.py --strict` with a score >= 95/100"
+      ]
+    }
+  ]
+}
