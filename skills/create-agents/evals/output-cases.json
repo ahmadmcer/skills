@@ -1,0 +1,80 @@
+[
+  {
+    "id": "output-01-fullstack-webapp-agents",
+    "title": "Fullstack Next.js + Prisma AGENTS.md Generation",
+    "prompt": "Generate a production-ready AGENTS.md for a Next.js 15, React 19, and Prisma web application managed with pnpm. Include explicit single-test execution commands, Client Component conventions, and Never Do boundaries.",
+    "expected_elements": {
+      "header_and_overview": "# AGENTS.md followed by tech stack identification (Next.js, TypeScript, React, pnpm).",
+      "operational_commands": [
+        "pnpm install",
+        "pnpm run build",
+        "pnpm test",
+        "pnpm test -- <path_to_test_file>",
+        "pnpm run lint",
+        "pnpm run typecheck"
+      ],
+      "single_test_pattern": "pnpm test -- <path_to_test_file>",
+      "architectural_conventions": "Rules covering Client Component minimalism, Tailwind utility usage, and Zod validation.",
+      "boundaries_and_never": [
+        "Never modify .next/ or dist/ build output folders.",
+        "Never commit .env or .env.local files containing secrets.",
+        "Never edit Prisma migration SQL files directly."
+      ],
+      "line_count_budget": "<= 150 lines"
+    }
+  },
+  {
+    "id": "output-02-fastapi-backend-agents",
+    "title": "Python FastAPI + SQLAlchemy Backend Service AGENTS.md",
+    "prompt": "Generate an AGENTS.md for a Python 3.12 FastAPI microservice managed with uv and Alembic. Include single-test pytest patterns, Pydantic validation rules, and database migration guardrails.",
+    "expected_elements": {
+      "stack_and_manifests": "Python 3.12, FastAPI, SQLAlchemy, Alembic, uv sync.",
+      "operational_commands": [
+        "uv sync",
+        "uv run pytest",
+        "uv run pytest <path_to_test_file>::<test_function>",
+        "uv run ruff check .",
+        "uv run mypy ."
+      ],
+      "single_test_pattern": "uv run pytest <path_to_test_file>::<test_function>",
+      "conventions": "Layer separation (Routers -> Service -> Repository), async sessions, Pydantic validation.",
+      "boundaries": "Never edit committed migration files in alembic/versions/ directly; never commit secrets."
+    }
+  },
+  {
+    "id": "output-03-monorepo-root-and-nested-agents",
+    "title": "Monorepo Workspace Root & Nested Package Scaffolding",
+    "prompt": "Scaffold a root AGENTS.md and a nested AGENTS.md for `apps/web` in a Turborepo monorepo managed via pnpm workspaces. Enforce package filter commands and localized subpackage scoping.",
+    "expected_elements": {
+      "root_filter_commands": "pnpm --filter <package_name> test",
+      "root_single_test": "pnpm --filter <package_name> test -- <path_to_test>",
+      "root_boundaries": "Never run global build/test when working on an isolated package.",
+      "nested_header": "# AGENTS.md - apps/web with inheritance note pointing to root AGENTS.md",
+      "nested_line_count": "<= 80 lines"
+    }
+  },
+  {
+    "id": "output-04-legacy-rule-migration",
+    "title": "Consolidate .cursorrules and CLAUDE.md into AGENTS.md with Bridges",
+    "prompt": "Inspect existing .cursorrules and CLAUDE.md files in the repository, consolidate operational rules into AGENTS.md, and create lightweight bridges so Claude Code and Cursor continue functioning without drift.",
+    "expected_elements": {
+      "rule_consolidation": "Unified AGENTS.md containing deduplicated commands, conventions, and boundaries.",
+      "claude_bridge": "CLAUDE.md contains '@AGENTS.md'.",
+      "copilot_bridge": ".github/copilot-instructions.md contains pointer to AGENTS.md.",
+      "cursor_bridge": ".cursor/rules/agents.mdc contains pointer to AGENTS.md.",
+      "zero_drift": "Single source of truth architecture maintained."
+    }
+  },
+  {
+    "id": "output-05-quality-audit-failing-remediation",
+    "title": "Audit and Remediate a Flawed Legacy AGENTS.md",
+    "prompt": "Audit an AGENTS.md file that contains unreplaced [TODO] strings, lacks a single-test command, lacks 'Never Do' boundaries, and exceeds 250 lines of narrative text. Output the quality score (<60) and remediation checklist.",
+    "expected_elements": {
+      "failing_score": "Score below 80/100 (Failing gate / Bronze tier).",
+      "placeholder_penalty": "Flags unreplaced [TODO] tokens with zero score for rubric criterion 10.",
+      "single_test_failure": "Flags missing targeted single-test command with FAIL status.",
+      "bloat_penalty": "Flags excessive line count (>220 lines) with FAIL on token budget.",
+      "remediation_actions": "Provides specific numbered remediation action items to achieve >=80/100 score."
+    }
+  }
+]

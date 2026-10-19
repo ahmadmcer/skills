@@ -1,0 +1,122 @@
+[
+  {
+    "id": "trigger-01-generate-agents-from-scratch",
+    "prompt": "Create an AGENTS.md file for this repository from scratch so AI coding agents understand how to test and build it.",
+    "should_trigger": true,
+    "category": "Scaffold New AGENTS.md"
+  },
+  {
+    "id": "trigger-02-audit-existing-agents-md",
+    "prompt": "Audit our existing AGENTS.md against the quality standards and tell me if it is missing any single-test commands or boundaries.",
+    "should_trigger": true,
+    "category": "Audit & Quality Score"
+  },
+  {
+    "id": "trigger-03-fullstack-webapp-agents",
+    "prompt": "Write an AGENTS.md for our Next.js and Prisma fullstack web application, detailing client component rules and pnpm test commands.",
+    "should_trigger": true,
+    "category": "Webapp Archetype"
+  },
+  {
+    "id": "trigger-04-python-fastapi-backend-agents",
+    "prompt": "Generate an AGENTS.md for our Python FastAPI microservice managed with uv, with explicit single-test pytest commands and alembic migration boundaries.",
+    "should_trigger": true,
+    "category": "API Archetype"
+  },
+  {
+    "id": "trigger-05-rust-cli-agents",
+    "prompt": "Set up an AGENTS.md for my Rust CLI tool with cargo test commands, clippy lint checks, and exit code conventions for coding assistants.",
+    "should_trigger": true,
+    "category": "CLI Archetype"
+  },
+  {
+    "id": "trigger-06-monorepo-root-and-nested",
+    "prompt": "We have a Turborepo monorepo with multiple apps. Can you scaffold a root AGENTS.md and nested AGENTS.md files for our packages?",
+    "should_trigger": true,
+    "category": "Monorepo Archetype"
+  },
+  {
+    "id": "trigger-07-migrate-from-cursorrules",
+    "prompt": "Consolidate our old .cursorrules and CLAUDE.md into a unified AGENTS.md standard, and set up bridge pointers so Cursor and Claude still work.",
+    "should_trigger": true,
+    "category": "Migration & Bridges"
+  },
+  {
+    "id": "trigger-08-optimize-agent-context-bloat",
+    "prompt": "Our current agent instructions file is over 400 lines and Claude keeps hallucinating commands. Help me prune it down to a high-signal token budget.",
+    "should_trigger": true,
+    "category": "Token Optimization"
+  },
+  {
+    "id": "trigger-09-add-never-do-boundaries",
+    "prompt": "Update our repository's AGENTS.md to add strict 'Never Do' rules so Copilot stops modifying files in dist/ and touching .env files.",
+    "should_trigger": true,
+    "category": "Boundaries & Guardrails"
+  },
+  {
+    "id": "trigger-10-agent-skill-agents-md",
+    "prompt": "Generate an AGENTS.md for this Antigravity Agent Skill repository with quick_validate checks and pytest commands.",
+    "should_trigger": true,
+    "category": "Agent Skill Archetype"
+  },
+  {
+    "id": "near-miss-01-human-readme",
+    "prompt": "Create a comprehensive README.md with Shields.io badges, marketing copy, and an architecture diagram for my open-source project.",
+    "should_trigger": false,
+    "category": "Human Documentation (create-readme)"
+  },
+  {
+    "id": "near-miss-02-code-bugfix",
+    "prompt": "My FastAPI backend is throwing a 500 Internal Server Error when querying the /api/users endpoint. Can you inspect main.py and fix the bug?",
+    "should_trigger": false,
+    "category": "Code Debugging"
+  },
+  {
+    "id": "near-miss-03-git-commit",
+    "prompt": "Stage all the files I just modified and create a conventional commit message for this bugfix.",
+    "should_trigger": false,
+    "category": "Git Workflow (git-commit)"
+  },
+  {
+    "id": "near-miss-04-dockerfile-authoring",
+    "prompt": "Write a multi-stage Dockerfile and docker-compose.yml file to containerize this Node.js web application for production deployment.",
+    "should_trigger": false,
+    "category": "DevOps & Infrastructure"
+  },
+  {
+    "id": "near-miss-05-create-skill",
+    "prompt": "I want to create a brand new agent skill called 'database-query-optimizer' from scratch with evals and test loops.",
+    "should_trigger": false,
+    "category": "Skill Authoring (skill-creator)"
+  },
+  {
+    "id": "near-miss-06-api-documentation",
+    "prompt": "Generate OpenAPI 3.1 REST API reference documentation and VitePress pages for all our backend endpoints.",
+    "should_trigger": false,
+    "category": "Project Documentation (project-documentation)"
+  },
+  {
+    "id": "near-miss-07-ui-ux-design",
+    "prompt": "Audit the accessibility and WCAG contrast ratios of our landing page navigation bar and redesign the mobile drawer.",
+    "should_trigger": false,
+    "category": "UI/UX Design (ui-ux-design)"
+  },
+  {
+    "id": "near-miss-08-brand-identity",
+    "prompt": "Help us define our company's brand voice, core positioning pillars, and logo design system.",
+    "should_trigger": false,
+    "category": "Branding (branding-process)"
+  },
+  {
+    "id": "near-miss-09-changelog-generation",
+    "prompt": "Inspect our latest git commits and generate the v2.1.0 release notes section in CHANGELOG.md following Keep a Changelog.",
+    "should_trigger": false,
+    "category": "Release Engineering (changelog-versioning)"
+  },
+  {
+    "id": "near-miss-10-research-protocol",
+    "prompt": "Perform an intelligence-grade competitive analysis and market research report on open-source vector databases.",
+    "should_trigger": false,
+    "category": "Deep Research (researching-protocol)"
+  }
+]

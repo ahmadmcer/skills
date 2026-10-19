@@ -1,0 +1,88 @@
+{
+  "skill_name": "create-agents",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 1,
+      "name": "fullstack-webapp-scaffold",
+      "prompt": "Generate a production-ready AGENTS.md for a Next.js 15, React 19, and Prisma web application managed with pnpm. Include explicit single-test execution commands, Client Component conventions, and Never Do boundaries.",
+      "expected_output": "A token-budgeted AGENTS.md file with verified pnpm commands, targeted single test pattern, architectural conventions, and strict Never Do boundaries.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "assert-has-overview-and-stack",
+          "text": "Contains project overview identifying Next.js, React, and pnpm",
+          "type": "contains_pattern"
+        },
+        {
+          "id": "assert-has-single-test-command",
+          "text": "Provides an explicit single-test execution command pattern",
+          "type": "contains_pattern"
+        },
+        {
+          "id": "assert-has-never-do-boundaries",
+          "text": "Contains strict Never Do rules forbidding modification of build output or committing secrets",
+          "type": "contains_pattern"
+        },
+        {
+          "id": "assert-token-budget",
+          "text": "Total line count is less than or equal to 150 lines",
+          "type": "line_count_lte_150"
+        },
+        {
+          "id": "assert-zero-placeholders",
+          "text": "Contains zero unreplaced placeholder tokens like [TODO] or <your-repo>",
+          "type": "regex_not_found"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "audit-quality-and-ci-gate",
+      "prompt": "Audit an AGENTS.md file in the current directory against the 12-point quality rubric and verify whether it meets the 80/100 passing gate.",
+      "expected_output": "A comprehensive quality audit report displaying total score (0-100), per-item PASS/WARN/FAIL status, line count density, and actionable remediations.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "assert-audit-table",
+          "text": "Outputs formatted audit table with score and criteria status",
+          "type": "contains_pattern"
+        },
+        {
+          "id": "assert-gate-evaluation",
+          "text": "Evaluates against the 80/100 quality gate threshold",
+          "type": "contains_pattern"
+        },
+        {
+          "id": "assert-actionable-remediations",
+          "text": "Provides actionable remediation guidance for any failed or warned criteria",
+          "type": "contains_pattern"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "legacy-migration-and-bridges",
+      "prompt": "Consolidate existing .cursorrules and CLAUDE.md into AGENTS.md, and create lightweight bridges so both Claude Code and Cursor continue functioning without instruction drift.",
+      "expected_output": "A unified AGENTS.md along with lightweight bridge files (CLAUDE.md containing @AGENTS.md and Cursor rules pointing to AGENTS.md).",
+      "files": [],
+      "assertions": [
+        {
+          "id": "assert-unified-agents-md",
+          "text": "Consolidates extracted rules into a single source of truth AGENTS.md",
+          "type": "contains_pattern"
+        },
+        {
+          "id": "assert-claude-bridge",
+          "text": "Creates CLAUDE.md containing @AGENTS.md reference",
+          "type": "contains_pattern"
+        },
+        {
+          "id": "assert-cursor-bridge",
+          "text": "Creates Cursor rule pointing to AGENTS.md",
+          "type": "contains_pattern"
+        }
+      ]
+    }
+  ]
+}
