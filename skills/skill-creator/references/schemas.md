@@ -1,6 +1,35 @@
-# JSON Schemas
+# Schemas and Metadata Specifications
 
-This document defines the JSON schemas used by skill-creator.
+This document defines the frontmatter and JSON schemas used by skill-creator.
+
+---
+
+## SKILL.md Frontmatter
+
+Defines the YAML metadata header in `SKILL.md`.
+
+```yaml
+---
+name: example-skill
+description: Comprehensive summary of what the skill does and specific triggers for when to use it. Must be at most 1024 characters.
+license: Apache-2.0
+compatibility: Optional tool or environment requirements (max 500 chars)
+metadata:
+  version: "1.0.0"
+allowed-tools:
+  - Bash
+  - ReadFile
+---
+```
+
+**Fields:**
+
+- `name` (required): Skill identifier matching the skill folder name. 1-64 lowercase ASCII letters, digits, and single hyphens. Cannot start or end with a hyphen or contain consecutive hyphens.
+- `description` (required): Classifier prompt explaining what the skill does and when to activate it. Hard limit of at most 1024 characters (cannot contain `<` or `>`).
+- `compatibility` (optional): Environment or tooling requirements. At most 500 characters.
+- `license` (optional): License identifier (e.g., Apache-2.0, MIT).
+- `metadata` (optional): Arbitrary key-value metadata dictionary.
+- `allowed-tools` (optional): List of tools permitted for the skill.
 
 ---
 

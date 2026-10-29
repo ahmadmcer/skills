@@ -39,7 +39,7 @@ The directory and `name` must match. A portable name:
 
 The `description` is a classifier prompt. Front-load the user intent, then state
 the capability and activation conditions. Include nearby exclusions when false
-positives are expensive. Keep it under 1,024 characters.
+positives are expensive. Must be at most 1,024 characters (enforced by validation tooling).
 
 Good:
 

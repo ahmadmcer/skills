@@ -64,7 +64,7 @@ Check available MCPs - if useful for research (searching docs, finding similar s
 Based on the user interview, fill in these components:
 
 - **name**: Skill identifier
-- **description**: When to trigger, what it does. This is the primary triggering mechanism - include both what the skill does AND specific contexts for when to use it. All "when to use" info goes here, not in the body. Note: models may have a tendency to "undertrigger" skills -- to not use them when they'd be useful. To combat this, make skill descriptions proactive and explicit about trigger conditions. For instance, instead of "Build a dashboard for internal metrics", write "Build dashboards and visualizations for internal metrics. Make sure to use this skill whenever the user mentions dashboards, data visualization, internal metrics, or wants to display system data, even if they don't explicitly ask for a 'dashboard.'"
+- **description**: When to trigger, what it does. This is the primary triggering mechanism - include both what the skill does AND specific contexts for when to use it. Must be at most 1024 characters. All "when to use" info goes here, not in the body. Note: models may have a tendency to "undertrigger" skills -- to not use them when they'd be useful. To combat this, make skill descriptions proactive and explicit about trigger conditions. For instance, instead of "Build a dashboard for internal metrics", write "Build dashboards and visualizations for internal metrics. Make sure to use this skill whenever the user mentions dashboards, data visualization, internal metrics, or wants to display system data, even if they don't explicitly ask for a 'dashboard.'"
 - **compatibility**: Required tools, dependencies (optional, rarely needed)
 - **the rest of the skill :)**
 
@@ -87,11 +87,11 @@ skill-name/
 
 Skills use a three-level loading system:
 
-1. **Metadata** (name + description) - Always in context (~100 words)
+1. **Metadata** (name + description) - Always in context (~100 words, at most 1024 characters)
 2. **SKILL.md body** - In context whenever skill triggers (<500 lines ideal)
 3. **Bundled resources** - As needed (unlimited, scripts can execute without loading)
 
-These word counts are approximate and you can feel free to go longer if needed.
+These word counts are approximate and you can feel free to go longer if needed (except for the description field, which has a strict hard limit of at most 1024 characters).
 
 **Key patterns:**
 
@@ -424,7 +424,7 @@ This means your eval queries should be substantive enough that the agent would a
 
 ### Step 4: Apply the result
 
-Take `best_description` from the JSON output and update the skill's SKILL.md frontmatter. Show the user before/after and report the scores.
+Take `best_description` from the JSON output and update the skill's SKILL.md frontmatter. Ensure the description does not exceed the hard limit of 1024 characters. Show the user before/after and report the scores.
 
 ---
 
