@@ -24,27 +24,12 @@ SOFTWARE.
 
 ### Third-Party Notices & Acknowledgments
 
-This repository includes and redistributes curated agent skills developed by upstream organizations:
+This repository includes curated agent skills developed by upstream organizations:
 
-1. **`android-cli`**
-   - Author: Google / Android Open Source Project
-   - Repository & Origin: Official Android Developer Tools & SDK
-   - Description: Android emulator, build, and platform CLI tooling.
-   - Trademarks: Android is a registered trademark of Google LLC.
-
-2. **`find-skills`**
-   - Author: Vercel / Skills.sh (https://skills.sh)
-   - Description: Discover and install agent skills from open-source registries.
-   - Trademarks: Vercel is a registered trademark of Vercel Inc.
-
-3. **`skill-creator`**
+1. **`skill-creator`**
    - Author: Anthropic (https://anthropic.com)
    - Description: Agent skill benchmarking, optimization, and evaluation toolchain.
+   - License: Apache-2.0 (see `skills/skill-creator/LICENSE.txt`)
    - Trademarks: Anthropic and Claude are trademarks of Anthropic PBC.
 
-4. **`use-railway`**
-   - Author: Railway (https://railway.com)
-   - Description: Cloud infrastructure management, database operations, and deployment tooling.
-   - Trademarks: Railway is a registered trademark of Railway Corp.
-
-All upstream trademarks and copyrights belong to their respective owners. Original skills in this repository (`branding-process`, `changelog-versioning`, `christianity-scriptural-references`, `create-readme`, `git-commit`, `islamic-scriptural-references`, `jewish-scriptural-references`, `novel-architect`, `novel-storytelling`, `project-documentation`, `sdlc-process`) are authored by Ahmad Nawawi (<ahmadmcer@gmail.com>) and licensed under the MIT License above.
+All upstream trademarks and copyrights belong to their respective owners. Original skills in this repository (`branding-process`, `changelog-versioning`, `christianity-scriptural-references`, `create-agents`, `create-readme`, `git-commit`, `islamic-scriptural-references`, `jewish-scriptural-references`, `mermaid-diagram`, `novel-architect`, `novel-storytelling`, `project-documentation`, `researching-protocol`, `sdlc-process`, `ui-ux-design`) are authored by Ahmad Nawawi (<ahmadmcer@gmail.com>) and licensed under the MIT License above.
