@@ -136,6 +136,30 @@ def _call_llm(
     )
 
 
+def truncate_description(description: str, max_chars: int = 1024) -> str:
+    """Ensure a skill description is at most max_chars, using smart truncation if needed."""
+    if len(description) <= max_chars:
+        return description
+
+    candidate = description[:max_chars]
+
+    # Look for sentence boundaries ending with . ! ? followed by whitespace or end of string
+    sentence_matches = list(re.finditer(r"[.!?](?:\s|$)", candidate))
+    if sentence_matches:
+        last_sentence_end = sentence_matches[-1].end()
+        # Only use sentence break if it retains at least 50% of the character budget
+        if last_sentence_end >= max_chars // 2:
+            return candidate[:last_sentence_end].strip()
+
+    # Look for last whitespace boundary
+    last_space = candidate.rfind(" ")
+    if last_space > 0 and last_space >= max_chars // 2:
+        return candidate[:last_space].rstrip(" ,;:-")
+
+    # Fallback to hard slice
+    return candidate.rstrip(" ,;:-")
+
+
 def improve_description(
     skill_name: str,
     skill_content: str,
@@ -276,7 +300,15 @@ Please respond with only the new description text in <new_description> tags, not
         transcript["rewrite_char_count"] = len(shortened)
         description = shortened
 
+    # Safety guarantee: ensure final description never exceeds 1024 characters
+    if len(description) > 1024:
+        truncated = truncate_description(description, max_chars=1024)
+        transcript["truncated_description"] = truncated
+        transcript["truncated_char_count"] = len(truncated)
+        description = truncated
+
     transcript["final_description"] = description
+    transcript["final_char_count"] = len(description)
 
     if log_dir:
         log_dir.mkdir(parents=True, exist_ok=True)
